@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive AI - Enterprise Dashboard Systems</title>
+    <title>Cognitive AI - Voice Dashboard System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Base Reset & Variables */
+        /* Base Reset & Design System Variables */
         :root {
             --bg-deep: #020617;
             --bg-surface: rgba(15, 23, 42, 0.6);
             --border-glow: rgba(56, 189, 248, 0.15);
             --primary-neon: #00ffff;
             --accent-purple: #8b5cf6;
+            --emerald-neon: #10b981;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
@@ -32,26 +33,19 @@
             overflow-x: hidden;
         }
 
-        /* Animated Ambient Background Matrix */
+        /* Ambient Kinetic Grid Background */
         body::before {
             content: '';
             position: fixed;
             width: 100%;
             height: 100%;
             background:
-                radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.12) 0%, transparent 35%),
-                radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.12) 0%, transparent 35%);
-            opacity: 0.8;
+                radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
             z-index: -1;
-            animation: ambientShift 12s infinite alternate ease-in-out;
         }
 
-        @keyframes ambientShift {
-            from { transform: scale(1) translate(0px, 0px); }
-            to { transform: scale(1.05) translate(10px, -10px); }
-        }
-
-        /* Enterprise Glassmorphic Header Navigation */
+        /* Fixed Navigation Hub */
         nav {
             width: 100%;
             display: flex;
@@ -67,11 +61,11 @@
         }
 
         .logo {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #38bdf8;
-            text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
 
         nav ul {
@@ -83,7 +77,7 @@
         nav ul li a {
             text-decoration: none;
             color: var(--text-muted);
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             transition: color 0.3s ease;
         }
@@ -92,24 +86,24 @@
             color: var(--primary-neon);
         }
 
-        /* Hero Concept Section */
+        /* Hero Control Room */
         .hero {
-            min-height: 95vh;
+            min-height: 90vh;
             display: flex;
             justify-content: center;
             align-items: center;
             text-align: center;
             flex-direction: column;
-            padding: 140px 20px 60px;
+            padding: 140px 20px 40px;
             position: relative;
         }
 
         .hero h1 {
-            font-size: 68px;
-            max-width: 1100px;
-            line-height: 1.15;
-            margin-bottom: 25px;
-            background: linear-gradient(135deg, #38bdf8 0%, var(--accent-purple) 100%);
+            font-size: 62px;
+            max-width: 1000px;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #38bdf8 0%, var(--emerald-neon) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 700;
@@ -117,11 +111,68 @@
         }
 
         .hero p {
-            max-width: 800px;
-            font-size: 20px;
+            max-width: 750px;
+            font-size: 18px;
             line-height: 1.7;
             color: var(--text-muted);
-            margin-bottom: 45px;
+            margin-bottom: 35px;
+        }
+
+        /* Voice Interface Deck */
+        .voice-console-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 24px 40px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            max-width: 650px;
+            width: 100%;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .voice-status-indicator {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #64748b;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .status-dot.active {
+            background: var(--emerald-neon);
+            box-shadow: 0 0 14px var(--emerald-neon);
+            animation: pulseDot 1.5s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .voice-transcript-box {
+            font-style: italic;
+            color: var(--primary-neon);
+            min-height: 26px;
+            font-size: 16px;
+            font-weight: 400;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
         }
 
         .hero-buttons {
@@ -135,110 +186,56 @@
             padding: 14px 36px;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .primary-btn {
-            background: #38bdf8;
-            color: #020617;
-            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
+        .voice-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.25);
         }
 
-        .primary-btn:hover {
-            transform: translateY(-3px);
-            background: #f8fafc;
-            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.2);
+        .voice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.45);
+        }
+
+        .voice-btn.listening {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.35);
         }
 
         .secondary-btn {
             background: transparent;
             color: var(--text-main);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(8px);
         }
 
         .secondary-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border-color: #38bdf8;
         }
 
-        /* Ambient Hero Orb Glow */
-        .ai-orb {
-            width: 260px;
-            height: 260px;
-            border-radius: 50%;
-            position: absolute;
-            top: 25%;
-            right: 12%;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.2), rgba(139, 92, 246, 0.05));
-            filter: blur(40px);
-            opacity: 0.7;
-            z-index: -1;
-            animation: floatingMotion 6s infinite ease-in-out;
-        }
-
-        @keyframes floatingMotion {
-            0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-20px) scale(1.05); }
-        }
-
-        /* System Grid Features */
-        .features {
+        /* Core Live Dashboard Section */
+        .dashboard {
             padding: 100px 8%;
-            position: relative;
+            background: #060b13;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
         }
 
         .section-title {
             text-align: center;
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 700;
             letter-spacing: -1px;
             margin-bottom: 60px;
-            color: #f8fafc;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-glow);
-            backdrop-filter: blur(16px);
-            padding: 40px 35px;
-            border-radius: 20px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(56, 189, 248, 0.4);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #38bdf8;
-            font-weight: 600;
-        }
-
-        .card p {
-            color: var(--text-muted);
-            line-height: 1.7;
-            font-size: 15px;
-        }
-
-        /* Unified Core Dashboard Architecture */
-        .dashboard {
-            padding: 100px 8%;
-            background: #090d16;
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .dashboard-container {
@@ -247,7 +244,7 @@
             gap: 35px;
         }
 
-        /* Re-engineered Unified Dashboard Box */
+        /* Voice Optimized Dashboard Box Architecture */
         .dashboard-box {
             position: relative;
             background: var(--bg-surface);
@@ -255,30 +252,29 @@
             padding: 40px;
             border-radius: 24px;
             border: 1px solid var(--border-glow);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        .dashboard-box:hover {
-            transform: translateY(-5px);
-            border-color: rgba(0, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        /* The Emerald Neon Voice Pulse Class */
+        .dashboard-box.voice-pulse-highlight {
+            border-color: var(--emerald-neon) !important;
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.4);
+            transform: translateY(-12px) scale(1.02);
         }
 
-        /* Realigned Dynamic Header Formatting */
         .dashboard-header-group {
             text-align: center;
             margin-bottom: 25px;
         }
 
         .glow-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 600;
             color: #f8fafc;
-            letter-spacing: -0.5px;
             margin-top: 15px;
         }
 
@@ -290,7 +286,6 @@
             min-height: 45px;
         }
 
-        /* Re-engineered Standard Progress Components */
         .progress-bar {
             width: 100%;
             height: 6px;
@@ -302,13 +297,13 @@
 
         .progress {
             height: 100%;
-            width: 0%; /* Driven dynamically by execution engine */
+            width: 0%; 
             background: linear-gradient(90deg, #38bdf8, var(--accent-purple));
             border-radius: 10px;
             transition: width 4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Clean Unified Infrastructure Metrics Matrix */
+        /* Matrix Telemetry Output */
         .stats-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -320,19 +315,13 @@
             text-align: center;
             padding: 14px 8px;
             border-radius: 14px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            transition: all 0.3s ease;
-        }
-
-        .stat-node:hover {
-            background: rgba(56, 189, 248, 0.04);
-            border-color: rgba(56, 189, 248, 0.2);
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .stat-node span {
             display: block;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--primary-neon);
         }
@@ -342,336 +331,143 @@
             color: var(--text-muted);
             font-size: 11px;
             margin-top: 4px;
-            font-weight: 500;
-            white-space: nowrap;
         }
 
-        /* Component Graphic Node Containers */
         .graphic-wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 120px;
+            height: 100px;
             margin-bottom: 10px;
-            position: relative;
         }
 
-        /* Graphic Core 1: Neural Core Mesh */
+        /* Graphic Nodes Elements */
         .brain-mesh {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #00ffff 0%, #030712 80%);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+        }
+
+        .vector-ring {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #00ffff 0%, #030712 80%);
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-            position: relative;
-            animation: pulseCore 2.5s infinite ease-in-out;
+            border: 2px dashed var(--accent-purple);
+            animation: spin 10s linear infinite;
         }
 
-        .brain-mesh::before, .brain-mesh::after {
-            content: '';
-            position: absolute;
-            top: -10%; left: -10%; width: 120%; height: 120%;
+        .gear-assembly {
+            width: 80px;
+            height: 80px;
+            border: 3px dashed var(--primary-neon);
             border-radius: 50%;
-            border: 1px solid rgba(0, 255, 255, 0.25);
-            animation: ringScale 4s linear infinite;
-        }
-        .brain-mesh::after { animation-delay: 2s; }
-
-        @keyframes pulseCore {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); }
-            50% { transform: scale(1.06); box-shadow: 0 0 45px rgba(0, 255, 255, 0.5); }
+            animation: spin 7s linear infinite reverse;
         }
 
-        @keyframes ringScale {
-            0% { transform: scale(0.8); opacity: 1; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
-
-        /* Graphic Core 2: Vector Rings */
-        .vector-ring-container {
-            width: 100px;
-            height: 100px;
-            position: relative;
-        }
-
-        .ring-node {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 255, 255, 0.15);
-            border-top-color: var(--primary-neon);
-            animation: rotateMatrix 6s linear infinite;
-        }
-
-        .ring-node.inner {
-            width: 70%;
-            height: 70%;
-            top: 15%;
-            left: 15%;
-            border-color: rgba(139, 92, 246, 0.15);
-            border-bottom-color: var(--accent-purple);
-            animation-duration: 4s;
-            animation-direction: reverse;
-        }
-
-        .center-nucleus {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: #f8fafc;
-            border-radius: 50%;
-            top: 38%; left: 38%;
-            box-shadow: 0 0 20px var(--primary-neon);
-        }
-
-        @keyframes rotateMatrix {
+        @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        /* Graphic Core 3: Synchronized Automation Gears */
-        .gear-assembly {
-            width: 110px;
-            height: 110px;
-            position: relative;
-        }
-
-        .engine-gear {
-            position: absolute;
-            border-radius: 50%;
-            border: 3px dashed var(--primary-neon);
-            animation: rotateMatrix 8s linear infinite;
-        }
-
-        .engine-gear.primary-gear {
-            width: 70px;
-            height: 70px;
-            top: 10px; left: 5px;
-        }
-
-        .engine-gear.secondary-gear {
-            width: 50px;
-            height: 50px;
-            top: 50px; left: 55px;
-            border-color: var(--accent-purple);
-            animation-duration: 5.3s;
-            animation-direction: reverse;
-        }
-
-        /* Ambient Dynamic Particle Injectors */
-        .box-particles span {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(0, 255, 255, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: riseParticle linear infinite;
-        }
-
-        @keyframes riseParticle {
-            from { transform: translateY(150px); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            to { transform: translateY(-400px); opacity: 0; }
-        }
-
-        /* Fluid Real-time Data Canvases */
         .live-telemetry-canvas {
             width: 100%;
-            height: 110px;
-            margin-top: 15px;
-            border-radius: 12px;
-            background: rgba(2, 6, 23, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            height: 90px;
+            border-radius: 10px;
+            background: rgba(2, 6, 23, 0.5);
         }
 
-        /* About & Mission Infrastructure Layout */
-        .about {
-            padding: 120px 8%;
-            text-align: center;
-            position: relative;
-        }
-
-        .about p {
-            max-width: 900px;
-            margin: auto;
-            font-size: 20px;
-            line-height: 1.8;
-            color: var(--text-muted);
-        }
-
-        /* Footer */
         footer {
             text-align: center;
-            padding: 40px 20px;
+            padding: 40px;
             background: #020617;
             color: #64748b;
-            font-size: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
-            letter-spacing: 0.5px;
-        }
-
-        /* Responsive Adaptive Queries */
-        @media(max-width: 900px) {
-            .hero h1 { font-size: 46px; }
-            .hero p { font-size: 17px; }
-            .section-title { font-size: 32px; }
-            nav { padding: 20px 4%; }
-            nav ul { gap: 20px; }
+            font-size: 13px;
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Navigation Grid -->
     <nav>
         <div class="logo">Cognitive AI</div>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#dashboard">Dashboard</a></li>
-            <li><a href="#about">About</a></li>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#dashboard">Control Center</a></li>
         </ul>
     </nav>
 
-    <!-- Hero Deployment Entry -->
-    <section class="hero">
-        <div class="ai-orb"></div>
-        <h1>Future Generation Cognitive Artificial Intelligence</h1>
-        <p>
-            Experience advanced human-like intelligence with interactive AI systems,
-            machine learning automation, neural reasoning, smart analytics,
-            and futuristic user interaction technology.
-        </p>
+    <section class="hero" id="home">
+        <h1>Voice Responsive Infrastructure Hub</h1>
+        <p>Speak to deploy system tracking and route focus parameters dynamically across processing cores.</p>
+
+        <!-- Live Vocal Input Deck -->
+        <div class="voice-console-card">
+            <div class="voice-status-indicator">
+                <span class="status-dot" id="voiceStatusDot"></span>
+                <span id="voiceStatusText">Acoustic Engine Offline</span>
+            </div>
+            <div class="voice-transcript-box" id="voiceTranscript">Click below and say a control path phrase...</div>
+        </div>
+
         <div class="hero-buttons">
-            <button class="btn primary-btn">Explore AI Systems</button>
-            <button class="btn secondary-btn">Watch Deployment Demo</button>
+            <button class="btn voice-btn" id="btnVoiceTrigger">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                Initialize Voice Listening
+            </button>
+            <button class="btn secondary-btn" id="btnManualSync">Trigger Manual Sync</button>
         </div>
     </section>
 
-    <!-- System Features Block -->
-    <section class="features" id="features">
-        <h2 class="section-title">Core Architecture Features</h2>
-        <div class="feature-grid">
-            <div class="card">
-                <h3>🧠 Machine Learning</h3>
-                <p>Intelligent systems that learn from user data, improve automatically, and optimize performance in real time.</p>
-            </div>
-            <div class="card">
-                <h3>💬 NLP Processing</h3>
-                <p>Understand human conversations, analyze text patterns, and respond intelligently.</p>
-            </div>
-            <div class="card">
-                <h3>👁 Computer Vision</h3>
-                <p>Analyze visual information, detect objects, and interpret images intelligently.</p>
-            </div>
-            <div class="card">
-                <h3>🎤 Voice Intelligence</h3>
-                <p>Convert voice into meaningful commands using advanced speech recognition systems.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Unified Infrastructure Live Dashboard Grid -->
     <section class="dashboard" id="dashboard">
         <h2 class="section-title">System Live Operations Control</h2>
         <div class="dashboard-container">
 
-            <!-- Card Node 1: Neural Processing -->
+            <!-- Neural Processing Card -->
             <div class="dashboard-box" id="neuralBox">
-                <div class="box-particles"></div>
-                <div class="graphic-wrapper">
-                    <div class="brain-mesh"></div>
-                </div>
+                <div class="graphic-wrapper"><div class="brain-mesh"></div></div>
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Neural Processing</h3>
-                    <p class="live-description">⚡ AI continuously processes and learns from real-time information vectors.</p>
+                    <p class="live-description">⚡ Continuously evaluating complex learning matrices across array logic tracks.</p>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress" id="neuralBar"></div>
-                </div>
+                <div class="progress-bar"><div class="progress" id="neuralBar"></div></div>
                 <div class="stats-matrix">
-                    <div class="stat-node">
-                        <span id="speed">0%</span>
-                        <small>Process Speed</small>
-                    </div>
-                    <div class="stat-node">
-                        <span id="learning">0%</span>
-                        <small>Learning Rate</small>
-                    </div>
-                    <div class="stat-node">
-                        <span id="neural">0%</span>
-                        <small>Neural Activity</small>
-                    </div>
+                    <div class="stat-node"><span id="speed">94%</span><small>Velocity</small></div>
+                    <div class="stat-node"><span id="learning">88%</span><small>Index</small></div>
+                    <div class="stat-node"><span id="neural">97%</span><small>Active</small></div>
                 </div>
                 <canvas id="neuralCanvas" class="live-telemetry-canvas"></canvas>
             </div>
 
-            <!-- Card Node 2: Smart Analytics -->
+            <!-- Smart Analytics Card -->
             <div class="dashboard-box" id="analyticsBox">
-                <div class="box-particles"></div>
-                <div class="graphic-wrapper">
-                    <div class="vector-ring-container">
-                        <div class="ring-node"></div>
-                        <div class="ring-node inner"></div>
-                        <div class="center-nucleus"></div>
-                    </div>
-                </div>
+                <div class="graphic-wrapper"><div class="vector-ring"></div></div>
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Smart Analytics</h3>
-                    <p class="live-description">📊 Advanced predictive data analytics matching structural operational requirements.</p>
+                    <p class="live-description">📊 Processing predictive pattern vectors matching operations metrics.</p>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress" id="analyticsBar"></div>
-                </div>
+                <div class="progress-bar"><div class="progress" id="analyticsBar"></div></div>
                 <div class="stats-matrix">
-                    <div class="stat-node">
-                        <span id="accuracy">0%</span>
-                        <small>Accuracy Rate</small>
-                    </div>
-                    <div class="stat-node">
-                        <span id="prediction">0%</span>
-                        <small>Prediction Index</small>
-                    </div>
-                    <div class="stat-node">
-                        <span id="optimization">0%</span>
-                        <small>Optimization</small>
-                    </div>
+                    <div class="stat-node"><span id="accuracy">99%</span><small>Accuracy</small></div>
+                    <div class="stat-node"><span id="prediction">92%</span><small>Forecast</small></div>
+                    <div class="stat-node"><span id="optimization">96%</span><small>Efficiency</small></div>
                 </div>
                 <canvas id="analyticsCanvas" class="live-telemetry-canvas"></canvas>
             </div>
 
-            <!-- Card Node 3: Automation Engine -->
+            <!-- Automation Engine Card -->
             <div class="dashboard-box" id="automationBox">
-                <div class="box-particles"></div>
-                <div class="graphic-wrapper">
-                    <div class="gear-assembly">
-                        <div class="engine-gear primary-gear"></div>
-                        <div class="engine-gear secondary-gear"></div>
-                    </div>
-                </div>
+                <div class="graphic-wrapper"><div class="gear-assembly"></div></div>
                 <div class="dashboard-header-group">
                     <h3 class="glow-title">Automation Engine</h3>
-                    <p class="live-description">🤖 Automated execution routines mapped to micro-task scaling algorithms.</p>
+                    <p class="live-description">🤖 Automated background threads mapping scaling orchestration.</p>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress" id="automationBar"></div>
-                </div>
+                <div class="progress-bar"><div class="progress" id="automationBar"></div></div>
                 <div class="stats-matrix">
-                    <div class="stat-node">
-                        <span id="tasks">0%</span>
-                        <small>Completed Tasks</small>
-                    </div>
-                    <div class="stat-node">
-                        <span id="efficiency">0%</span>
-                        <small>Core Efficiency</small>
-                    </div>
-                    <div class="stat-node">
-                        <span id="aiFlow">0%</span>
-                        <small>Workflow Flow</small>
-                    </div>
+                    <div class="stat-node"><span id="tasks">84%</span><small>Tasks Done</small></div>
+                    <div class="stat-node"><span id="efficiency">95%</span><small>Core Load</small></div>
+                    <div class="stat-node"><span id="aiFlow">91%</span><small>Flow Rate</small></div>
                 </div>
                 <canvas id="automationCanvas" class="live-telemetry-canvas"></canvas>
             </div>
@@ -679,131 +475,191 @@
         </div>
     </section>
 
-    <!-- About Structural Core Section -->
-    <section class="about" id="about">
-        <h2 class="section-title">About Cognitive Enterprise Infrastructure</h2>
-        <p>
-            Cognitive AI combines machine learning, deep learning, natural language processing,
-            and reasoning systems to simulate intelligent human behavior. These advanced systems learn,
-            adapt, and interact dynamically with users to create futuristic digital experiences.
-        </p>
-    </section>
-
-    <!-- Footer System Element -->
     <footer> 
         &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
     </footer>
 
-    <!-- Optimized Real-time Synchronized Functional Operations Scripts -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             
-            /* --- ASYNC MULTI-THREADED DIGITAL COUNTER ENGINE --- */
-            function executeMetricCounter(elementId, initialValue, targetValue, operationalDuration) {
-                const telemetryElement = document.getElementById(elementId);
-                if (!telemetryElement) return;
+            // Basic UI Setup Elements
+            setTimeout(() => { document.getElementById("neuralBar").style.width = "94%"; }, 200);
+            setTimeout(() => { document.getElementById("analyticsBar").style.width = "99%"; }, 400);
+            setTimeout(() => { document.getElementById("automationBar").style.width = "84%"; }, 600);
+
+            function routeScrollToDashboard(targetBoxId) {
+                const targetElement = document.getElementById(targetBoxId);
+                const sectionContainer = document.getElementById("dashboard");
                 
-                const trajectoryRange = targetValue - initialValue;
-                let currentIterationValue = initialValue;
-                const dynamicFrameRateInterval = 24; 
-                const absoluteStepsCount = operationalDuration / dynamicFrameRateInterval;
-                const progressiveIncrementValue = trajectoryRange / absoluteStepsCount;
+                if (targetElement && sectionContainer) {
+                    // Step 1: Smooth scroll to the main dashboard container area
+                    const headerOffset = 90;
+                    const elementPosition = sectionContainer.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+
+                    // Step 2: Clear old highlights, then flash the new target emerald neon pulse
+                    document.querySelectorAll('.dashboard-box').forEach(box => {
+                        box.classList.remove('voice-pulse-highlight');
+                    });
+
+                    setTimeout(() => {
+                        targetElement.classList.add('voice-pulse-highlight');
+                    }, 400); // Small wait for scroll movement animation buffer
+                }
+            }
+
+            /* --- HIGH FREQUENCY SIMULATION SYNC ROUTINE ENGINE --- */
+            let syncRunning = false;
+            function runHighSpeedSimulationRoutine() {
+                if (syncRunning) return;
+                syncRunning = true;
+
+                voiceTranscript.textContent = "Processing High-Speed Simulation Sync Routine...";
                 
-                const performanceTimer = setInterval(() => {
-                    currentIterationValue += progressiveIncrementValue;
-                    if ((progressiveIncrementValue > 0 && currentIterationValue >= targetValue) || 
-                        (progressiveIncrementValue < 0 && currentIterationValue <= targetValue)) {
-                        currentIterationValue = targetValue;
-                        clearInterval(performanceTimer);
+                // Max out progress visualization lines
+                document.getElementById("neuralBar").style.width = "100%";
+                document.getElementById("analyticsBar").style.width = "100%";
+                document.getElementById("automationBar").style.width = "100%";
+
+                // Flash all nodes together for unity response view
+                document.querySelectorAll('.dashboard-box').forEach(box => {
+                    box.classList.add('voice-pulse-highlight');
+                });
+
+                setTimeout(() => {
+                    document.getElementById("neuralBar").style.width = "94%";
+                    document.getElementById("analyticsBar").style.width = "99%";
+                    document.getElementById("automationBar").style.width = "84%";
+                    
+                    document.querySelectorAll('.dashboard-box').forEach(box => {
+                        box.classList.remove('voice-pulse-highlight');
+                    });
+                    syncRunning = false;
+                    voiceTranscript.textContent = "Simulation Sync Complete. System Stabilized.";
+                }, 3000);
+            }
+
+            document.getElementById("btnManualSync").addEventListener("click", () => {
+                routeScrollToDashboard("neuralBox");
+                runHighSpeedSimulationRoutine();
+            });
+
+            /* --- INTUITIVE COGNITIVE SPEECH API HANDLER HUB --- */
+            const voiceBtn = document.getElementById("btnVoiceTrigger");
+            const voiceStatusDot = document.getElementById("voiceStatusDot");
+            const voiceStatusText = document.getElementById("voiceStatusText");
+            const voiceTranscript = document.getElementById("voiceTranscript");
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!SpeechRecognition) {
+                voiceStatusText.textContent = "Speech API Engine Missing";
+                voiceBtn.style.opacity = "0.5";
+                voiceBtn.style.cursor = "not-allowed";
+            } else {
+                const recognitionEngine = new SpeechRecognition();
+                recognitionEngine.continuous = false;
+                recognitionEngine.lang = 'en-US';
+                recognitionEngine.interimResults = false;
+
+                let isListening = false;
+
+                // Voice Logic Command Evaluator Parser Matrix
+                function evaluateVoiceCommand(rawUtterance) {
+                    const normalizedText = rawUtterance.toLowerCase().trim();
+                    voiceTranscript.textContent = `Captured Command: "${rawUtterance}"`;
+
+                    // Command Path Route Mapping Conditions
+                    if (normalizedText.includes("neural") || normalizedText.includes("show neural")) {
+                        routeScrollToDashboard("neuralBox");
+                    } else if (normalizedText.includes("analytics") || normalizedText.includes("show analytics")) {
+                        routeScrollToDashboard("analyticsBox");
+                    } else if (normalizedText.includes("automation") || normalizedText.includes("show automation")) {
+                        routeScrollToDashboard("automationBox");
+                    } else if (normalizedText.includes("sync") || normalizedText.includes("trigger demo") || normalizedText.includes("run system sync")) {
+                        routeScrollToDashboard("neuralBox");
+                        setTimeout(() => {
+                            runHighSpeedSimulationRoutine();
+                        }, 500);
+                    } else {
+                        voiceTranscript.textContent = "Command unmapped. Say 'Show Neural', 'Show Analytics', 'Show Automation', or 'Run System Sync'.";
                     }
-                    telemetryElement.textContent = Math.floor(currentIterationValue) + "%";
-                }, dynamicFrameRateInterval);
-            }
-
-            // Fire Counter Progress Loops Sequence
-            executeMetricCounter("speed", 0, 98, 3200);
-            executeMetricCounter("learning", 0, 94, 3200);
-            executeMetricCounter("neural", 0, 99, 3200);
-            executeMetricCounter("accuracy", 0, 98, 3200);
-            executeMetricCounter("prediction", 0, 95, 3200);
-            executeMetricCounter("optimization", 0, 99, 3200);
-            executeMetricCounter("tasks", 0, 96, 3200);
-            executeMetricCounter("efficiency", 0, 99, 3200);
-            executeMetricCounter("aiFlow", 0, 94, 3200);
-
-            /* --- SYNCHRONIZED PROGRESS LINE ANIMATION OVERLAYS --- */
-            setTimeout(() => { document.getElementById("neuralBar").style.width = "96%"; }, 200);
-            setTimeout(() => { document.getElementById("analyticsBar").style.width = "98%"; }, 400);
-            setTimeout(() => { document.getElementById("automationBar").style.width = "94%"; }, 600);
-
-            /* --- DISTRIBUTED GRAPHIC PARTICLE EMISSION ARRAYS --- */
-            function initializeParticleGrid(boxSelector, totalNodeQuantity, lifespanScalar) {
-                const insertionTarget = document.querySelector(boxSelector);
-                if (!insertionTarget) return;
-                
-                for (let i = 0; i < totalNodeQuantity; i++) {
-                    const nodeParticle = document.createElement("span");
-                    nodeParticle.style.left = Math.random() * 100 + "%";
-                    nodeParticle.style.bottom = "0px";
-                    nodeParticle.style.animationDuration = (Math.random() * 5 + lifespanScalar) + "s";
-                    nodeParticle.style.opacity = Math.random() * 0.7;
-                    nodeParticle.style.animationDelay = (Math.random() * 4) + "s";
-                    insertionTarget.appendChild(nodeParticle);
-                }
-            }
-            
-            initializeParticleGrid("#neuralBox .box-particles", 25, 4);
-            initializeParticleGrid("#analyticsBox .box-particles", 25, 5);
-            initializeParticleGrid("#automationBox .box-particles", 25, 4);
-
-            /* --- REALTIME HIGH-PERFORMANCE DATA CANVAS RENDER LOOP --- */
-            function allocateTelemetryMatrix(targetCanvasId, absoluteSampleWidth, variationDelta) {
-                const dynamicCanvasElement = document.getElementById(targetCanvasId);
-                if (!dynamicCanvasElement) return;
-                const renderingContext2D = dynamicCanvasElement.getContext("2d");
-                
-                // Track dynamic element configuration bounding rect box dimensions
-                dynamicCanvasElement.width = dynamicCanvasElement.offsetWidth;
-                dynamicCanvasElement.height = dynamicCanvasElement.offsetHeight;
-                
-                let coordinateVectorArray = [];
-                for (let i = 0; i < absoluteSampleWidth; i++) {
-                    coordinateVectorArray.push(Math.random() * (dynamicCanvasElement.height - 30) + 15);
                 }
 
-                function computeFrameExecution() {
-                    renderingContext2D.clearRect(0, 0, dynamicCanvasElement.width, dynamicCanvasElement.height);
-                    renderingContext2D.beginPath();
-                    
-                    for (let i = 0; i < coordinateVectorArray.length; i++) {
-                        let linePositionX = i * (dynamicCanvasElement.width / (coordinateVectorArray.length - 1));
-                        let linePositionY = coordinateVectorArray[i];
-                        
-                        if (i === 0) renderingContext2D.moveTo(linePositionX, linePositionY);
-                        else renderingContext2D.lineTo(linePositionX, linePositionY);
-                        
-                        // Mutate matrix arrays via minor noise variation vectors
-                        coordinateVectorArray[i] += (Math.random() - 0.5) * variationDelta;
-                        if (coordinateVectorArray[i] < 15) coordinateVectorArray[i] = 15;
-                        if (coordinateVectorArray[i] > dynamicCanvasElement.height - 15) {
-                            coordinateVectorArray[i] = dynamicCanvasElement.height - 15;
-                        }
+                // Event Listeners Integration Hooks
+                voiceBtn.addEventListener("click", () => {
+                    if (!isListening) {
+                        recognitionEngine.start();
+                    } else {
+                        recognitionEngine.stop();
                     }
-                    
-                    renderingContext2D.strokeStyle = "rgba(0, 255, 255, 0.85)";
-                    renderingContext2D.lineWidth = 2;
-                    renderingContext2D.shadowBlur = 12;
-                    renderingContext2D.shadowColor = "#00ffff";
-                    renderingContext2D.stroke();
-                    
-                    requestAnimationFrame(computeFrameExecution);
-                }
-                computeFrameExecution();
+                });
+
+                recognitionEngine.onstart = () => {
+                    isListening = true;
+                    voiceBtn.classList.add("listening");
+                    voiceBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Disengage Engine`;
+                    voiceStatusDot.classList.add("active");
+                    voiceStatusText.textContent = "Listening Active";
+                    voiceTranscript.textContent = "Awaiting structural voice path instruction...";
+                };
+
+                recognitionEngine.onresult = (event) => {
+                    const dynamicTextPayload = event.results[0][0].transcript;
+                    evaluateVoiceCommand(dynamicTextPayload);
+                };
+
+                recognitionEngine.onerror = (err) => {
+                    voiceTranscript.textContent = "Vocal analysis timed out or failed.";
+                    console.error("Acoustic Logging error: ", err.error);
+                };
+
+                recognitionEngine.onend = () => {
+                    isListening = false;
+                    voiceBtn.classList.remove("listening");
+                    voiceBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Initialize Voice Listening`;
+                    voiceStatusDot.classList.remove("active");
+                    voiceStatusText.textContent = "Acoustic Engine Ready";
+                };
             }
 
-            allocateTelemetryMatrix("neuralCanvas", 45, 4);
-            allocateTelemetryMatrix("analyticsCanvas", 45, 3);
-            allocateTelemetryMatrix("automationCanvas", 45, 3.5);
+            /* --- SIMULATED BACKGROUND CANVAS TRACK TELEMETRY GRAPHICS --- */
+            function renderCanvasBackgroundTrack(canvasId) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+                const ctx = canvas.getContext("2d");
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+
+                let dataNodesArray = Array.from({length: 30}, () => Math.random() * (canvas.height - 20) + 10);
+
+                function draw() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+                    ctx.lineWidth = 1.5;
+
+                    for(let i=0; i<dataNodesArray.length; i++) {
+                        let x = i * (canvas.width / (dataNodesArray.length - 1));
+                        let y = dataNodesArray[i];
+                        if(i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+
+                        dataNodesArray[i] += (Math.random() - 0.5) * 3;
+                        if(dataNodesArray[i] < 10) dataNodesArray[i] = 10;
+                        if(dataNodesArray[i] > canvas.height - 10) dataNodesArray[i] = canvas.height - 10;
+                    }
+                    ctx.stroke();
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            }
+
+            renderCanvasBackgroundTrack("neuralCanvas");
+            renderCanvasBackgroundTrack("analyticsCanvas");
+            renderCanvasBackgroundTrack("automationCanvas");
         });
     </script>
 </body>
