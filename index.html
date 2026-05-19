@@ -1,399 +1,1318 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Enterprise Production Architecture Blueprint</title>
-  <style>
-    :root {
-      --bg-canvas: #0f172a;
-      --bg-card: #1e293b;
-      --border-color: #334155;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent-primary: #38bdf8;
-      --accent-success: #4ade80;
-      --accent-failure: #f87171;
-      --arrow-color: #64748b;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive AI - Enterprise Multi-Modal Voice & Architecture Control Plane</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Enterprise Level Design System Variables */
+        :root {
+            --bg-base: #090d16;
+            --bg-card: #111827;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --border-active: #3b82f6;
+            
+            /* Status Indicators */
+            --color-primary: #3b82f6;      /* Corporate Blue */
+            --color-success: #10b981;      /* Stable / Positive Valence */
+            --color-warning: #f59e0b;      /* Analytical / Moderate */
+            --color-danger: #ef4444;       /* High Stress Variant */
+            
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --dynamic-accent: var(--color-primary);
+            --arrow-color: #4b5563;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-canvas);
-      color: var(--text-main);
-      padding: 2rem 1rem;
-      line-height: 1.5;
-      display: flex;
-      justify-content: center;
-    }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            letter-spacing: -0.01em;
+        }
 
-    .architecture-container {
-      width: 100%;
-      max-width: 900px;
-      background: #111827;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 2.5rem;
-      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
-    }
+        /* Fixed Enterprise Control Header */
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 4%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(9, 13, 22, 0.8);
+            border-bottom: 1px solid var(--border-subtle);
+        }
 
-    .header {
-      margin-bottom: 3rem;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 1rem;
-    }
+        .brand-lockup {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .header h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      text-transform: uppercase;
-      color: var(--text-main);
-    }
+        .brand-logo {
+            width: 12px;
+            height: 12px;
+            background: var(--dynamic-accent);
+            border-radius: 2px;
+            transition: background 0.3s ease;
+        }
 
-    .header p {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      margin-top: 0.25rem;
-    }
+        .brand-title {
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    /* Diagram Flow Layout */
-    .flow-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      width: 100%;
-    }
+        .system-time-stamp {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
 
-    /* Standard Core Node styling */
-    .node {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-left: 4px solid var(--accent-primary);
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
-      width: 100%;
-      max-width: 480px;
-      text-align: center;
-      transition: border-color 0.2s ease;
-    }
+        /* Workspace Layout */
+        .workspace {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            padding-top: 65px;
+        }
 
-    .node:hover {
-      border-color: var(--accent-primary);
-    }
+        /* Left Console Sidebar Panel */
+        .control-sidebar {
+            background: #0d1321;
+            border-right: 1px solid var(--border-subtle);
+            padding: 30px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: fixed;
+            width: 420px;
+            height: calc(100vh - 65px);
+            overflow-y: auto;
+        }
 
-    .node-title {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
+        .panel-heading {
+            margin-bottom: 20px;
+        }
 
-    .node-value {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-top: 0.25rem;
-    }
+        .panel-heading h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+        }
 
-    /* Vertical connector line */
-    .v-arrow {
-      width: 2px;
-      height: 32px;
-      background-color: var(--arrow-color);
-      position: relative;
-    }
+        .panel-heading p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
 
-    /* Downward arrowhead */
-    .v-arrow::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top: 6px solid var(--arrow-color);
-    }
+        /* Professional Telemetry Console Card */
+        .telemetry-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
 
-    /* Split Grid Layer for Side Nodes */
-    .split-grid {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      width: 100%;
-      max-width: 800px;
-    }
+        .engine-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
 
-    .side-node-container {
-      display: flex;
-      align-items: center;
-    }
+        .engine-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
 
-    .side-node-container.left {
-      justify-content: flex-end;
-    }
+        .engine-indicator-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            border: 1px solid var(--border-subtle);
+        }
 
-    .side-node-container.right {
-      justify-content: flex-start;
-    }
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--text-muted);
+            border-radius: 50%;
+        }
 
-    .side-node {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 0.75rem 1rem;
-      width: 220px;
-    }
+        .badge-dot.active {
+            background: var(--color-success);
+            box-shadow: 0 0 8px var(--color-success);
+            animation: statusPulse 1.8s infinite;
+        }
 
-    /* Horizontal connecting paths */
-    .h-connector {
-      height: 2px;
-      background-color: var(--arrow-color);
-      position: relative;
-      flex-grow: 1;
-      max-width: 40px;
-    }
+        @keyframes statusPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
 
-    .h-connector.to-right::after {
-      content: '';
-      position: absolute;
-      right: -4px;
-      top: 50%;
-      transform: translateY(-50%);
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
-      border-left: 6px solid var(--arrow-color);
-    }
+        .transcript-output-pane {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            min-height: 70px;
+            color: var(--text-primary);
+            border-left: 2px solid var(--text-muted);
+            margin-bottom: 15px;
+        }
 
-    /* Divergent Branching Layout at the End */
-    .branch-container {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 750px;
-      margin-top: 24px;
-      position: relative;
-    }
+        /* Metric Grid Architecture */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
 
-    /* Branch line tracks */
-    .branch-container::before {
-      content: '';
-      position: absolute;
-      top: -24px;
-      left: 25%;
-      right: 25%;
-      height: 2px;
-      background-color: var(--arrow-color);
-    }
+        .matrix-node {
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 10px;
+            border-radius: 8px;
+        }
 
-    .branch-line-down {
-      width: 2px;
-      height: 24px;
-      background-color: var(--arrow-color);
-      position: absolute;
-      top: -24px;
-    }
+        .matrix-node label {
+            display: block;
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
 
-    .branch-line-down.left { left: 25%; }
-    .branch-line-down.right { right: 25%; }
+        .matrix-node .val {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dynamic-accent);
+            transition: color 0.3s ease;
+        }
 
-    .branch-line-down::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top: 6px solid var(--arrow-color);
-    }
+        /* Console Interface Controls */
+        .action-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: auto;
+        }
 
-    .branch-card {
-      width: 46%;
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 1rem;
-    }
+        .btn-core {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
 
-    .branch-card.success { border-left: 4px solid var(--accent-success); }
-    .branch-card.failure { border-left: 4px solid var(--accent-failure); }
+        .btn-primary-ops {
+            background: var(--color-primary);
+            color: #ffffff;
+        }
 
-    .badge {
-      display: inline-block;
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      margin-bottom: 0.5rem;
-    }
+        .btn-primary-ops:hover {
+            background: #2563eb;
+        }
 
-    .badge.success { background-color: rgba(74, 222, 128, 0.1); color: var(--accent-success); }
-    .badge.failure { background-color: rgba(248, 113, 113, 0.1); color: var(--accent-failure); }
+        .btn-primary-ops.listening-state {
+            background: var(--color-danger);
+        }
 
-    /* Responsive Adaptation for smaller viewports */
-    @media (max-width: 768px) {
-      .split-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-      }
-      .side-node-container.left, .side-node-container.right {
-        justify-content: center;
-      }
-      .h-connector { display: none; }
-      .side-node { width: 100%; max-width: 480px; text-align: center;}
-      .branch-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5rem;
-      }
-      .branch-container::before, .branch-line-down { display: none; }
-      .branch-card { width: 100%; max-width: 480px; }
-    }
-  </style>
+        .btn-primary-ops.listening-state:hover {
+            background: #dc2626;
+        }
+
+        .btn-secondary-ops {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .btn-secondary-ops:hover {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: var(--text-secondary);
+        }
+
+        /* Right Dashboard Panel */
+        .dashboard-stream {
+            margin-left: 420px;
+            padding: 30px 4%;
+            width: calc(100% - 420px);
+        }
+
+        .stream-title-block {
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stream-title-block h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Tabs/Toggle for View Switching */
+        .view-toggle-group {
+            display: flex;
+            background: rgba(255,255,255,0.03);
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .view-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active-view {
+            display: block;
+        }
+
+        .grid-plane {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Enterprise Functional Dashboard Node */
+        .data-card-node {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        /* Active highlight state frame */
+        .data-card-node.system-vocal-intercept {
+            border-color: var(--dynamic-accent) !important;
+            box-shadow: 0 4px 30px rgba(59, 130, 246, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .node-top-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .node-icon-box {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-secondary);
+        }
+
+        .node-tag-id {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .node-main-spec h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .node-main-spec p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            min-height: 36px;
+        }
+
+        .metric-progress-wrapper {
+            margin: 15px 0;
+        }
+
+        .metric-split-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .metric-split-row span {
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        .horizontal-rail {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .fill-track {
+            height: 100%;
+            width: 0%;
+            background: var(--color-primary);
+            border-radius: 2px;
+            transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Tabular Sub-data Layout */
+        .tabular-sub-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.12);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.01);
+        }
+
+        .sub-data-cell {
+            text-align: center;
+        }
+
+        .sub-data-cell label {
+            display: block;
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .sub-data-cell span {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* --- VISUAL ARCHITECTURE TRACK DESIGN --- */
+        .architecture-blueprint-plane {
+            background: #0b0f19;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .arch-node {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--color-primary);
+            border-radius: 8px;
+            padding: 12px 16px;
+            width: 100%;
+            max-width: 460px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .arch-node.highlighted-intent {
+            border-color: var(--dynamic-accent);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+            transform: scale(1.02);
+        }
+
+        .arch-node-title {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .arch-node-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        .v-arrow {
+            width: 2px;
+            height: 24px;
+            background-color: var(--arrow-color);
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .v-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--arrow-color);
+            transition: border-top-color 0.3s;
+        }
+
+        /* Split-Grid Tracks */
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            width: 100%;
+            max-width: 760px;
+        }
+
+        .side-node-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .side-node-container.right { justify-content: flex-start; }
+        .side-node-container.left { justify-content: flex-end; }
+
+        .side-arch-node {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 10px 14px;
+            width: 190px;
+            transition: all 0.3s;
+        }
+
+        .h-connector {
+            height: 2px;
+            background-color: var(--arrow-color);
+            position: relative;
+            flex-grow: 1;
+            max-width: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .h-connector.to-right::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 5px solid var(--arrow-color);
+        }
+
+        /* Branching Paths Setup */
+        .branch-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 700px;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .branch-container::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background-color: var(--arrow-color);
+        }
+
+        .branch-line-down {
+            width: 2px;
+            height: 20px;
+            background-color: var(--arrow-color);
+            position: absolute;
+            top: -20px;
+        }
+        .branch-line-down.left { left: 25%; }
+        .branch-line-down.right { right: 25%; }
+
+        .branch-line-down::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--arrow-color);
+        }
+
+        .branch-card {
+            width: 48%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px;
+            transition: all 0.3s ease;
+        }
+        .branch-card.success { border-left: 4px solid var(--color-success); }
+        .branch-card.failure { border-left: 4px solid var(--color-danger); }
+
+        .branch-card.active-path {
+            box-shadow: 0 0 15px rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .path-badge {
+            display: inline-block;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+        }
+        .path-badge.success { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
+        .path-badge.failure { background: rgba(239, 68, 68, 0.1); color: var(--color-danger); }
+
+
+        /* Real-Time Linear Spectrum Canvas */
+        .live-spectrogram-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .spectrogram-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .spectrogram-header h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .spectrogram-canvas {
+            width: 100%;
+            height: 95px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            display: block;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 16px 0 0;
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* Responsive Flow Adaptation */
+        @media (max-width: 992px) {
+            .workspace { grid-template-columns: 1fr; }
+            .control-sidebar { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-subtle); }
+            .dashboard-stream { margin-left: 0; width: 100%; }
+            .split-grid { grid-template-columns: 1fr; gap: 10px; }
+            .h-connector { display: none; }
+            .side-node-container.right, .side-node-container.left { justify-content: center; }
+            .side-arch-node { width: 100%; max-width: 460px; text-align: center; }
+            .branch-container { flex-direction: column; gap: 15px; }
+            .branch-container::before, .branch-line-down { display: none; }
+            .branch-card { width: 100%; }
+        }
+    </style>
 </head>
 <body>
 
-  <div class="architecture-container">
-    <header class="header">
-      <h1>Enterprise Production Architecture Blueprint</h1>
-      <p>Intelligent Monitoring & Event Automation Stack</p>
+    <header>
+        <div class="brand-lockup">
+            <div class="brand-logo" id="logoIndicator"></div>
+            <div class="brand-title">Cognitive Operations Center</div>
+        </div>
+        <div class="system-time-stamp" id="lblLiveTimestamp">SYS-STATUS: DEPLOYED // INFRA-MATRIX</div>
     </header>
 
-    <!-- 1. Real-Time Data Ingestion -->
-    <div class="flow-step">
-      <div class="node">
-        <div class="node-title">Ingestion Layer</div>
-        <div class="node-value">Real-Time Data Ingestion</div>
-      </div>
-      <div class="v-arrow"></div>
+    <div class="workspace">
+        
+        <aside class="control-sidebar">
+            <div>
+                <div class="panel-heading">
+                    <h1>Acoustic Telemetry</h1>
+                    <p>Interface framework capturing real-time vocal command matrices to route structural automated architecture flows.</p>
+                </div>
+
+                <div class="telemetry-card">
+                    <div class="engine-status-row">
+                        <span class="engine-label">Acoustic Signal Processing</span>
+                        <div class="engine-indicator-badge">
+                            <span class="badge-dot" id="voiceIndicatorDot"></span>
+                            <span id="txtEngineStatus">STANDBY</span>
+                        </div>
+                    </div>
+                    <div class="transcript-output-pane" id="paneTranscript">
+                        Awaiting input sequence verification. Initialize engine or vocalize valid tracking command routes.
+                    </div>
+
+                    <div class="matrix-grid">
+                        <div class="matrix-node">
+                            <label>Perceived Valence</label>
+                            <div class="val" id="metricValence">0.00</div>
+                        </div>
+                        <div class="matrix-node">
+                            <label>Arousal Index</label>
+                            <div class="val" id="metricArousal">0.00</div>
+                        </div>
+                        <div class="matrix-node">
+                            <label>Vocal Frequency</label>
+                            <div class="val" id="metricHertz">-- Hz</div>
+                        </div>
+                        <div class="matrix-node">
+                            <label>Confidence Metric</label>
+                            <div class="val" id="metricConfidence">0.0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-group">
+                <button class="btn-core btn-primary-ops" id="btnTogglePipeline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
+                    Initialize Acoustic Engine
+                </button>
+                <button class="btn-core btn-secondary-ops" id="btnForceSync">Execute Pipeline Sync</button>
+            </div>
+        </aside>
+
+        <main class="dashboard-stream">
+            
+            <div class="stream-title-block">
+                <h2>System Analytics & Architecture Matrix</h2>
+                <div class="view-toggle-group">
+                    <button class="view-btn active" onclick="switchView('nodes')">System Nodes</button>
+                    <button class="view-btn" onclick="switchView('blueprint')">Production Architecture Blueprint</button>
+                </div>
+            </div>
+
+            <div id="viewNodes" class="dashboard-section active-view">
+                <div class="grid-plane">
+                    <div class="data-card-node" id="nodeNeural">
+                        <div class="node-top-meta">
+                            <div class="node-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
+                            </div>
+                            <span class="node-tag-id">NODE::NEURAL_01</span>
+                        </div>
+                        <div class="node-main-spec">
+                            <h3>Neural Processing Array</h3>
+                            <p>Evaluating incoming cognitive learning tracks across deep multi-layered nodes.</p>
+                        </div>
+                        <div class="metric-progress-wrapper">
+                            <div class="metric-split-row">
+                                <label>Processing Load</label>
+                                <span id="txtPctNeural">94%</span>
+                            </div>
+                            <div class="horizontal-rail"><div class="fill-track" id="barNeural"></div></div>
+                        </div>
+                        <div class="tabular-sub-grid">
+                            <div class="sub-data-cell"><label>Velocity</label><span>94%</span></div>
+                            <div class="sub-data-cell"><label>Index</label><span>88%</span></div>
+                            <div class="sub-data-cell"><label>Active</label><span>97%</span></div>
+                        </div>
+                    </div>
+
+                    <div class="data-card-node" id="nodeAnalytics">
+                        <div class="node-top-meta">
+                            <div class="node-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                            </div>
+                            <span class="node-tag-id">NODE::ANALYTICS_02</span>
+                        </div>
+                        <div class="node-main-spec">
+                            <h3>Smart Analytics Track</h3>
+                            <p>Compiling complex pattern parsing algorithms matching vector variables.</p>
+                        </div>
+                        <div class="metric-progress-wrapper">
+                            <div class="metric-split-row">
+                                <label>Vector Precision</label>
+                                <span id="txtPctAnalytics">99%</span>
+                            </div>
+                            <div class="horizontal-rail"><div class="fill-track" id="barAnalytics"></div></div>
+                        </div>
+                        <div class="tabular-sub-grid">
+                            <div class="sub-data-cell"><label>Accuracy</label><span>99%</span></div>
+                            <div class="sub-data-cell"><label>Forecast</label><span>92%</span></div>
+                            <div class="sub-data-cell"><label>Optimal</label><span>96%</span></div>
+                        </div>
+                    </div>
+
+                    <div class="data-card-node" id="nodeAutomation">
+                        <div class="node-top-meta">
+                            <div class="node-icon-box">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </div>
+                            <span class="node-tag-id">NODE::AUTOMATION_03</span>
+                        </div>
+                        <div class="node-main-spec">
+                            <h3>Automation Engine Core</h3>
+                            <p>Orchestrating autonomous scaling tasks across system environments.</p>
+                        </div>
+                        <div class="metric-progress-wrapper">
+                            <div class="metric-split-row">
+                                <label>Operational Yield</label>
+                                <span id="txtPctAutomation">84%</span>
+                            </div>
+                            <div class="horizontal-rail"><div class="fill-track" id="barAutomation"></div></div>
+                        </div>
+                        <div class="tabular-sub-grid">
+                            <div class="sub-data-cell"><label>Executed</label><span>84%</span></div>
+                            <div class="sub-data-cell"><label>Core Load</label><span>95%</span></div>
+                            <div class="sub-data-cell"><label>Flow Rate</label><span>91%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="viewBlueprint" class="dashboard-section">
+                <div class="architecture-blueprint-plane">
+                    
+                    <div class="flow-step" id="archIngestion">
+                        <div class="arch-node">
+                            <div class="arch-node-title">Ingestion Layer</div>
+                            <div class="arch-node-value">Real-Time Data Ingestion</div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step" id="archPubSub">
+                        <div class="split-grid">
+                            <div></div>
+                            <div class="arch-node">
+                                <div class="arch-node-title">Message Queue</div>
+                                <div class="arch-node-value">Google Cloud Pub/Sub</div>
+                            </div>
+                            <div class="side-node-container right">
+                                <div class="h-connector to-right"></div>
+                                <div class="side-arch-node" id="archRedis">
+                                    <div class="arch-node-title">Fast Cache</div>
+                                    <div class="arch-node-value">Redis Enterprise</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step" id="archDataflow">
+                        <div class="split-grid">
+                            <div></div>
+                            <div class="arch-node">
+                                <div class="arch-node-title">Stream Processor</div>
+                                <div class="arch-node-value">Dataflow (Apache Beam)</div>
+                            </div>
+                            <div class="side-node-container right">
+                                <div class="h-connector to-right"></div>
+                                <div class="side-arch-node" id="archStorage">
+                                    <div class="arch-node-title">Storage</div>
+                                    <div class="arch-node-value">BigQuery / GCS</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step" id="archEmbedding">
+                        <div class="arch-node">
+                            <div class="arch-node-title">Vectorization Engine</div>
+                            <div class="arch-node-value">Embedding Model: text-embedding-004</div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step" id="archVectorSearch">
+                        <div class="arch-node">
+                            <div class="arch-node-title">Vector Database</div>
+                            <div class="arch-node-value">Vector DB: Vertex AI Vector Search</div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step" id="archOrchestration">
+                        <div class="split-grid">
+                            <div class="side-node-container left">
+                                <div class="side-arch-node" id="archGrounding">
+                                    <div class="arch-node-title">Grounding Layer</div>
+                                    <div class="arch-node-value">Vertex AI Search / Playbooks</div>
+                                </div>
+                                <div class="h-connector"></div>
+                            </div>
+                            <div class="arch-node">
+                                <div class="arch-node-title">Orchestration & Reasoning</div>
+                                <div class="arch-node-value">LangChain / LangGraph</div>
+                            </div>
+                            <div></div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step" id="archModel">
+                        <div class="arch-node">
+                            <div class="arch-node-title">Cognitive Foundation Model</div>
+                            <div class="arch-node-value">Gemini 1.5 Pro via Vertex AI</div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step" id="archGuardrails">
+                        <div class="arch-node">
+                            <div class="arch-node-title">Policy & Schema Guardrails</div>
+                            <div class="arch-node-value">Guardrail & Validation Engine</div>
+                        </div>
+                        <div class="v-arrow"></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="branch-container">
+                            <div class="branch-line-down left"></div>
+                            <div class="branch-line-down right"></div>
+
+                            <div class="branch-card success" id="pathSuccess">
+                                <span class="path-badge success">Success Path</span>
+                                <div class="arch-node-title">Automation Execution</div>
+                                <div class="arch-node-value">Cloud Run / Webhooks</div>
+                            </div>
+
+                            <div class="branch-card failure" id="pathFailure">
+                                <span class="path-badge failure">Exception Path</span>
+                                <div class="arch-node-title">Telemetry & Alerting</div>
+                                <div class="arch-node-value">Control Plane Dashboard</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="live-spectrogram-container">
+                <div class="spectrogram-header">
+                    <h4>Vocal Frequency Array & Spectrogram Matrix Waveform</h4>
+                    <div class="system-time-stamp" id="txtHzTelemetry">0.00 Hz // Core Constant</div>
+                </div>
+                <canvas class="spectrogram-canvas" id="canvasSpectrogram"></canvas>
+            </div>
+
+            <footer>
+                <span>CONSOLE VERSION 5.0.0 // SECURE INTEGRATION PLATFORM</span>
+                <span>ENGINE ARCHITECTURE SYSTEM SPEC</span>
+            </footer>
+        </main>
+
     </div>
 
-    <!-- 2. Split Row: Pub/Sub & Redis Cache -->
-    <div class="flow-step">
-      <div class="split-grid">
-        <div></div>
-        <div class="node">
-          <div class="node-title">Message Queue</div>
-          <div class="node-value">Google Cloud Pub/Sub</div>
-        </div>
-        <div class="side-node-container right">
-          <div class="h-connector to-right"></div>
-          <div class="side-node">
-            <div class="node-title">Fast Cache</div>
-            <div class="node-value" style="font-size: 0.9rem;">Redis Enterprise</div>
-          </div>
-        </div>
-      </div>
-      <div class="v-arrow"></div>
-    </div>
+    <script>
+        // Interface Tab Toggle Controller
+        function switchView(viewName) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.dashboard-section').forEach(sect => sect.classList.remove('active-view'));
 
-    <!-- 3. Split Row: Dataflow & BigQuery Storage -->
-    <div class="flow-step">
-      <div class="split-grid">
-        <div></div>
-        <div class="node">
-          <div class="node-title">Stream Processor</div>
-          <div class="node-value">Dataflow (Apache Beam)</div>
-        </div>
-        <div class="side-node-container right">
-          <div class="h-connector to-right"></div>
-          <div class="side-node">
-            <div class="node-title">Storage</div>
-            <div class="node-value" style="font-size: 0.9rem;">BigQuery / GCS</div>
-          </div>
-        </div>
-      </div>
-      <div class="v-arrow"></div>
-    </div>
+            if(viewName === 'nodes') {
+                document.querySelector('[onclick="switchView(\'nodes\')"]').classList.add('active');
+                document.getElementById('viewNodes').classList.add('active-view');
+            } else {
+                document.querySelector('[onclick="switchView(\'blueprint\')"]').classList.add('active');
+                document.getElementById('viewBlueprint').classList.add('active-view');
+            }
+        }
 
-    <!-- 4. Embedding Model -->
-    <div class="flow-step">
-      <div class="node">
-        <div class="node-title">Vectorization Engine</div>
-        <div class="node-value">Embedding Model: text-embedding-004</div>
-      </div>
-      <div class="v-arrow"></div>
-    </div>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            let telemetryModulationCoeff = 3; 
 
-    <!-- 5. Vector DB -->
-    <div class="flow-step">
-      <div class="node">
-        <div class="node-title">Vector Database</div>
-        <div class="node-value">Vector DB: Vertex AI Vector Search</div>
-      </div>
-      <div class="v-arrow"></div>
-    </div>
+            // Initialize Progress Bars Custom Animation Widths
+            setTimeout(() => { document.getElementById("barNeural").style.width = "94%"; }, 150);
+            setTimeout(() => { document.getElementById("barAnalytics").style.width = "99%"; }, 300);
+            setTimeout(() => { document.getElementById("barAutomation").style.width = "84%"; }, 450);
 
-    <!-- 6. Split Row: Orchestration & Grounding Playbooks -->
-    <div class="flow-step">
-      <div class="split-grid">
-        <div class="side-node-container left">
-          <div class="side-node">
-            <div class="node-title">Grounding Layer</div>
-            <div class="node-value" style="font-size: 0.85rem;">Vertex AI Search / Playbooks</div>
-          </div>
-          <div class="h-connector"></div>
-        </div>
-        <div class="node">
-          <div class="node-title">Orchestration & Reasoning</div>
-          <div class="node-value">LangChain / LangGraph</div>
-        </div>
-        <div></div>
-      </div>
-      <div class="v-arrow"></div>
-    </div>
+            // Cross-functional routing to view nodes or architectural coordinates
+            function highlightTargetElement(elementId, viewContext) {
+                switchView(viewContext);
+                const targetNode = document.getElementById(elementId);
+                if (targetNode) {
+                    targetNode.scrollIntoView({ behavior: "smooth", block: "center" });
 
-    <!-- 7. Foundation Model -->
-    <div class="flow-step">
-      <div class="node">
-        <div class="node-title">Cognitive Foundation Model</div>
-        <div class="node-value">Gemini 1.5 Pro via Vertex AI</div>
-      </div>
-      <div class="v-arrow"></div>
-    </div>
+                    document.querySelectorAll('.data-card-node, .arch-node').forEach(node => {
+                        node.classList.remove('system-vocal-intercept', 'highlighted-intent');
+                    });
 
-    <!-- 8. Guardrail & Validation Engine -->
-    <div class="flow-step">
-      <div class="node">
-        <div class="node-title">Policy & Schema Guardrails</div>
-        <div class="node-value">Guardrail & Validation Engine</div>
-      </div>
-      <!-- Center line pointing down to split track -->
-      <div class="v-arrow" style="height: 24px;"></div>
-    </div>
+                    setTimeout(() => {
+                        if(viewContext === 'nodes') {
+                            targetNode.classList.add('system-vocal-intercept');
+                        } else {
+                            targetNode.classList.add('highlighted-intent');
+                        }
+                    }, 350);
+                }
+            }
 
-    <!-- 9. Final Branching Output -->
-    <div class="flow-step">
-      <div class="branch-container">
-        <div class="branch-line-down left"></div>
-        <div class="branch-line-down right"></div>
+            /* --- DISPATCH AUTOMATION PIPELINE SYNC RUNNER --- */
+            let isProcessingPipelineSync = false;
+            function triggerOperationalSystemSync() {
+                if (isProcessingPipelineSync) return;
+                isProcessingPipelineSync = true;
 
-        <div class="branch-card success">
-          <span class="badge success">Success Path</span>
-          <div class="node-title">Automation Execution</div>
-          <div class="node-value" style="font-size: 0.95rem; margin-top: 0.15rem;">Cloud Run / Webhooks</div>
-        </div>
+                paneTranscript.textContent = "CRITICAL COMMAND MATCHED: Executing multi-module operational pipeline sync...";
+                
+                document.getElementById("barNeural").style.width = "100%";
+                document.getElementById("barAnalytics").style.width = "100%";
+                document.getElementById("barAutomation").style.width = "100%";
 
-        <div class="branch-card failure">
-          <span class="badge failure">Exception Path</span>
-          <div class="node-title">Telemetry & Alerting</div>
-          <div class="node-value" style="font-size: 0.95rem; margin-top: 0.15rem;">Control Plane Dashboard</div>
-        </div>
-      </div>
-    </div>
+                document.querySelectorAll('.data-card-node').forEach(node => {
+                    node.classList.add('system-vocal-intercept');
+                });
 
-  </div>
+                setTimeout(() => {
+                    document.getElementById("barNeural").style.width = "94%";
+                    document.getElementById("barAnalytics").style.width = "99%";
+                    document.getElementById("barAutomation").style.width = "84%";
+                    
+                    document.querySelectorAll('.data-card-node').forEach(node => {
+                        node.classList.remove('system-vocal-intercept');
+                    });
+                    isProcessingPipelineSync = false;
+                    paneTranscript.textContent = "Pipeline synchronization verified. Modulates restored to base constant parameters.";
+                }, 3000);
+            }
 
+            document.getElementById("btnForceSync").addEventListener("click", () => {
+                highlightTargetElement("nodeNeural", "nodes");
+                triggerOperationalSystemSync();
+            });
+
+            /* --- COGNITIVE LEXICON EMOTION ANALYTICS PARSER --- */
+            function classifyVocalLinguisticEmotion(transcriptText) {
+                const normalizedStr = transcriptText.toLowerCase();
+
+                const metricValence = document.getElementById("metricValence");
+                const metricArousal = document.getElementById("metricArousal");
+                const metricConfidence = document.getElementById("metricConfidence");
+                const pathSuccess = document.getElementById("pathSuccess");
+                const pathFailure = document.getElementById("pathFailure");
+
+                // Enterprise ML Lexicon Mapping Profiles
+                const lexPositiveProfile = ["great", "awesome", "excellent", "perfect", "run", "sync", "trigger", "boost", "fast", "accelerate", "success"];
+                const lexStressProfile = ["error", "fail", "wrong", "broken", "stop", "critical", "slow", "scramble", "bad", "alert", "failure"];
+                const lexStableProfile = ["neural", "analytics", "automation", "show", "clear", "steady", "balance", "calm", "smooth", "constant", "blueprint"];
+
+                let scorePositive = 0;
+                let scoreStress = 0;
+                let scoreStable = 0;
+
+                lexPositiveProfile.forEach(word => { if(normalizedStr.includes(word)) scorePositive += 2; });
+                lexStressProfile.forEach(word => { if(normalizedStr.includes(word)) scoreStress += 2; });
+                lexStableProfile.forEach(word => { if(normalizedStr.includes(word)) scoreStable += 1; });
+
+                // Reset specific dynamic paths inside view blueprint
+                pathSuccess.classList.remove("active-path");
+                pathFailure.classList.remove("active-path");
+
+                if (scorePositive > scoreStress && scorePositive >= scoreStable) {
+                    metricValence.textContent = "0.89";
+                    metricArousal.textContent = "0.74";
+                    metricConfidence.textContent = "94.2%";
+                    
+                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-success)');
+                    telemetryModulationCoeff = 7;
+                    pathSuccess.classList.add("active-path");
+                } 
+                else if (scoreStress > scorePositive) {
+                    metricValence.textContent = "-0.62";
+                    metricArousal.textContent = "0.91";
+                    metricConfidence.textContent = "38.5%";
+                    
+                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-danger)');
+                    telemetryModulationCoeff = 14; 
+                    pathFailure.classList.add("active-path");
+                } 
+                else {
+                    metricValence.textContent = "0.15";
+                    metricArousal.textContent = "0.08";
+                    metricConfidence.textContent = "86.0%";
+                    
+                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-primary)');
+                    telemetryModulationCoeff = 3;
+                }
+            }
+
+            /* --- WEB SPEECH RECOGNITION INTERFACE HUB --- */
+            const btnTogglePipeline = document.getElementById("btnTogglePipeline");
+            const voiceIndicatorDot = document.getElementById("voiceIndicatorDot");
+            const txtEngineStatus = document.getElementById("txtEngineStatus");
+            const paneTranscript = document.getElementById("paneTranscript");
+
+            const WebSpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            let audioCtx = null;
+            let audioAnalyser = null;
+            let microphoneStream = null;
+            let javascriptFreqSimulator = true;
+
+            if (!WebSpeechAPI) {
+                txtEngineStatus.textContent = "SPEECH ENGINE UNSUPPORTED";
+                btnTogglePipeline.style.opacity = "0.4";
+                btnTogglePipeline.style.cursor = "not-allowed";
+            } else {
+                const vocalRecognitionEngine = new WebSpeechAPI();
+                vocalRecognitionEngine.continuous = false;
+                vocalRecognitionEngine.lang = 'en-US';
+                vocalRecognitionEngine.interimResults = false;
+
+                let recognitionActive = false;
+
+                async function linkAcousticHardwareNodes() {
+                    try {
+                        if (!audioCtx) {
+                            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                            audioAnalyser = audioCtx.createAnalyser();
+                            audioAnalyser.fftSize = 64;
+                            
+                            microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                            const source = audioCtx.createMediaStreamSource(microphoneStream);
+                            source.connect(audioAnalyser);
+                            javascriptFreqSimulator = false; 
+                        }
+                    } catch (e) {
+                        console.warn("Hardware audio engine intercept denied. Falling back to internal simulation mapping logic.", e);
+                        javascriptFreqSimulator = true;
+                    }
+                }
+
+                function routeVocalCommandStrings(rawText) {
+                    const cleanString = rawText.toLowerCase().trim();
+                    paneTranscript.textContent = `Acoustic Log Captured: "${rawText}"`;
+
+                    classifyVocalLinguisticEmotion(rawText);
+
+                    // Cross-functional element visibility routing rules
+                    if (cleanString.includes("blueprint") || cleanString.includes("show blueprint")) {
+                        switchView('blueprint');
+                    } else if (cleanString.includes("neural")) {
+                        highlightTargetElement("nodeNeural", "nodes");
+                    } else if (cleanString.includes("analytics")) {
+                        highlightTargetElement("nodeAnalytics", "nodes");
+                    } else if (cleanString.includes("automation")) {
+                        highlightTargetElement("nodeAutomation", "nodes");
+                    } else if (cleanString.includes("ingestion")) {
+                        highlightTargetElement("archIngestion", "blueprint");
+                    } else if (cleanString.includes("queue") || cleanString.includes("pubsub") || cleanString.includes("pub sub")) {
+                        highlightTargetElement("archPubSub", "blueprint");
+                    } else if (cleanString.includes("dataflow") || cleanString.includes("processor")) {
+                        highlightTargetElement("archDataflow", "blueprint");
+                    } else if (cleanString.includes("embedding")) {
+                        highlightTargetElement("archEmbedding", "blueprint");
+                    } else if (cleanString.includes("vector")) {
+                        highlightTargetElement("archVectorSearch", "blueprint");
+                    } else if (cleanString.includes("orchestration") || cleanString.includes("langchain")) {
+                        highlightTargetElement("archOrchestration", "blueprint");
+                    } else if (cleanString.includes("model") || cleanString.includes("gemini")) {
+                        highlightTargetElement("archModel", "blueprint");
+                    } else if (cleanString.includes("guardrail")) {
+                        highlightTargetElement("archGuardrails", "blueprint");
+                    } else if (cleanString.includes("sync") || cleanString.includes("trigger")) {
+                        highlightTargetElement("nodeNeural", "nodes");
+                        setTimeout(() => { triggerOperationalSystemSync(); }, 400);
+                    }
+                }
+
+                btnTogglePipeline.addEventListener("click", () => {
+                    linkAcousticHardwareNodes();
+                    if (!recognitionActive) {
+                        vocalRecognitionEngine.start();
+                    } else {
+                        vocalRecognitionEngine.stop();
+                    }
+                });
+
+                vocalRecognitionEngine.onstart = () => {
+                    recognitionActive = true;
+                    btnTogglePipeline.classList.add("listening-state");
+                    btnTogglePipeline.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Disengage Pipeline`;
+                    voiceIndicatorDot.classList.add("active");
+                    txtEngineStatus.textContent = "LIVE LISTENING";
+                    paneTranscript.textContent = "Acoustic streams engaged. Speak target array commands natively...";
+                };
+
+                vocalRecognitionEngine.onresult = (evt) => {
+                    const parsedPayloadString = evt.results[0][0].transcript;
+                    routeVocalCommandStrings(parsedPayloadString);
+                };
+
+                vocalRecognitionEngine.onend = () => {
+                    recognitionActive = false;
+                    btnTogglePipeline.classList.remove("listening-state");
+                    btnTogglePipeline.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Initialize Acoustic Engine`;
+                    voiceIndicatorDot.classList.remove("active");
+                    txtEngineStatus.textContent = "STANDBY";
+                };
+            }
+
+            /* --- AUTOMATED DATA SPECTROGRAM WAVEFORM RENDERER --- */
+            const canvas = document.getElementById("canvasSpectrogram");
+            const ctx = canvas.getContext("2d");
+            const txtHzTelemetry = document.getElementById("txtHzTelemetry");
+            const metricHertz = document.getElementById("metricHertz");
+
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let waveDataBuffer = Array.from({length: 50}, () => canvas.height / 2);
+            let dynamicHertzMarker = 0;
+
+            function processSpectrogramLoop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                
+                let targetStrokeColor = getComputedStyle(document.documentElement).getPropertyValue('--dynamic-accent').trim();
+                ctx.strokeStyle = targetStrokeColor || "#3b82f6";
+                ctx.lineWidth = 1.5;
+
+                if (!javascriptFreqSimulator && audioAnalyser) {
+                    const totalDataBins = audioAnalyser.frequencyBinCount;
+                    const arrayDataData = new Uint8Array(totalDataBins);
+                    audioAnalyser.getByteFrequencyData(arrayDataData);
+
+                    let sumMagnitudes = 0;
+                    for (let i = 0; i < totalDataBins; i++) {
+                        let scaleX = i * (canvas.width / totalDataBins);
+                        let scaleY = canvas.height - (arrayDataData[i] / 255) * canvas.height;
+                        
+                        if (i === 0) ctx.moveTo(scaleX, scaleY);
+                        else ctx.lineTo(scaleX, scaleY);
+                        
+                        sumMagnitudes += arrayDataData[i];
+                    }
+                    
+                    if(sumMagnitudes > 100) {
+                        dynamicHertzMarker = Math.floor(135 + (sumMagnitudes / totalDataBins) * 2.8);
+                        txtHzTelemetry.textContent = `${dynamicHertzMarker}.00 Hz // Live Microscopic Array Tracking`;
+                        metricHertz.textContent = `${dynamicHertzMarker} Hz`;
+                    } else {
+                        txtHzTelemetry.textContent = "0.00 Hz // Core Constant";
+                        metricHertz.textContent = "-- Hz";
+                    }
+                } else {
+                    for(let i=0; i<waveDataBuffer.length; i++) {
+                        let x = i * (canvas.width / (waveDataBuffer.length - 1));
+                        let y = waveDataBuffer[i];
+                        
+                        if(i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+
+                        waveDataBuffer[i] += (Math.random() - 0.5) * telemetryModulationCoeff;
+                        if(waveDataBuffer[i] < 15) waveDataBuffer[i] = 15;
+                        if(waveDataBuffer[i] > canvas.height - 15) waveDataBuffer[i] = canvas.height - 15;
+                    }
+                    
+                    if(telemetryModulationCoeff > 4) {
+                        dynamicHertzMarker = Math.floor(140 + (Math.random() * 80));
+                        txtHzTelemetry.textContent = `${dynamicHertzMarker}.24 Hz // Simulated Tracking Matrix`;
+                        metricHertz.textContent = `${dynamicHertzMarker} Hz`;
+                    } else {
+                        txtHzTelemetry.textContent = "0.00 Hz // Core Constant";
+                        metricHertz.textContent = "-- Hz";
+                    }
+                }
+
+                ctx.stroke();
+                requestAnimationFrame(processSpectrogramLoop);
+            }
+
+            processSpectrogramLoop();
+            
+            window.addEventListener('resize', () => {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            });
+        });
+    </script>
 </body>
 </html>
