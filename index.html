@@ -1,938 +1,399 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive AI - Enterprise Multi-Modal Voice & Emotion Control System</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        /* Enterprise Level Design System Variables */
-        :root {
-            --bg-base: #090d16;
-            --bg-card: #111827;
-            --border-subtle: rgba(255, 255, 255, 0.06);
-            --border-active: #3b82f6;
-            
-            /* Status Indicators */
-            --color-primary: #3b82f6;      /* Corporate Blue */
-            --color-success: #10b981;      /* Stable / Positive Valence */
-            --color-warning: #f59e0b;      /* Analytical / Moderate */
-            --color-danger: #ef4444;       /* High Stress Variant */
-            
-            --text-primary: #f9fafb;
-            --text-secondary: #9ca3af;
-            --text-muted: #6b7280;
-            --font-mono: 'JetBrains Mono', monospace;
-            
-            --dynamic-accent: var(--color-primary);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enterprise Production Architecture Blueprint</title>
+  <style>
+    :root {
+      --bg-canvas: #0f172a;
+      --bg-card: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-primary: #38bdf8;
+      --accent-success: #4ade80;
+      --accent-failure: #f87171;
+      --arrow-color: #64748b;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            letter-spacing: -0.01em;
-        }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      padding: 2rem 1rem;
+      line-height: 1.5;
+      display: flex;
+      justify-content: center;
+    }
 
-        /* Fixed Enterprise Control Header */
-        header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 5%;
-            position: fixed;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(20px);
-            background: rgba(9, 13, 22, 0.8);
-            border-bottom: 1px solid var(--border-subtle);
-        }
+    .architecture-container {
+      width: 100%;
+      max-width: 900px;
+      background: #111827;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+    }
 
-        .brand-lockup {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .header {
+      margin-bottom: 3rem;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
 
-        .brand-logo {
-            width: 12px;
-            height: 12px;
-            background: var(--color-primary);
-            border-radius: 2px;
-        }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
 
-        .brand-title {
-            font-size: 16px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .header p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
 
-        .system-time-stamp {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
+    /* Diagram Flow Layout */
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 100%;
+    }
 
-        /* Workspace Control Layout */
-        .workspace {
-            min-height: 100vh;
-            display: grid;
-            grid-template-columns: 420px 1fr;
-            padding-top: 65px;
-        }
+    /* Standard Core Node styling */
+    .node {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-primary);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      transition: border-color 0.2s ease;
+    }
 
-        /* Left Console Sidebar Panel */
-        .control-sidebar {
-            background: #0d1321;
-            border-right: 1px solid var(--border-subtle);
-            padding: 40px 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: fixed;
-            width: 420px;
-            height: calc(100vh - 65px);
-            overflow-y: auto;
-        }
+    .node:hover {
+      border-color: var(--accent-primary);
+    }
 
-        .panel-heading {
-            margin-bottom: 25px;
-        }
+    .node-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
 
-        .panel-heading h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.02em;
-        }
+    .node-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 0.25rem;
+    }
 
-        .panel-heading p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
+    /* Vertical connector line */
+    .v-arrow {
+      width: 2px;
+      height: 32px;
+      background-color: var(--arrow-color);
+      position: relative;
+    }
 
-        /* Professional Telemetry Console Card */
-        .telemetry-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
+    /* Downward arrowhead */
+    .v-arrow::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid var(--arrow-color);
+    }
 
-        .engine-status-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
+    /* Split Grid Layer for Side Nodes */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      width: 100%;
+      max-width: 800px;
+    }
 
-        .engine-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-        }
+    .side-node-container {
+      display: flex;
+      align-items: center;
+    }
 
-        .engine-indicator-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-family: var(--font-mono);
-            border: 1px solid var(--border-subtle);
-        }
+    .side-node-container.left {
+      justify-content: flex-end;
+    }
 
-        .badge-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--text-muted);
-            border-radius: 50%;
-        }
+    .side-node-container.right {
+      justify-content: flex-start;
+    }
 
-        .badge-dot.active {
-            background: var(--color-success);
-            box-shadow: 0 0 8px var(--color-success);
-            animation: statusPulse 1.8s infinite;
-        }
+    .side-node {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      width: 220px;
+    }
 
-        @keyframes statusPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
+    /* Horizontal connecting paths */
+    .h-connector {
+      height: 2px;
+      background-color: var(--arrow-color);
+      position: relative;
+      flex-grow: 1;
+      max-width: 40px;
+    }
 
-        .transcript-output-pane {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            padding: 14px;
-            font-size: 13px;
-            line-height: 1.6;
-            min-height: 80px;
-            color: var(--text-primary);
-            border-left: 2px solid var(--text-muted);
-            margin-bottom: 20px;
-        }
+    .h-connector.to-right::after {
+      content: '';
+      position: absolute;
+      right: -4px;
+      top: 50%;
+      transform: translateY(-50%);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 6px solid var(--arrow-color);
+    }
 
-        /* Metric Grid Architecture */
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+    /* Divergent Branching Layout at the End */
+    .branch-container {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 750px;
+      margin-top: 24px;
+      position: relative;
+    }
 
-        .matrix-node {
-            background: rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.02);
-            padding: 12px;
-            border-radius: 8px;
-        }
+    /* Branch line tracks */
+    .branch-container::before {
+      content: '';
+      position: absolute;
+      top: -24px;
+      left: 25%;
+      right: 25%;
+      height: 2px;
+      background-color: var(--arrow-color);
+    }
 
-        .matrix-node label {
-            display: block;
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
+    .branch-line-down {
+      width: 2px;
+      height: 24px;
+      background-color: var(--arrow-color);
+      position: absolute;
+      top: -24px;
+    }
 
-        .matrix-node .val {
-            font-family: var(--font-mono);
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--dynamic-accent);
-        }
+    .branch-line-down.left { left: 25%; }
+    .branch-line-down.right { right: 25%; }
 
-        /* Console Interface Controls */
-        .action-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+    .branch-line-down::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 6px solid var(--arrow-color);
+    }
 
-        .btn-core {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
+    .branch-card {
+      width: 46%;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1rem;
+    }
 
-        .btn-primary-ops {
-            background: var(--color-primary);
-            color: #ffffff;
-        }
+    .branch-card.success { border-left: 4px solid var(--accent-success); }
+    .branch-card.failure { border-left: 4px solid var(--accent-failure); }
 
-        .btn-primary-ops:hover {
-            background: #2563eb;
-        }
+    .badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
 
-        .btn-primary-ops.listening-state {
-            background: var(--color-danger);
-        }
+    .badge.success { background-color: rgba(74, 222, 128, 0.1); color: var(--accent-success); }
+    .badge.failure { background-color: rgba(248, 113, 113, 0.1); color: var(--accent-failure); }
 
-        .btn-primary-ops.listening-state:hover {
-            background: #dc2626;
-        }
-
-        .btn-secondary-ops {
-            background: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
-        }
-
-        .btn-secondary-ops:hover {
-            background: rgba(255, 255, 255, 0.02);
-            border-color: var(--text-secondary);
-        }
-
-        /* Right Dashboard Stream Panel */
-        .dashboard-stream {
-            margin-left: 420px;
-            padding: 40px 5%;
-            width: calc(100% - 420px);
-        }
-
-        .stream-title-block {
-            margin-bottom: 40px;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 20px;
-        }
-
-        .stream-title-block h2 {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .grid-plane {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-
-        /* Enterprise Functional Dashboard Node */
-        .data-card-node {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-        }
-
-        /* High Professionalism Highlight State Frame */
-        .data-card-node.system-vocal-intercept {
-            border-color: var(--dynamic-accent) !important;
-            box-shadow: 0 4px 30px rgba(59, 130, 246, 0.08);
-            transform: translateY(-4px);
-        }
-
-        .node-top-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .node-icon-box {
-            width: 36px;
-            height: 36px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-secondary);
-        }
-
-        .node-tag-id {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .node-main-spec h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .node-main-spec p {
-            font-size: 12px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            min-height: 36px;
-        }
-
-        .metric-progress-wrapper {
-            margin: 20px 0;
-        }
-
-        .metric-split-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            margin-bottom: 6px;
-        }
-
-        .metric-split-row span {
-            font-family: var(--font-mono);
-            font-weight: 500;
-        }
-
-        .horizontal-rail {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .fill-track {
-            height: 100%;
-            width: 0%;
-            background: var(--color-primary);
-            border-radius: 2px;
-            transition: width 2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        /* Tabular Sub-data Layout */
-        .tabular-sub-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            background: rgba(0, 0, 0, 0.12);
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.01);
-        }
-
-        .sub-data-cell {
-            text-align: center;
-        }
-
-        .sub-data-cell label {
-            display: block;
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 2px;
-        }
-
-        .sub-data-cell span {
-            font-family: var(--font-mono);
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        /* Real-Time Linear Spectrum Canvas */
-        .live-spectrogram-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .spectrogram-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .spectrogram-header h4 {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-        }
-
-        .spectrogram-canvas {
-            width: 100%;
-            height: 110px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            display: block;
-        }
-
-        footer {
-            border-top: 1px solid var(--border-subtle);
-            padding: 20px 0 0;
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-        }
-    </style>
+    /* Responsive Adaptation for smaller viewports */
+    @media (max-width: 768px) {
+      .split-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .side-node-container.left, .side-node-container.right {
+        justify-content: center;
+      }
+      .h-connector { display: none; }
+      .side-node { width: 100%; max-width: 480px; text-align: center;}
+      .branch-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .branch-container::before, .branch-line-down { display: none; }
+      .branch-card { width: 100%; max-width: 480px; }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand-lockup">
-            <div class="brand-logo"></div>
-            <div class="brand-title">Cognitive Control Plane</div>
-        </div>
-        <div class="system-time-stamp" id="lblLiveTimestamp">SYS-STATUS: CONNECTED // EXT-01</div>
+  <div class="architecture-container">
+    <header class="header">
+      <h1>Enterprise Production Architecture Blueprint</h1>
+      <p>Intelligent Monitoring & Event Automation Stack</p>
     </header>
 
-    <div class="workspace">
-        
-        <!-- Left Console Sidebar Panel -->
-        <aside class="control-sidebar">
-            <div>
-                <div class="panel-heading">
-                    <h1>Acoustic Telemetry</h1>
-                    <p>Interface platform capturing raw multi-modal vocal signals to analyze behavioral tracking vectors.</p>
-                </div>
-
-                <!-- Live Core Telemetry Track Card -->
-                <div class="telemetry-card">
-                    <div class="engine-status-row">
-                        <span class="engine-label">Acoustic Signal Processing</span>
-                        <div class="engine-indicator-badge">
-                            <span class="badge-dot" id="voiceIndicatorDot"></span>
-                            <span id="txtEngineStatus">OFFLINE</span>
-                        </div>
-                    </div>
-                    <div class="transcript-output-pane" id="paneTranscript">
-                        Console awaiting structural initialization... click operational pipeline trigger to synchronize tracking array.
-                    </div>
-
-                    <!-- Metric Sub Grid Matrix -->
-                    <div class="matrix-grid">
-                        <div class="matrix-node">
-                            <label>Perceived Valence</label>
-                            <div class="val" id="metricValence">0.00</div>
-                        </div>
-                        <div class="matrix-node">
-                            <label>Arousal Index</label>
-                            <div class="val" id="metricArousal">0.00</div>
-                        </div>
-                        <div class="matrix-node">
-                            <label>Vocal Frequency</label>
-                            <div class="val" id="metricHertz">-- Hz</div>
-                        </div>
-                        <div class="matrix-node">
-                            <label>Confidence Metric</label>
-                            <div class="val" id="metricConfidence">0.0%</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Interface Operational Inputs -->
-            <div class="action-group">
-                <button class="btn-core btn-primary-ops" id="btnTogglePipeline">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                    Initialize Acoustic Engine
-                </button>
-                <button class="btn-core btn-secondary-ops" id="btnForceSync">Execute Pipeline Sync</button>
-            </div>
-        </aside>
-
-        <!-- Right Dashboard Stream Panel -->
-        <main class="dashboard-stream">
-            
-            <div class="stream-title-block">
-                <h2>System Telemetry Matrix Arrays</h2>
-            </div>
-
-            <!-- Dashboard Modules Matrix Grid -->
-            <div class="grid-plane">
-
-                <!-- Neural Processing Node -->
-                <div class="data-card-node" id="nodeNeural">
-                    <div class="node-top-meta">
-                        <div class="node-icon-box">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 6v6l4 2"/></svg>
-                        </div>
-                        <span class="node-tag-id">NODE::NEURAL_01</span>
-                    </div>
-                    <div class="node-main-spec">
-                        <h3>Neural Processing Array</h3>
-                        <p id="descNeural">Evaluating incoming cognitive learning tracks across deep multi-layered nodes.</p>
-                    </div>
-                    <div class="metric-progress-wrapper">
-                        <div class="metric-split-row">
-                            <label>Processing Load</label>
-                            <span id="txtPctNeural">94%</span>
-                        </div>
-                        <div class="horizontal-rail"><div class="fill-track" id="barNeural"></div></div>
-                    </div>
-                    <div class="tabular-sub-grid">
-                        <div class="sub-data-cell"><label>Velocity</label><span id="valNeuralSpeed">94%</span></div>
-                        <div class="sub-data-cell"><label>Index</label><span id="valNeuralIndex">88%</span></div>
-                        <div class="sub-data-cell"><label>Active</label><span id="valNeuralActive">97%</span></div>
-                    </div>
-                </div>
-
-                <!-- Smart Analytics Node -->
-                <div class="data-card-node" id="nodeAnalytics">
-                    <div class="node-top-meta">
-                        <div class="node-icon-box">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-                        </div>
-                        <span class="node-tag-id">NODE::ANALYTICS_02</span>
-                    </div>
-                    <div class="node-main-spec">
-                        <h3>Smart Analytics Track</h3>
-                        <p id="descAnalytics">Compiling complex pattern parsing algorithms matching vector variables.</p>
-                    </div>
-                    <div class="metric-progress-wrapper">
-                        <div class="metric-split-row">
-                            <label>Vector Precision</label>
-                            <span id="txtPctAnalytics">99%</span>
-                        </div>
-                        <div class="horizontal-rail"><div class="fill-track" id="barAnalytics"></div></div>
-                    </div>
-                    <div class="tabular-sub-grid">
-                        <div class="sub-data-cell"><label>Accuracy</label><span id="valAnalyticsAcc">99%</span></div>
-                        <div class="sub-data-cell"><label>Forecast</label><span id="valAnalyticsFore">92%</span></div>
-                        <div class="sub-data-cell"><label>Optimal</label><span id="valAnalyticsOpt">96%</span></div>
-                    </div>
-                </div>
-
-                <!-- Automation Engine Node -->
-                <div class="data-card-node" id="nodeAutomation">
-                    <div class="node-top-meta">
-                        <div class="node-icon-box">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                        </div>
-                        <span class="node-tag-id">NODE::AUTOMATION_03</span>
-                    </div>
-                    <div class="node-main-spec">
-                        <h3>Automation Engine Core</h3>
-                        <p id="descAutomation">Orchestrating autonomous scaling tasks across system environments.</p>
-                    </div>
-                    <div class="metric-progress-wrapper">
-                        <div class="metric-split-row">
-                            <label>Operational Yield</label>
-                            <span id="txtPctAutomation">84%</span>
-                        </div>
-                        <div class="horizontal-rail"><div class="fill-track" id="barAutomation"></div></div>
-                    </div>
-                    <div class="tabular-sub-grid">
-                        <div class="sub-data-cell"><label>Executed</label><span id="valAutoDone">84%</span></div>
-                        <div class="sub-data-cell"><label>Core Load</label><span id="valAutoLoad">95%</span></div>
-                        <div class="sub-data-cell"><label>Flow Rate</label><span id="valAutoFlow">91%</span></div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Full-Width Live Signal Canvas Area -->
-            <div class="live-spectrogram-container">
-                <div class="spectrogram-header">
-                    <h4>Vocal Frequency Array & Spectrogram Matrix Waveform</h4>
-                    <div class="system-time-stamp" id="txtHzTelemetry">0.00 Hz // Core Constant</div>
-                </div>
-                <canvas class="spectrogram-canvas" id="canvasSpectrogram"></canvas>
-            </div>
-
-            <footer>
-                <span>CONSOLE VERSION 4.1.2 // SECURE CONNECTION ACTIVE</span>
-                <span>DESIGN SYSTEM BY RAMESH KUMAR K</span>
-            </footer>
-        </main>
-
+    <!-- 1. Real-Time Data Ingestion -->
+    <div class="flow-step">
+      <div class="node">
+        <div class="node-title">Ingestion Layer</div>
+        <div class="node-value">Real-Time Data Ingestion</div>
+      </div>
+      <div class="v-arrow"></div>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            
-            // Scaled volatility vectors matching conversational state
-            let telemetryModulationCoeff = 3; 
+    <!-- 2. Split Row: Pub/Sub & Redis Cache -->
+    <div class="flow-step">
+      <div class="split-grid">
+        <div></div>
+        <div class="node">
+          <div class="node-title">Message Queue</div>
+          <div class="node-value">Google Cloud Pub/Sub</div>
+        </div>
+        <div class="side-node-container right">
+          <div class="h-connector to-right"></div>
+          <div class="side-node">
+            <div class="node-title">Fast Cache</div>
+            <div class="node-value" style="font-size: 0.9rem;">Redis Enterprise</div>
+          </div>
+        </div>
+      </div>
+      <div class="v-arrow"></div>
+    </div>
 
-            // Initialize Progress Metric Bar Width Components
-            setTimeout(() => { document.getElementById("barNeural").style.width = "94%"; }, 150);
-            setTimeout(() => { document.getElementById("barAnalytics").style.width = "99%"; }, 300);
-            setTimeout(() => { document.getElementById("barAutomation").style.width = "84%"; }, 450);
+    <!-- 3. Split Row: Dataflow & BigQuery Storage -->
+    <div class="flow-step">
+      <div class="split-grid">
+        <div></div>
+        <div class="node">
+          <div class="node-title">Stream Processor</div>
+          <div class="node-value">Dataflow (Apache Beam)</div>
+        </div>
+        <div class="side-node-container right">
+          <div class="h-connector to-right"></div>
+          <div class="side-node">
+            <div class="node-title">Storage</div>
+            <div class="node-value" style="font-size: 0.9rem;">BigQuery / GCS</div>
+          </div>
+        </div>
+      </div>
+      <div class="v-arrow"></div>
+    </div>
 
-            // Command Intercept Smooth Scroll Routines
-            function routeControlToMatrixElement(boxId) {
-                const targetNode = document.getElementById(boxId);
-                if (targetNode) {
-                    targetNode.scrollIntoView({ behavior: "smooth", block: "center" });
+    <!-- 4. Embedding Model -->
+    <div class="flow-step">
+      <div class="node">
+        <div class="node-title">Vectorization Engine</div>
+        <div class="node-value">Embedding Model: text-embedding-004</div>
+      </div>
+      <div class="v-arrow"></div>
+    </div>
 
-                    document.querySelectorAll('.data-card-node').forEach(node => {
-                        node.classList.remove('system-vocal-intercept');
-                    });
+    <!-- 5. Vector DB -->
+    <div class="flow-step">
+      <div class="node">
+        <div class="node-title">Vector Database</div>
+        <div class="node-value">Vector DB: Vertex AI Vector Search</div>
+      </div>
+      <div class="v-arrow"></div>
+    </div>
 
-                    setTimeout(() => {
-                        targetNode.classList.add('system-vocal-intercept');
-                    }, 350);
-                }
-            }
+    <!-- 6. Split Row: Orchestration & Grounding Playbooks -->
+    <div class="flow-step">
+      <div class="split-grid">
+        <div class="side-node-container left">
+          <div class="side-node">
+            <div class="node-title">Grounding Layer</div>
+            <div class="node-value" style="font-size: 0.85rem;">Vertex AI Search / Playbooks</div>
+          </div>
+          <div class="h-connector"></div>
+        </div>
+        <div class="node">
+          <div class="node-title">Orchestration & Reasoning</div>
+          <div class="node-value">LangChain / LangGraph</div>
+        </div>
+        <div></div>
+      </div>
+      <div class="v-arrow"></div>
+    </div>
 
-            /* --- HIGH DISPATCH AUTOMATION SYNC PIPELINE RUNNER --- */
-            let isProcessingPipelineSync = false;
-            function triggerOperationalSystemSync() {
-                if (isProcessingPipelineSync) return;
-                isProcessingPipelineSync = true;
+    <!-- 7. Foundation Model -->
+    <div class="flow-step">
+      <div class="node">
+        <div class="node-title">Cognitive Foundation Model</div>
+        <div class="node-value">Gemini 1.5 Pro via Vertex AI</div>
+      </div>
+      <div class="v-arrow"></div>
+    </div>
 
-                paneTranscript.textContent = "CRITICAL COMMAND MATCHED: Executing multi-module operational pipeline sync...";
-                
-                document.getElementById("barNeural").style.width = "100%";
-                document.getElementById("barAnalytics").style.width = "100%";
-                document.getElementById("barAutomation").style.width = "100%";
+    <!-- 8. Guardrail & Validation Engine -->
+    <div class="flow-step">
+      <div class="node">
+        <div class="node-title">Policy & Schema Guardrails</div>
+        <div class="node-value">Guardrail & Validation Engine</div>
+      </div>
+      <!-- Center line pointing down to split track -->
+      <div class="v-arrow" style="height: 24px;"></div>
+    </div>
 
-                document.querySelectorAll('.data-card-node').forEach(node => {
-                    node.classList.add('system-vocal-intercept');
-                });
+    <!-- 9. Final Branching Output -->
+    <div class="flow-step">
+      <div class="branch-container">
+        <div class="branch-line-down left"></div>
+        <div class="branch-line-down right"></div>
 
-                setTimeout(() => {
-                    document.getElementById("barNeural").style.width = "94%";
-                    document.getElementById("barAnalytics").style.width = "99%";
-                    document.getElementById("barAutomation").style.width = "84%";
-                    
-                    document.querySelectorAll('.data-card-node').forEach(node => {
-                        node.classList.remove('system-vocal-intercept');
-                    });
-                    isProcessingPipelineSync = false;
-                    paneTranscript.textContent = "Pipeline synchronization verified. Modulates restored to base constant parameters.";
-                }, 3000);
-            }
+        <div class="branch-card success">
+          <span class="badge success">Success Path</span>
+          <div class="node-title">Automation Execution</div>
+          <div class="node-value" style="font-size: 0.95rem; margin-top: 0.15rem;">Cloud Run / Webhooks</div>
+        </div>
 
-            document.getElementById("btnForceSync").addEventListener("click", () => {
-                routeControlToMatrixElement("nodeNeural");
-                triggerOperationalSystemSync();
-            });
+        <div class="branch-card failure">
+          <span class="badge failure">Exception Path</span>
+          <div class="node-title">Telemetry & Alerting</div>
+          <div class="node-value" style="font-size: 0.95rem; margin-top: 0.15rem;">Control Plane Dashboard</div>
+        </div>
+      </div>
+    </div>
 
+  </div>
 
-            /* --- COGNITIVE LEXICON EMOTION ANALYTICS PARSER --- */
-            function classifyVocalLinguisticEmotion(transcriptText) {
-                const normalizedStr = transcriptText.toLowerCase();
-
-                // Structural Component Elements
-                const metricValence = document.getElementById("metricValence");
-                const metricArousal = document.getElementById("metricArousal");
-                const metricConfidence = document.getElementById("metricConfidence");
-
-                // Enterprise ML Lexicon Mapping Profiles
-                const lexPositiveProfile = ["great", "awesome", "excellent", "perfect", "run", "sync", "trigger", "boost", "fast", "accelerate"];
-                const lexStressProfile = ["error", "fail", "wrong", "broken", "stop", "critical", "slow", "scramble", "bad", "alert"];
-                const lexStableProfile = ["neural", "analytics", "automation", "show", "clear", "steady", "balance", "calm", "smooth", "constant"];
-
-                let scorePositive = 0;
-                let scoreStress = 0;
-                let scoreStable = 0;
-
-                lexPositiveProfile.forEach(word => { if(normalizedStr.includes(word)) scorePositive += 2; });
-                lexStressProfile.forEach(word => { if(normalizedStr.includes(word)) scoreStress += 2; });
-                lexStableProfile.forEach(word => { if(normalizedStr.includes(word)) scoreStable += 1; });
-
-                if (scorePositive > scoreStress && scorePositive >= scoreStable) {
-                    // Positive High Fidelity Valence State
-                    metricValence.textContent = "0.89";
-                    metricArousal.textContent = "0.74";
-                    metricConfidence.textContent = "94.2%";
-                    
-                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-success)');
-                    telemetryModulationCoeff = 7; // Accelerate spectrum visual scale
-                } 
-                else if (scoreStress > scorePositive) {
-                    // Stress / Alert Boundary Breach State
-                    metricValence.textContent = "-0.62";
-                    metricArousal.textContent = "0.91";
-                    metricConfidence.textContent = "38.5%";
-                    
-                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-danger)');
-                    telemetryModulationCoeff = 14; // Extreme wave turbulence
-                } 
-                else {
-                    // Optimized Technical Constant State
-                    metricValence.textContent = "0.15";
-                    metricArousal.textContent = "0.08";
-                    metricConfidence.textContent = "86.0%";
-                    
-                    document.documentElement.style.setProperty('--dynamic-accent', 'var(--color-primary)');
-                    telemetryModulationCoeff = 3; // Standard execution track
-                }
-            }
-
-
-            /* --- WEB SPEECH RECOGNITION INTERFACE HUB --- */
-            const btnTogglePipeline = document.getElementById("btnTogglePipeline");
-            const voiceIndicatorDot = document.getElementById("voiceIndicatorDot");
-            const txtEngineStatus = document.getElementById("txtEngineStatus");
-            const paneTranscript = document.getElementById("paneTranscript");
-
-            const WebSpeechAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            // MediaStream Audio Context Variables for authentic frequency detection
-            let audioCtx = null;
-            let audioAnalyser = null;
-            let microphoneStream = null;
-            let javascriptFreqSimulator = true;
-
-            if (!WebSpeechAPI) {
-                txtEngineStatus.textContent = "SPEECH ENGINE UNSUPPORTED";
-                btnTogglePipeline.style.opacity = "0.4";
-                btnTogglePipeline.style.cursor = "not-allowed";
-            } else {
-                const vocalRecognitionEngine = new WebSpeechAPI();
-                vocalRecognitionEngine.continuous = false;
-                vocalRecognitionEngine.lang = 'en-US';
-                vocalRecognitionEngine.interimResults = false;
-
-                let recognitionActive = false;
-
-                // Attempt to request access to internal audio nodes for true frequency measurements
-                async function linkAcousticHardwareNodes() {
-                    try {
-                        if (!audioCtx) {
-                            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                            audioAnalyser = audioCtx.createAnalyser();
-                            audioAnalyser.fftSize = 64;
-                            
-                            microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                            const source = audioCtx.createMediaStreamSource(microphoneStream);
-                            source.connect(audioAnalyser);
-                            javascriptFreqSimulator = false; // Successfully tied to microphone input
-                        }
-                    } catch (e) {
-                        console.warn("Hardware audio engine intercept denied or unavailable. Defaulting to algorithmic matrix parsing fallback.", e);
-                        javascriptFreqSimulator = true;
-                    }
-                }
-
-                function routeVocalCommandStrings(rawText) {
-                    const cleanString = rawText.toLowerCase().trim();
-                    paneTranscript.textContent = `Acoustic Log Captured: "${rawText}"`;
-
-                    // Run metric tracking analytics engine
-                    classifyVocalLinguisticEmotion(rawText);
-
-                    // Process specific structural operations triggers
-                    if (cleanString.includes("neural") || cleanString.includes("show neural")) {
-                        routeControlToMatrixElement("nodeNeural");
-                    } else if (cleanString.includes("analytics") || cleanString.includes("show analytics")) {
-                        routeControlToMatrixElement("nodeAnalytics");
-                    } else if (cleanString.includes("automation") || cleanString.includes("show automation")) {
-                        routeControlToMatrixElement("nodeAutomation");
-                    } else if (cleanString.includes("sync") || cleanString.includes("trigger") || cleanString.includes("run system sync")) {
-                        routeControlToMatrixElement("nodeNeural");
-                        setTimeout(() => { triggerOperationalSystemSync(); }, 400);
-                    }
-                }
-
-                btnTogglePipeline.addEventListener("click", () => {
-                    linkAcousticHardwareNodes();
-                    if (!recognitionActive) {
-                        vocalRecognitionEngine.start();
-                    } else {
-                        vocalRecognitionEngine.stop();
-                    }
-                });
-
-                vocalRecognitionEngine.onstart = () => {
-                    recognitionActive = true;
-                    btnTogglePipeline.classList.add("listening-state");
-                    btnTogglePipeline.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg> Disengage Pipeline`;
-                    voiceIndicatorDot.classList.add("active");
-                    txtEngineStatus.textContent = "LIVE LISTENING";
-                    paneTranscript.textContent = "Acoustic hardware streams engaged. Speak command array phrases naturally...";
-                };
-
-                vocalRecognitionEngine.onresult = (evt) => {
-                    const parsedPayloadString = evt.results[0][0].transcript;
-                    routeVocalCommandStrings(parsedPayloadString);
-                };
-
-                vocalRecognitionEngine.onerror = (err) => {
-                    paneTranscript.textContent = "Vocal analysis interval reached or stream went idle.";
-                };
-
-                vocalRecognitionEngine.onend = () => {
-                    recognitionActive = false;
-                    btnTogglePipeline.classList.remove("listening-state");
-                    btnTogglePipeline.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg> Initialize Acoustic Engine`;
-                    voiceIndicatorDot.classList.remove("active");
-                    txtEngineStatus.textContent = "STANDBY";
-                };
-            }
-
-
-            /* --- TECHNICAL REAL-TIME FREQUENCY WAVEFORM RENDERER --- */
-            const canvas = document.getElementById("canvasSpectrogram");
-            const ctx = canvas.getContext("2d");
-            const txtHzTelemetry = document.getElementById("txtHzTelemetry");
-            const metricHertz = document.getElementById("metricHertz");
-
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-
-            // Local fallback wave vector coordinates configuration
-            let waveDataBuffer = Array.from({length: 45}, () => canvas.height / 2);
-            let dynamicHertzMarker = 0;
-
-            function processSpectrogramLoop() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.beginPath();
-                
-                // Fetch dynamic tracking stroke style hex code directly from interface property assignment
-                let targetStrokeColor = getComputedStyle(document.documentElement).getPropertyValue('--dynamic-accent').trim();
-                ctx.strokeStyle = targetStrokeColor || "#3b82f6";
-                ctx.lineWidth = 1.5;
-
-                if (!javascriptFreqSimulator && audioAnalyser) {
-                    // Extract real physical acoustic spectrum metadata from mic input array
-                    const totalDataBins = audioAnalyser.frequencyBinCount;
-                    const arrayDataData = new Uint8Array(totalDataBins);
-                    audioAnalyser.getByteFrequencyData(arrayDataData);
-
-                    let sumMagnitudes = 0;
-                    for (let i = 0; i < totalDataBins; i++) {
-                        let scaleX = i * (canvas.width / totalDataBins);
-                        // Map 0-255 scaling bounds neatly inside interface canvas coordinate matrix
-                        let scaleY = canvas.height - (arrayDataData[i] / 255) * canvas.height;
-                        
-                        if (i === 0) ctx.moveTo(scaleX, scaleY);
-                        else ctx.lineTo(scaleX, scaleY);
-                        
-                        sumMagnitudes += arrayDataData[i];
-                    }
-                    
-                    // Simple programmatic mapping logic calculating approximate real voice fundamental frequency index
-                    if(sumMagnitudes > 100) {
-                        dynamicHertzMarker = Math.floor(135 + (sumMagnitudes / totalDataBins) * 2.8);
-                        txtHzTelemetry.textContent = `${dynamicHertzMarker}.00 Hz // Live Microscopic Array Tracking`;
-                        metricHertz.textContent = `${dynamicHertzMarker} Hz`;
-                    } else {
-                        txtHzTelemetry.textContent = "0.00 Hz // Core Constant";
-                        metricHertz.textContent = "-- Hz";
-                    }
-
-                } else {
-                    // Algorithmic simulation fallback if acoustic hardware permission channel is isolated
-                    for(let i=0; i<waveDataBuffer.length; i++) {
-                        let x = i * (canvas.width / (waveDataBuffer.length - 1));
-                        let y = waveDataBuffer[i];
-                        
-                        if(i === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
-
-                        waveDataBuffer[i] += (Math.random() - 0.5) * telemetryModulationCoeff;
-                        // Limit boundary loops
-                        if(waveDataBuffer[i] < 15) waveDataBuffer[i] = 15;
-                        if(waveDataBuffer[i] > canvas.height - 15) waveDataBuffer[i] = canvas.height - 15;
-                    }
-                    
-                    if(telemetryModulationCoeff > 4) {
-                        dynamicHertzMarker = Math.floor(140 + (Math.random() * 80));
-                        txtHzTelemetry.textContent = `${dynamicHertzMarker}.24 Hz // Simulated Tracking Matrix`;
-                        metricHertz.textContent = `${dynamicHertzMarker} Hz`;
-                    } else {
-                        txtHzTelemetry.textContent = "0.00 Hz // Core Constant";
-                        metricHertz.textContent = "-- Hz";
-                    }
-                }
-
-                ctx.stroke();
-                requestAnimationFrame(processSpectrogramLoop);
-            }
-
-            processSpectrogramLoop();
-            
-            // Auto resize handling parameters
-            window.addEventListener('resize', () => {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-            });
-        });
-    </script>
 </body>
 </html>
