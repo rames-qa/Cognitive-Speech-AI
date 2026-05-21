@@ -687,10 +687,20 @@
     const eqBars = document.querySelectorAll(".eq-bar");
     const processingPanel = document.getElementById("processingPanel");
     
+ // Delete your old elementsMatrix block and paste this one:
     const elementsMatrix = {
-        calm: { bar: document.getElementById("barCalm"), txt: document.getElementById("txtCalm") },
-        stress: { bar: document.getElementById("barStress"), txt: document.getElementById("txtStress") },
-        load: { bar: document.getElementById("barLoad"), txt: document.getElementById("txtLoad") }
+        calm: { 
+            bar: document.getElementById("barCalm") || document.getElementById("calmBar"), 
+            txt: document.getElementById("txtCalm") || document.getElementById("valCalm") 
+        },
+        stress: { 
+            bar: document.getElementById("barStress") || document.getElementById("stressBar") || document.getElementById("frictionBar"), 
+            txt: document.getElementById("txtStress") || document.getElementById("valStress") || document.getElementById("valFriction")
+        },
+        load: { 
+            bar: document.getElementById("barLoad") || document.getElementById("loadBar"), 
+            txt: document.getElementById("txtLoad") || document.getElementById("valLoad") 
+        }
     };
 
     const metricLabels = {
