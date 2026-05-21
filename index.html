@@ -339,102 +339,83 @@
         &copy; 2026 Cognitive AI Advanced Web Project
     </footer>
 
-<script>
+<<script>
     document.addEventListener("DOMContentLoaded", () => {
         const SystemState = {
-            activeModule: null,
             audioContext: null,
             analyser: null,
             dataArray: null,
-            timeDataArray: null,
-            isSimulatingVoice: true
+            timeDataArray: null
         };
 
-        let localAudioRecorder = null;
-        let recordedChunks = [];
-        const voiceBtn = document.getElementById("btnVoiceTrigger");
-        const voiceStatusDot = document.getElementById("voiceStatusDot");
-        const voiceStatusText = document.getElementById("voiceStatusText");
-        const voiceTranscript = document.getElementById("voiceTranscript");
-        const voiceModuleStatus = document.getElementById("voiceModuleStatus");
-        const liveDecibel = document.getElementById("liveDecibel");
-        const eqBars = document.querySelectorAll(".eq-bar");
-
-        // --- Dashboard Initialization ---
-        resetDashboardMetrics();
-        initSparklineCanvases();
-        
-        // This function was missing in your original code
-        function startGlobalTelemetryLoop() {
-            setInterval(() => {
-                // Simulate random fluctuations for dashboard metrics
-                const random = (min, max) => Math.floor(Math.random() * (max - min) + min);
-                document.getElementById("valNeuralVelocity").textContent = random(20, 90) + "%";
-                document.getElementById("valAnalyticsAccuracy").textContent = random(70, 99) + "%";
-                document.getElementById("valAutomationDone").textContent = random(40, 95) + "%";
-            }, 2000);
-        }
-        startGlobalTelemetryLoop();
-
-        function resetDashboardMetrics() {
-            // Your existing logic...
-            document.getElementById("barCalm").style.width = "75%";
-            document.getElementById("barStress").style.width = "15%";
-            document.getElementById("barLoad").style.width = "45%";
-        }
+        // --- Visualizers ---
+        const waveCanvas = document.getElementById("waveformCanvas");
+        const waveCtx = waveCanvas.getContext("2d");
+        const specCanvas = document.getElementById("spectrogramCanvas");
+        const specCtx = specCanvas.getContext("2d");
 
         async function initActualVoiceStream() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 SystemState.audioContext = new AudioContext();
                 
-                // Crucial: resume context if suspended by browser
-                if (SystemState.audioContext.state === 'suspended') {
-                    await SystemState.audioContext.resume();
-                }
-
                 SystemState.analyser = SystemState.audioContext.createAnalyser();
-                SystemState.analyser.fftSize = 1024;
+                SystemState.analyser.fftSize = 2048;
+                
                 const source = SystemState.audioContext.createMediaStreamSource(stream);
                 source.connect(SystemState.analyser);
                 
                 SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
                 SystemState.timeDataArray = new Uint8Array(SystemState.analyser.fftSize);
-                SystemState.isSimulatingVoice = false;
 
-                voiceStatusDot.classList.add('active');
-                voiceStatusText.textContent = "Acoustic Engine Online";
-                voiceModuleStatus.textContent = "Signal Live - Active";
-
-                runLiveVoiceDataPipeline();
+                document.getElementById("voiceStatusDot").classList.add('active');
+                document.getElementById("voiceStatusText").textContent = "Acoustic Engine Online";
+                
+                renderPipeline();
             } catch (err) {
-                console.error("Audio Access Error:", err);
-                voiceTranscript.textContent = "Error: Mic access denied or hardware missing.";
+                document.getElementById("voiceTranscript").textContent = "System Error: Hardware Access Denied.";
             }
         }
 
-        function runLiveVoiceDataPipeline() {
-            if (SystemState.isSimulatingVoice) return;
-            requestAnimationFrame(runLiveVoiceDataPipeline);
-            
+        function renderPipeline() {
+            requestAnimationFrame(renderPipeline);
+            SystemState.analyser.getByteTimeDomainData(SystemState.timeDataArray);
             SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-            
-            // Visualizer update logic
-            let total = 0;
-            eqBars.forEach((bar, index) => {
-                const value = SystemState.dataArray[index] || 0;
-                total += value;
-                bar.style.height = `${Math.max(10, (value / 255) * 100)}%`;
-            });
+
+            // 1. Draw Waveform
+            waveCtx.fillStyle = "#090d16";
+            waveCtx.fillRect(0, 0, waveCanvas.width, waveCanvas.height);
+            waveCtx.lineWidth = 2;
+            waveCtx.strokeStyle = "#00f3ff";
+            waveCtx.beginPath();
+            let sliceWidth = waveCanvas.width * 1.0 / SystemState.analyser.fftSize;
+            let x = 0;
+            for (let i = 0; i < SystemState.analyser.fftSize; i++) {
+                let v = SystemState.timeDataArray[i] / 128.0;
+                let y = v * waveCanvas.height / 2;
+                i === 0 ? waveCtx.moveTo(x, y) : waveCtx.lineTo(x, y);
+                x += sliceWidth;
+            }
+            waveCtx.stroke();
+
+            // 2. Update UI Metrics
+            const db = Math.round((SystemState.dataArray[0] / 255) * 100 - 60);
+            document.getElementById("liveDecibel").textContent = db + " dB";
         }
 
-        voiceBtn.addEventListener("click", initActualVoiceStream);
-    });
+        // --- Dashboard Simulation Logic ---
+        setInterval(() => {
+            document.getElementById("valNeuralVelocity").textContent = Math.floor(Math.random() * 40 + 50) + "%";
+            document.getElementById("valAnalyticsAccuracy").textContent = Math.floor(Math.random() * 10 + 90) + "%";
+            document.getElementById("valAutomationDone").textContent = Math.floor(Math.random() * 20 + 70) + "%";
+            
+            // Progress Bar Update
+            document.getElementById("neuralBar").style.width = Math.random() * 100 + "%";
+        }, 1500);
 
-    // Dummy function to prevent errors if chart.js or other libs are slow
-    function initSparklineCanvases() { /* ... */ }
-    </script>
+        document.getElementById("btnVoiceTrigger").addEventListener("click", initActualVoiceStream);
+    });
+</script>
 </body>
 </html>
