@@ -1132,6 +1132,148 @@
                 } else {
                     SystemState.oscGain.gain.setValueAtTime(0, SystemState.audioContext.currentTime);
                 }
+              //  1. The Web Layer (useSpeechToText.web.js)
+                import { useState, useEffect, useRef } from 'react';
+
+export function useSpeechToText() {
+  const [isListening, setIsListening] = useState(false);
+  const [text, setText] = useState('');
+  const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.warn("Browser does not support native speech recognition.");
+      return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = 'en-US';
+
+    rec.onstart = () => setIsListening(true);
+    rec.onend = () => setIsListening(false);
+    
+    rec.onresult = (event) => {
+      let interimTranscript = '';
+      let finalTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      setText(finalTranscript || interimTranscript);
+    };
+
+    rec.onerror = (e) => console.error("Web Speech Error:", e.error);
+    recognitionRef.current = rec;
+  }, []);
+
+  const startListening = () => recognitionRef.current?.start();
+  const stopListening = () => recognitionRef.current?.stop();
+
+  return { isListening, text, startListening, stopListening };
+}
+    // 2. The Mobile Layer (useSpeechToText.native.js)
+
+                import { useState } from 'react';
+import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
+
+export function useSpeechToText() {
+  const [isListening, setIsListening] = useState(false);
+  const [text, setText] = useState('');
+
+  useSpeechRecognitionEvent("start", () => setIsListening(true));
+  useSpeechRecognitionEvent("end", () => setIsListening(false));
+  useSpeechRecognitionEvent("result", (event) => {
+    if (event.results[0]?.transcript) {
+      setText(event.results[0].transcript);
+    }
+  });
+  useSpeechRecognitionEvent("error", (e) => console.error("Native Speech Error:", e.error));
+
+  const startListening = async () => {
+    const response = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+    if (response.granted) {
+      ExpoSpeechRecognitionModule.start({
+        lang: "en-US",
+        interimResults: true,
+        continuous: true,
+      });
+    } else {
+      console.warn("Microphone permissions denied.");
+    }
+  };
+
+  const stopListening = () => ExpoSpeechRecognitionModule.stop();
+
+  return { isListening, text, startListening, stopListening };
+}
+// 3. The Multiplatform Switch (useSpeechToText.js)
+   import { Platform } from 'react-native';
+
+// Dynamically exports the proper platform hook without breaking bundlers
+const hook = Platform.OS === 'web' 
+  ? require('./useSpeechToText.web').useSpeechToText 
+  : require('./useSpeechToText.native').useSpeechToText;
+
+export const useSpeechToText = hook;
+
+// 4. The Unified View Component (App.js)
+
+                import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSpeechToText } from './useSpeechToText';
+
+export default function App() {
+  const { isListening, text, startListening, stopListening } = useSpeechToText();
+
+  const handlePress = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>True Voice-to-Text Stream</Text>
+      
+      <TouchableOpacity 
+        style={[styles.button, isListening ? styles.buttonActive : styles.buttonInactive]} 
+        onPress={handlePress}
+      >
+        <Text style={styles.buttonText}>
+          {isListening ? "Stop Streaming" : "Start Live Mic"}
+        </Text>
+      </TouchableOpacity>
+
+      <View style={styles.textContainer}>
+        <Text style={styles.label}>Real-time Raw Text Feed:</Text>
+        <Text style={styles.output}>{text || "Speak into your mic to stream text..."}</Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f5f5f7', justifyContent: 'center', alignItems: 'center', padding: 24 },
+  title: { fontSize: 22, fontWeight: '700', marginBottom: 40, color: '#1d1d1f' },
+  button: { paddingVertical: 16, paddingHorizontal: 32, borderRadius: 28, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+  buttonActive: { backgroundColor: '#ff3b30' },
+  buttonInactive: { backgroundColor: '#007aff' },
+  buttonText: { color: '#ffffff', fontSize: 16, fontWeight: '600' },
+  textContainer: { marginTop: 40, width: '100%', maxWidth: 500, backgroundColor: '#ffffff', borderRadius: 12, padding: 20, minHeight: 150 },
+  label: { fontSize: 12, fontWeight: '600', color: '#8e8e93', marginBottom: 8, textTransform: 'uppercase' },
+  output: { fontSize: 16, color: '#333333', lineHeight: 24 }
+});
+        
+                
             }
         });
     </script>
