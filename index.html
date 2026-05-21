@@ -804,6 +804,150 @@
                 runLiveTelemetryUIUpdate();
             }
 
+            function setupControlEventListeners() {
+                // Presets implementation
+                Object.keys(morphButtons).forEach(mode => {
+                    if (morphButtons[mode]) {
+                        morphButtons[mode].addEventListener("click", () => {
+                            Object.values(morphButtons).forEach(b => b?.classList.remove("active"));
+                            morphButtons[mode].classList.add("active");
+                            SystemState.morphMode = mode;
+                            applyPresetParameters(mode);
+                        });
+                    }
+                });
+
+                // Range slider listeners
+                Object.keys(sliders).forEach(key => {
+                    if (sliders[key]) {
+                        sliders[key].addEventListener("input", (e) => {
+                            updateSliderLabel(key, e.target.value);
+                        });
+                    }
+                });
+
+                if (voiceBtn) {
+                    voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
+                }
+                if (manualSyncBtn) {
+                    manualSyncBtn.addEventListener("click", triggerManualSystemSync);
+                }
+            }
+
+            function applyPresetParameters(mode) {
+                const presets = {
+                    normal: { pitch: 0, robotic: 0, modulation: 0, wet: 100 },
+                    deep: { pitch: -5, robotic: 10, modulation: 5, wet: 85 },
+                    robot: { pitch: -2, robotic: 80, modulation: 15, wet: 100 },
+                    alien: { pitch: 4, robotic: 40, modulation: 35, wet: 90 },
+                    echo: { pitch: 1, robotic: 15, modulation: 8, wet: 75 },
+                    radio: { pitch: 2, robotic: 30, modulation: 0, wet: 100 }
+                };
+
+                const config = presets[mode] || presets.normal;
+                if (sliders.pitch) sliders.pitch.value = config.pitch;
+                if (sliders.robotic) sliders.robotic.value = config.robotic;
+                if (sliders.modulation) sliders.modulation.value = config.modulation;
+                if (sliders.dryWet) sliders.dryWet.value = config.wet;
+
+                Object.keys(sliders).forEach(key => updateSliderLabel(key, sliders[key].value));
+            }
+
+            function updateSliderLabel(key, val) {
+                if (!sliderValues[key]) return;
+                if (key === 'pitch') sliderValues[key].textContent = `${val} semitones`;
+                else if (key === 'modulation') sliderValues[key].textContent = `${val} Hz`;
+                else sliderValues[key].textContent = `${val}%`;
+            }
+
+            function toggleVoiceCaptureSystem() {
+                if (!SystemState.isListening) {
+                    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                        .then(stream => {
+                            SystemState.isListening = true;
+                            SystemState.stream = stream;
+                            
+                            voiceBtn.classList.add("listening");
+                            voiceBtn.innerHTML = `<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/></svg> Terminate Core Session`;
+                            
+                            voiceStatusDot.classList.add("active");
+                            voiceStatusText.textContent = "Acoustic Stream Active";
+                            voiceModuleStatus.textContent = "Processing Audio";
+                            voiceProcessingPanel.classList.add("voice-pulse-highlight");
+                            voiceTranscript.textContent = "Listening to audio feed channel link setup...";
+
+                            // Initialize Audio Web Nodes
+                            SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                            SystemState.analyser = SystemState.audioContext.createAnalyser();
+                            SystemState.analyser.fftSize = 64;
+                            SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
+                            
+                            SystemState.source = SystemState.audioContext.createMediaStreamSource(stream);
+                            SystemState.source.connect(SystemState.analyser);
+                            
+                            if (liveSampleRate) {
+                                liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Audio Access Revoked:", err);
+                            voiceTranscript.textContent = "Access Denied. Check mic context logic hooks.";
+                        });
+                } else {
+                    deactivateVoiceSystem();
+                }
+            }
+
+            function deactivateVoiceSystem() {
+                SystemState.isListening = false;
+                if (SystemState.stream) {
+                    SystemState.stream.getTracks().forEach(track => track.stop());
+                }
+                if (SystemState.audioContext) {
+                    SystemState.audioContext.close();
+                }
+                
+                voiceBtn.classList.remove("listening");
+                voiceBtn.innerHTML = `<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><path d=\"M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z\"/><path d=\"M19 10v1a7 7 0 0 1-14 0v-1\"/><line x1=\"12\" x2=\"12\" y1=\"19\" y2=\"22\"/></svg> Initialize Voice Listening`;
+                
+                voiceStatusDot.classList.remove("active");
+                voiceStatusText.textContent = "Acoustic Engine Offline";
+                voiceModuleStatus.textContent = "Standby Monitoring";
+                voiceProcessingPanel.classList.remove("voice-pulse-highlight");
+                if (liveDecibel) liveDecibel.textContent = "-Inf dB";
+                if (liveSampleRate) liveSampleRate.textContent = "0.0 kHz";
+                
+                eqBars.forEach(bar => bar.style.height = "25%");
+                updateVoiceMatrixMetrics();
+            }
+
+            function triggerManualSystemSync() {
+                const prevText = voiceTranscript.textContent;
+                voiceTranscript.textContent = "Executing algorithmic matrix re-alignment loop across cores...";
+                setTimeout(() => {
+                    voiceTranscript.textContent = prevText;
+                }, 1500);
+            }
+
+            function updateVoiceMatrixMetrics() {
+                let c = 0, s = 0, l = 0;
+                if (SystemState.isListening) {
+                    c = Math.floor(45 + Math.random() * 40);
+                    s = Math.floor(10 + Math.random() * 30);
+                    l = Math.floor(50 + Math.random() * 35);
+                    if (cognitiveModality) cognitiveModality.textContent = "Dynamic Shift";
+                } else {
+                    if (cognitiveModality) cognitiveModality.textContent = "Adaptive Base";
+                }
+
+                if (elementsMatrix.calm.bar) elementsMatrix.calm.bar.style.width = `${c}%`;
+                if (elementsMatrix.calm.txt) elementsMatrix.calm.txt.textContent = `${c}%`;
+                if (elementsMatrix.stress.bar) elementsMatrix.stress.bar.style.width = `${s}%`;
+                if (elementsMatrix.stress.txt) elementsMatrix.stress.txt.textContent = `${s}%`;
+                if (elementsMatrix.load.bar) elementsMatrix.load.bar.style.width = `${l}%`;
+                if (elementsMatrix.load.txt) elementsMatrix.load.txt.textContent = `${l}%`;
+            }
+
             function runLiveTelemetryUIUpdate() {
                 const timestamp = Date.now();
 
@@ -821,459 +965,79 @@
                 const forecastVal   = Math.floor(86 + Math.cos(timestamp / 1500) * 3);
                 const efficiencyVal = Math.floor(101 + Math.sin(timestamp / 1800) * 2);
                 
-                if(metricLabels.analyticsAccuracy)  metricLabels.analyticsAccuracy.textContent = `${accuracyVal}%`;
-                if(metricLabels.analyticsForecast)  metricLabels.analyticsForecast.textContent = `${forecastVal}%`;
+                if(metricLabels.analyticsAccuracy)   metricLabels.analyticsAccuracy.textContent = `${accuracyVal}%`;
+                if(metricLabels.analyticsForecast)   metricLabels.analyticsForecast.textContent = `${forecastVal}%`;
                 if(metricLabels.analyticsEfficiency) metricLabels.analyticsEfficiency.textContent = `${efficiencyVal}%`;
                 if(metricLabels.analyticsBar)        metricLabels.analyticsBar.style.width = `${forecastVal}%`;
 
                 const doneVal = Math.floor(74 + Math.sin(timestamp / 800) * 5);
                 const loadVal = Math.floor(41 + Math.cos(timestamp / 700) * 8);
-                const flowVal = Math.floor(88 + Math.sin(timestamp / 1100) * 3);
-                
+                const flowVal = Math.floor(88 + Math.sin(timestamp / 1000) * 3);
+
                 if(metricLabels.automationDone) metricLabels.automationDone.textContent = `${doneVal}%`;
                 if(metricLabels.automationLoad) metricLabels.automationLoad.textContent = `${loadVal}%`;
                 if(metricLabels.automationFlow) metricLabels.automationFlow.textContent = `${flowVal}%`;
                 if(metricLabels.automationBar)  metricLabels.automationBar.style.width = `${doneVal}%`;
 
-                // 2. Continuous Canvas Graph Renderers
+                // 2. Real-Time Web Audio Equalizer Display Logic
+                if (SystemState.isListening && SystemState.analyser && SystemState.dataArray) {
+                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                    let sum = 0;
+                    
+                    for (let i = 0; i < eqBars.length; i++) {
+                        const val = SystemState.dataArray[i * 2] || 0;
+                        sum += val;
+                        const heightPercent = Math.max(15, (val / 255) * 100);
+                        eqBars[i].style.height = `${heightPercent}%`;
+                    }
+
+                    const average = sum / eqBars.length;
+                    const db = average > 0 ? Math.floor((average / 255) * 40) - 40 : -90;
+                    if (liveDecibel) liveDecibel.textContent = `${db} dB`;
+
+                    if (Math.random() < 0.15) {
+                        updateVoiceMatrixMetrics();
+                    }
+                }
+
+                // 3. Render Canvas Tracks Line Topology
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const cObj = telemetryCanvasEngines[key];
-                    if (!cObj.ctx) return;
-                    
+                    if (!cObj.ctx || !cObj.el) return;
+
                     const ctx = cObj.ctx;
                     const W = cObj.el.width;
                     const H = cObj.el.height;
-                    
+
                     ctx.clearRect(0, 0, W, H);
-                    
-                    // Shift values leftward and scale noise depending on microstate activity
-                    cObj.points.shift();
-                    let targetMod = key === 'neural' ? velocityVal : (key === 'analytics' ? forecastVal : doneVal);
-                    let noise = (Math.random() - 0.5) * 0.18 + (targetMod / 200);
-                    cObj.points.push(Math.max(0.1, Math.min(0.9, noise)));
-                    
+
+                    let targetNext = 0.5;
+                    if (key === 'neural') targetNext = (velocityVal - 60) / 40;
+                    else if (key === 'analytics') targetNext = (forecastVal - 60) / 50;
+                    else targetNext = (doneVal - 50) / 45;
+
+                    targetNext += (Math.random() - 0.5) * 0.15;
+                    targetNext = Math.max(0.1, Math.min(0.9, targetNext));
+
+                    cObj.points.push(targetNext);
+                    if (cObj.points.length > 80) cObj.points.shift();
+
                     ctx.beginPath();
                     ctx.strokeStyle = `hsl(${cObj.hue}, 100%, 60%)`;
                     ctx.lineWidth = 2.5 * window.devicePixelRatio;
                     ctx.lineJoin = "round";
-                    
-                    const stepWidth = W / (cObj.points.length - 1);
+
+                    const slice = W / (cObj.points.length - 1);
                     for (let i = 0; i < cObj.points.length; i++) {
-                        let x = i * stepWidth;
-                        let y = H - (cObj.points[i] * H);
+                        const x = i * slice;
+                        const y = H - (cObj.points[i] * H);
                         if (i === 0) ctx.moveTo(x, y);
                         else ctx.lineTo(x, y);
                     }
                     ctx.stroke();
                 });
 
-                // 3. Audio Graph Analyzer Synchronization Thread
-                if (SystemState.isListening && SystemState.analyser) {
-                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    
-                    let totalAmplitude = 0;
-                    const barCount = eqBars.length;
-                    const sliceWidth = Math.floor(SystemState.dataArray.length / barCount) || 1;
-                    
-                    for (let i = 0; i < barCount; i++) {
-                        let sum = 0;
-                        let startIdx = i * sliceWidth;
-                        for (let j = 0; j < sliceWidth; j++) {
-                            sum += SystemState.dataArray[startIdx + j] || 0;
-                        }
-                        let average = sum / sliceWidth;
-                        totalAmplitude += average;
-                        
-                        let heightPercent = Math.max(15, Math.min(100, (average / 255) * 100));
-                        eqBars[i].style.height = `${heightPercent}%`;
-                    }
-                    
-                    let rms = totalAmplitude / barCount;
-                    let db = rms > 0 ? Math.floor(20 * Math.log10(rms / 10)) : -Infinity;
-                    
-                    if (liveDecibel) {
-                        liveDecibel.textContent = db === -Infinity ? "-Inf dB" : `${db} dB`;
-                    }
-                    
-                    // Live dynamic emotional drift updates from raw volume fluctuations
-                    if (timestamp % 7 === 0) {
-                        updateVoiceMatrixMetrics(rms);
-                    }
-                } else {
-                    // Flatten equalizer array values gracefully when off
-                    eqBars.forEach((bar, index) => {
-                        let idleMotion = Math.sin(timestamp / 300 + index) * 4 + 20;
-                        bar.style.height = `${idleMotion}%`;
-                    });
-                }
-
                 requestAnimationFrame(runLiveTelemetryUIUpdate);
-            }
-
-            function updateVoiceMatrixMetrics(audioRms = 0) {
-                let baseCalm = 85, baseStress = 12, baseLoad = 24;
-                
-                if (audioRms > 0) {
-                    baseCalm = Math.max(30, 95 - (audioRms * 0.4));
-                    baseStress = Math.min(90, 5 + (audioRms * 0.5));
-                    baseLoad = Math.min(100, 15 + (audioRms * 0.6));
-                } else {
-                    baseCalm = Math.floor(75 + Math.sin(Date.now() / 2000) * 5);
-                    baseStress = Math.floor(15 + Math.cos(Date.now() / 1500) * 3);
-                    baseLoad = Math.floor(22 + Math.sin(Date.now() / 1800) * 4);
-                }
-
-                if (elementsMatrix.calm.bar) elementsMatrix.calm.bar.style.width = `${baseCalm}%`;
-                if (elementsMatrix.calm.txt) elementsMatrix.calm.txt.textContent = `${Math.floor(baseCalm)}%`;
-                
-                if (elementsMatrix.stress.bar) elementsMatrix.stress.bar.style.width = `${baseStress}%`;
-                if (elementsMatrix.stress.txt) elementsMatrix.stress.txt.textContent = `${Math.floor(baseStress)}%`;
-                
-                if (elementsMatrix.load.bar) elementsMatrix.load.bar.style.width = `${baseLoad}%`;
-                if (elementsMatrix.load.txt) elementsMatrix.load.txt.textContent = `${Math.floor(baseLoad)}%`;
-                
-                if (cognitiveModality) {
-                    cognitiveModality.textContent = baseStress > 45 ? "High Agitation Matrix" : "Optimal Balanced Stability";
-                }
-            }
-
-            function setupControlEventListeners() {
-                // Presets Config Switcher
-                Object.keys(morphButtons).forEach(mode => {
-                    const btn = morphButtons[mode];
-                    if (!btn) return;
-                    
-                    btn.addEventListener("click", () => {
-                        Object.values(morphButtons).forEach(b => b.classList.remove("active"));
-                        btn.classList.add("active");
-                        SystemState.morphMode = mode;
-                        applyProfilePresetParameters(mode);
-                    });
-                });
-
-                // Range Control Sync Maps
-                Object.keys(sliders).forEach(key => {
-                    const slider = sliders[key];
-                    const label = sliderValues[key];
-                    if (!slider || !label) return;
-                    
-                    slider.addEventListener("input", (e) => {
-                        let suffix = " %";
-                        if (key === "pitch") suffix = " semitones";
-                        if (key === "modulation") suffix = " Hz";
-                        label.textContent = `${e.target.value}${suffix}`;
-                        
-                        if (SystemState.isListening) {
-                            updateAudioNodesOnTheFly();
-                        }
-                    });
-                });
-
-                if (voiceBtn) {
-                    voiceBtn.addEventListener("click", toggleVoiceCoreEngine);
-                }
-
-                if (manualSyncBtn) {
-                    manualSyncBtn.addEventListener("click", () => {
-                        if (voiceTranscript) {
-                            voiceTranscript.textContent = "⚙️ Executing hard manual clear and realignment sync...";
-                            setTimeout(() => {
-                                voiceTranscript.textContent = "✓ System parameters standard alignment complete.";
-                            }, 1200);
-                        }
-                    });
-                }
-            }
-
-            function applyProfilePresetParameters(mode) {
-                const configMaps = {
-                    normal: { pitch: 0, robotic: 0, modulation: 0, dryWet: 100 },
-                    deep:    { pitch: -7, robotic: 15, modulation: 2, dryWet: 100 },
-                    robot:   { pitch: 2, robotic: 90, modulation: 14, dryWet: 100 },
-                    alien:   { pitch: 5, robotic: 40, modulation: 38, dryWet: 85 },
-                    echo:    { pitch: 1, robotic: 5, modulation: 0.5, dryWet: 90 },
-                    radio:   { pitch: -1, robotic: 65, modulation: 8, dryWet: 70 }
-                };
-
-                const target = configMaps[mode] || configMaps.normal;
-                
-                Object.keys(target).forEach(prop => {
-                    if (sliders[prop] && sliderValues[prop]) {
-                        sliders[prop].value = target[prop];
-                        let suffix = "%";
-                        if (prop === "pitch") suffix = " semitones";
-                        if (prop === "modulation") suffix = " Hz";
-                        sliderValues[prop].textContent = `${target[prop]}${suffix}`;
-                    }
-                });
-
-                if (SystemState.isListening) {
-                    updateAudioNodesOnTheFly();
-                }
-            }
-
-            async function toggleVoiceCoreEngine() {
-                if (SystemState.isListening) {
-                    // Turn Off Audio Loop
-                    SystemState.isListening = false;
-                    if (voiceBtn) {
-                        voiceBtn.classList.remove("listening");
-                        voiceBtn.innerHTML = `<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><path d=\"M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z\"/><path d=\"M19 10v1a7 7 0 0 1-14 0v-1\"/><line x1=\"12\" x2=\"12\" y1=\"19\" y2=\"22\"/></svg> Initialize Voice Listening`;
-                    }
-                    if (voiceStatusDot) voiceStatusDot.classList.remove("active");
-                    if (voiceStatusText) voiceStatusText.textContent = "Acoustic Engine Offline";
-                    if (voiceModuleStatus) voiceModuleStatus.textContent = "Standby Monitoring";
-                    if (voiceProcessingPanel) voiceProcessingPanel.classList.remove("voice-pulse-highlight");
-                    if (liveSampleRate) liveSampleRate.textContent = "0.0 kHz";
-                    if (liveDecibel) liveDecibel.textContent = "-Inf dB";
-                    
-                    // Explicit Audio Stream Disposal
-                    if (SystemState.oscillatorNode) try { SystemState.oscillatorNode.stop(); } catch(e){}
-                    if (SystemState.stream) {
-                        SystemState.stream.getTracks().forEach(track => track.stop());
-                    }
-                    if (SystemState.audioContext) {
-                        await SystemState.audioContext.close();
-                    }
-                    SystemState.audioContext = null;
-                    return;
-                }
-
-                // Request Hardware Stream Hooks
-                try {
-                    SystemState.stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                    SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    
-                    if (liveSampleRate) {
-                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-                    }
-
-                    SystemState.analyser = SystemState.audioContext.createAnalyser();
-                    SystemState.analyser.fftSize = 64;
-                    SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
-                    
-                    SystemState.source = SystemState.audioContext.createMediaStreamSource(SystemState.stream);
-                    
-                    // Initialize Sound FX Processing Engine Blocks
-                    SystemState.filterNode = SystemState.audioContext.createBiquadFilter();
-                    SystemState.delayNode = SystemState.audioContext.createDelay();
-                    SystemState.feedbackGain = SystemState.audioContext.createGain();
-                    SystemState.oscillatorNode = SystemState.audioContext.createOscillator();
-                    SystemState.oscGain = SystemState.audioContext.createGain();
-                    
-                    // Connect Topology Graph Path
-                    SystemState.source.connect(SystemState.filterNode);
-                    SystemState.filterNode.connect(SystemState.delayNode);
-                    SystemState.delayNode.connect(SystemState.analyser);
-                    
-                    // Create basic feedback loop delay line
-                    SystemState.delayNode.connect(SystemState.feedbackGain);
-                    SystemState.feedbackGain.connect(SystemState.delayNode);
-                    
-                    // Connect ring modulation routing channels
-                    SystemState.oscillatorNode.connect(SystemState.oscGain);
-                    SystemState.oscGain.connect(SystemState.filterNode.frequency);
-                    
-                    SystemState.analyser.connect(SystemState.audioContext.destination);
-                    
-                    SystemState.oscillatorNode.start(0);
-                    
-                    SystemState.isListening = true;
-                    updateAudioNodesOnTheFly();
-
-                    if (voiceBtn) {
-                        voiceBtn.classList.add("listening");
-                        voiceBtn.innerHTML = `<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\"><rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/></svg> Terminate Listening Loop`;
-                    }
-                    if (voiceStatusDot) voiceStatusDot.classList.add("active");
-                    if (voiceStatusText) voiceStatusText.textContent = "Live Acoustic Processing Stream Active";
-                    if (voiceModuleStatus) voiceModuleStatus.textContent = "Streaming Telemetry Pipeline";
-                    if (voiceProcessingPanel) voiceProcessingPanel.classList.add("voice-pulse-highlight");
-                    if (voiceTranscript) voiceTranscript.textContent = "Listening to speech matrix patterns... [Acoustic feedback enabled]";
-
-                } catch (err) {
-                    console.error("Microphone hardware connection rejected:", err);
-                    if (voiceTranscript) voiceTranscript.textContent = "⚠️ Error: Capture pipeline blocked. Verify audio mic hardware controls.";
-                }
-            }
-
-            function updateAudioNodesOnTheFly() {
-                if (!SystemState.audioContext || !SystemState.isListening) return;
-
-                const p = parseFloat(sliders.pitch.value);
-                const r = parseFloat(sliders.robotic.value);
-                const m = parseFloat(sliders.modulation.value);
-                const w = parseFloat(sliders.dryWet.value) / 100;
-
-                // 1. Process Simulated Pitch Shifts via Filter Frequency Mapping
-                if (p < 0) {
-                    SystemState.filterNode.type = "lowpass";
-                    SystemState.filterNode.frequency.setValueAtTime(1200 + (p * 80), SystemState.audioContext.currentTime);
-                } else if (p > 0) {
-                    SystemState.filterNode.type = "highpass";
-                    SystemState.filterNode.frequency.setValueAtTime(800 + (p * 150), SystemState.audioContext.currentTime);
-                } else {
-                    SystemState.filterNode.type = "allpass";
-                }
-
-                // 2. Robotic Resonance Setup
-                if (r > 0) {
-                    SystemState.delayNode.delayTime.setValueAtTime(Math.max(0.005, 0.05 * (r / 100)), SystemState.audioContext.currentTime);
-                    SystemState.feedbackGain.gain.setValueAtTime(0.1 + (0.65 * (r / 100)) * w, SystemState.audioContext.currentTime);
-                } else {
-                    SystemState.delayNode.delayTime.setValueAtTime(0.0, SystemState.audioContext.currentTime);
-                    SystemState.feedbackGain.gain.setValueAtTime(0.0, SystemState.audioContext.currentTime);
-                }
-
-                // 3. Ring Modulation Frequency Configuration
-                if (m > 0) {
-                    SystemState.oscillatorNode.frequency.setValueAtTime(m, SystemState.audioContext.currentTime);
-                    SystemState.oscGain.gain.setValueAtTime(200 * (r / 100 || 0.5) * w, SystemState.audioContext.currentTime);
-                } else {
-                    SystemState.oscGain.gain.setValueAtTime(0, SystemState.audioContext.currentTime);
-                }
-              //  1. The Web Layer (useSpeechToText.web.js)
-                import { useState, useEffect, useRef } from 'react';
-
-export function useSpeechToText() {
-  const [isListening, setIsListening] = useState(false);
-  const [text, setText] = useState('');
-  const recognitionRef = useRef(null);
-
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      console.warn("Browser does not support native speech recognition.");
-      return;
-    }
-
-    const rec = new SpeechRecognition();
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.lang = 'en-US';
-
-    rec.onstart = () => setIsListening(true);
-    rec.onend = () => setIsListening(false);
-    
-    rec.onresult = (event) => {
-      let interimTranscript = '';
-      let finalTranscript = '';
-
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
-        if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript;
-        } else {
-          interimTranscript += event.results[i][0].transcript;
-        }
-      }
-      setText(finalTranscript || interimTranscript);
-    };
-
-    rec.onerror = (e) => console.error("Web Speech Error:", e.error);
-    recognitionRef.current = rec;
-  }, []);
-
-  const startListening = () => recognitionRef.current?.start();
-  const stopListening = () => recognitionRef.current?.stop();
-
-  return { isListening, text, startListening, stopListening };
-}
-    // 2. The Mobile Layer (useSpeechToText.native.js)
-
-                import { useState } from 'react';
-import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
-
-export function useSpeechToText() {
-  const [isListening, setIsListening] = useState(false);
-  const [text, setText] = useState('');
-
-  useSpeechRecognitionEvent("start", () => setIsListening(true));
-  useSpeechRecognitionEvent("end", () => setIsListening(false));
-  useSpeechRecognitionEvent("result", (event) => {
-    if (event.results[0]?.transcript) {
-      setText(event.results[0].transcript);
-    }
-  });
-  useSpeechRecognitionEvent("error", (e) => console.error("Native Speech Error:", e.error));
-
-  const startListening = async () => {
-    const response = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
-    if (response.granted) {
-      ExpoSpeechRecognitionModule.start({
-        lang: "en-US",
-        interimResults: true,
-        continuous: true,
-      });
-    } else {
-      console.warn("Microphone permissions denied.");
-    }
-  };
-
-  const stopListening = () => ExpoSpeechRecognitionModule.stop();
-
-  return { isListening, text, startListening, stopListening };
-}
-// 3. The Multiplatform Switch (useSpeechToText.js)
-   import { Platform } from 'react-native';
-
-// Dynamically exports the proper platform hook without breaking bundlers
-const hook = Platform.OS === 'web' 
-  ? require('./useSpeechToText.web').useSpeechToText 
-  : require('./useSpeechToText.native').useSpeechToText;
-
-export const useSpeechToText = hook;
-
-// 4. The Unified View Component (App.js)
-
-                import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useSpeechToText } from './useSpeechToText';
-
-export default function App() {
-  const { isListening, text, startListening, stopListening } = useSpeechToText();
-
-  const handlePress = () => {
-    if (isListening) {
-      stopListening();
-    } else {
-      startListening();
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>True Voice-to-Text Stream</Text>
-      
-      <TouchableOpacity 
-        style={[styles.button, isListening ? styles.buttonActive : styles.buttonInactive]} 
-        onPress={handlePress}
-      >
-        <Text style={styles.buttonText}>
-          {isListening ? "Stop Streaming" : "Start Live Mic"}
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.textContainer}>
-        <Text style={styles.label}>Real-time Raw Text Feed:</Text>
-        <Text style={styles.output}>{text || "Speak into your mic to stream text..."}</Text>
-      </View>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f7', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  title: { fontSize: 22, fontWeight: '700', marginBottom: 40, color: '#1d1d1f' },
-  button: { paddingVertical: 16, paddingHorizontal: 32, borderRadius: 28, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
-  buttonActive: { backgroundColor: '#ff3b30' },
-  buttonInactive: { backgroundColor: '#007aff' },
-  buttonText: { color: '#ffffff', fontSize: 16, fontWeight: '600' },
-  textContainer: { marginTop: 40, width: '100%', maxWidth: 500, backgroundColor: '#ffffff', borderRadius: 12, padding: 20, minHeight: 150 },
-  label: { fontSize: 12, fontWeight: '600', color: '#8e8e93', marginBottom: 8, textTransform: 'uppercase' },
-  output: { fontSize: 16, color: '#333333', lineHeight: 24 }
-});
-        
-                
             }
         });
     </script>
