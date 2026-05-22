@@ -583,7 +583,7 @@
         &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
     </footer>
  
-    <script>
+   <script>
         document.addEventListener("DOMContentLoaded", () => {
             const SystemState = {
                 isListening: false,
@@ -693,11 +693,12 @@
                     if (!cObj.el) return;
                      
                     const rect = cObj.el.getBoundingClientRect();
-                    cObj.el.width = rect.width;
-                    cObj.el.height = rect.height;
+                    cObj.el.width = rect.width * window.devicePixelRatio;
+                    cObj.el.height = rect.height * window.devicePixelRatio;
                     cObj.ctx = cObj.el.getContext("2d");
+                    cObj.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
                      
-                    cObj.points = new Array(60).fill(rect.height / 2); 
+                    cObj.points = new Array(60).fill(25); 
                 });
  
                 resetAllUIValues();
@@ -793,22 +794,28 @@
                                     try { SystemState.recognition.start(); } catch(e) {}
                                 }
                             };
- 
+
                             SystemState.recognition.start();
                         }
                     }).catch(err => {
-                        console.error("Audio access denied:", err);
-                        voiceTranscript.textContent = "Error: Cannot initialize microphone interface.";
+                        console.error("Audio access rejected:", err);
+                        voiceTranscript.textContent = "Error: Microphone permission denied.";
                     });
                 } else {
-                    // Turn off system loop smoothly
+                    // Turn off system loop cleanly
                     SystemState.isListening = false;
                     SystemState.shouldRestartRecognition = false;
                     
-                    if(SystemState.recognition) SystemState.recognition.stop();
-                    if(SystemState.stream) SystemState.stream.getTracks().forEach(track => track.stop());
-                    if(SystemState.audioContext) SystemState.audioContext.close();
-                    
+                    if (SystemState.recognition) {
+                        SystemState.recognition.stop();
+                    }
+                    if (SystemState.stream) {
+                        SystemState.stream.getTracks().forEach(track => track.stop());
+                    }
+                    if (SystemState.audioContext) {
+                        SystemState.audioContext.close();
+                    }
+
                     voiceBtn.classList.remove("listening");
                     document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
                     voiceStatusDot.className = "status-dot";
@@ -816,29 +823,29 @@
                     voiceModuleStatus.textContent = "STANDBY";
                     voiceModuleStatus.classList.remove("active");
                     voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                    liveDecibel.textContent = "-Inf dB";
+                    liveSampleRate.textContent = "0.0 kHz";
                     
                     resetAllUIValues();
                 }
             }
 
             function processAutomatedSemanticResponse(text) {
-                // Core Command Router
-                if (text.includes("system") || text.includes("run") || text.includes("scan")) {
-                    executeRoboticSpeech("Processing optimization algorithms. Matrices balanced.");
-                    
-                    // Simulating sudden spike inside backend metrics
-                    emotionBars.calmBar.style.width = "95%"; emotionBars.calmTxt.textContent = "95%";
-                    emotionBars.frictionBar.style.width = "12%"; emotionBars.frictionTxt.textContent = "12%";
-                    emotionBars.loadBar.style.width = "40%"; emotionBars.loadTxt.textContent = "40%";
-                } else {
-                    executeRoboticSpeech("Signal captured. Commencing default pipeline distribution.");
+                if (text.includes("system") || text.includes("assist")) {
+                    if (text.includes("status") || text.includes("scan")) {
+                        executeRoboticSpeech("Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops.");
+                    } else if (text.includes("hello") || text.includes("hi")) {
+                        executeRoboticSpeech("Greetings user. Systems initialization check complete. All matrices are operational.");
+                    } else {
+                        executeRoboticSpeech("System keyword processed. Parsing command string.");
+                    }
                 }
             }
- 
+
             function runLiveTelemetryUIUpdate() {
                 requestAnimationFrame(runLiveTelemetryUIUpdate);
- 
-                // 1. Audio Equalizer and Decibel Pipeline Updates
+
+                // 1. Audio Equalizer & Decibel updates
                 if (SystemState.isListening && SystemState.analyser) {
                     SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
                     let sum = 0;
@@ -849,74 +856,92 @@
                         const heightPercent = Math.max(10, Math.min(100, (val / 255) * 100));
                         bar.style.height = `${heightPercent}%`;
                     });
-                    
-                    const averageVolume = sum / eqBars.length;
-                    const db = averageVolume > 0 ? Math.round(20 * Math.log10(averageVolume / 255)) : -90;
-                    liveDecibel.textContent = db > -90 ? `${db} dB` : "-Inf dB";
+
+                    let average = sum / eqBars.length;
+                    SystemState.currentVolume = average;
+                    let db = 20 * Math.log10(average / 255);
+                    if (average === 0) db = -100;
+                    liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
+
+                    // Animate responsive metric changes when speaking
+                    const randomFlux = () => Math.floor(Math.random() * 30);
+                    emotionBars.calmBar.style.width = `${70 + randomFlux() / 3}%`;
+                    emotionBars.calmTxt.textContent = emotionBars.calmBar.style.width;
+                    emotionBars.frictionBar.style.width = `${10 + randomFlux() / 5}%`;
+                    emotionBars.frictionTxt.textContent = emotionBars.frictionBar.style.width;
+                    emotionBars.loadBar.style.width = `${Math.min(100, average * 1.5)}%`;
+                    emotionBars.loadTxt.textContent = emotionBars.loadBar.style.width;
                 }
- 
-                // 2. Telemetry Matrix Value Randomizers (Simulating Matrix Processing)
+
+                // 2. Mocking UI matrix data updates if core is running
                 if (SystemState.isListening) {
-                    const seed = Math.random();
+                    const timeSeed = Date.now();
                     
-                    // Real-time component updates
-                    metricLabels.neuralVelocity.textContent = `${Math.floor(70 + seed * 25)}%`;
-                    metricLabels.neuralIndex.textContent = `${Math.floor(40 + seed * 50)}%`;
-                    metricLabels.neuralActive.textContent = `${Math.floor(85 + seed * 10)}%`;
-                    metricLabels.neuralBar.style.width = metricLabels.neuralActive.textContent;
- 
-                    metricLabels.visionFPS.textContent = `${Math.floor(58 + seed * 4)} FPS`;
-                    metricLabels.visionAccuracy.textContent = `${Math.floor(92 + seed * 7)}%`;
-                    metricLabels.visionTracking.textContent = `${Math.floor(75 + seed * 20)}%`;
-                    metricLabels.analyticsBar.style.width = metricLabels.visionAccuracy.textContent;
- 
-                    metricLabels.robotTasks.textContent = `${Math.floor(30 + seed * 40)}%`;
-                    metricLabels.robotLoad.textContent = `${Math.floor(15 + seed * 30)}%`;
-                    metricLabels.robotFlow.textContent = `${Math.floor(88 + seed * 11)}%`;
-                    metricLabels.automationBar.style.width = metricLabels.robotFlow.textContent;
+                    // Neural values
+                    const nVelocity = Math.floor(75 + Math.sin(timeSeed / 400) * 10);
+                    metricLabels.neuralVelocity.textContent = `${nVelocity}%`;
+                    metricLabels.neuralIndex.textContent = `${Math.floor(60 + Math.cos(timeSeed / 600) * 8)}%`;
+                    metricLabels.neuralActive.textContent = `${Math.floor(85 + Math.sin(timeSeed / 200) * 5)}%`;
+                    metricLabels.neuralBar.style.width = `${nVelocity}%`;
+
+                    // Vision values
+                    const vFPS = Math.floor(58 + Math.random() * 4);
+                    metricLabels.visionFPS.textContent = `${vFPS} FPS`;
+                    metricLabels.visionAccuracy.textContent = `${(94 + Math.sin(timeSeed / 800) * 2).toFixed(1)}%`;
+                    metricLabels.visionTracking.textContent = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
+                    metricLabels.analyticsBar.style.width = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
+
+                    // Robot Core values
+                    const rTasks = Math.floor(40 + Math.sin(timeSeed / 1000) * 20);
+                    metricLabels.robotTasks.textContent = `${rTasks}%`;
+                    metricLabels.robotLoad.textContent = `${Math.floor(35 + Math.cos(timeSeed / 700) * 12)}%`;
+                    metricLabels.robotFlow.textContent = `${(98.2 + Math.sin(timeSeed / 1500) * 1.1).toFixed(1)}%`;
+                    metricLabels.automationBar.style.width = `${rTasks}%`;
                 }
- 
-                // 3. Render Simulated Analytics Waveform Canvases
+
+                // 3. Render Simulated Telemetry Sparklines using HTML5 Canvas
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
                     if (!engine.ctx) return;
-                    
+
                     const ctx = engine.ctx;
-                    const w = engine.el.width;
-                    const h = engine.el.height;
-                    
+                    const w = engine.el.width / window.devicePixelRatio;
+                    const h = engine.el.height / window.devicePixelRatio;
+
                     ctx.clearRect(0, 0, w, h);
-                    
-                    // Shift values leftward
-                    engine.points.shift();
-                    let nextValue = h / 2;
-                    
+
+                    // Add new data point to trace array
                     if (SystemState.isListening) {
-                        const lastVal = engine.points[engine.points.length - 1];
-                        const volatility = key === 'neural' ? 12 : key === 'analytics' ? 6 : 4;
-                        nextValue = lastVal + (Math.random() - 0.5) * volatility;
-                        nextValue = Math.max(10, Math.min(h - 10, nextValue));
+                        let lastPoint = engine.points[engine.points.length - 1];
+                        let change = (Math.random() - 0.5) * 12;
+                        let newPoint = Math.max(10, Math.min(h - 10, lastPoint + change));
+                        engine.points.push(newPoint);
+                        engine.points.shift();
                     }
-                    engine.points.push(nextValue);
-                    
-                    // Drawing paths
+
+                    // Render trace path line
                     ctx.beginPath();
                     ctx.strokeStyle = engine.color;
                     ctx.lineWidth = 2;
                     ctx.lineJoin = "round";
-                    
-                    const sliceWidth = w / (engine.points.length - 1);
+
+                    const step = w / (engine.points.length - 1);
                     engine.points.forEach((pt, idx) => {
-                        const x = idx * sliceWidth;
-                        if (idx === 0) ctx.moveTo(x, pt);
-                        else ctx.lineTo(x, pt);
+                        if (idx === 0) ctx.moveTo(0, pt);
+                        else ctx.lineTo(idx * step, pt);
                     });
-                    
                     ctx.stroke();
+
+                    // Render smooth area under path fill
+                    ctx.lineTo(w, h);
+                    ctx.lineTo(0, h);
+                    ctx.closePath();
+                    ctx.fillStyle = engine.color + "11"; // Add alpha opacity color fill
+                    ctx.fill();
                 });
             }
- 
-            // Kickstart matrix layouts
+
+            // Fire up Canvas systems mapping elements instantly
             initLiveTelemetryEngine();
         });
     </script>
