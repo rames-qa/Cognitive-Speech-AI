@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cognitive AI - Robotics & Vision Systems Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;500;600;700&family=JetBrains+Mono:wght=400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark-main: #0b0f19;
@@ -466,7 +466,7 @@
  
     <section class="dashboard" id="dashboard">
         <h2 class="section-title">Cognitive Operations Interface Matrix</h2>
-        
+         
         <div class="cognitive-grid">
             <div class="sub-panel" id="voiceProcessingPanel">
                 <div class="sub-panel-header">
@@ -595,7 +595,7 @@
                 currentVolume: 0,
                 voiceSynth: window.speechSynthesis,
                 roboticVoice: null,
-                shouldRestartRecognition: true // Controls ambient looping
+                shouldRestartRecognition: true 
             };
  
             const telemetryCanvasEngines = {
@@ -649,7 +649,6 @@
             function executeRoboticSpeech(phrase) {
                 if (!SystemState.voiceSynth) return;
                 
-                // Stop recognition loop temporarily while assistant speaks to prevent self-triggering
                 if (SystemState.recognition) {
                     SystemState.shouldRestartRecognition = false;
                     SystemState.recognition.abort();
@@ -679,7 +678,6 @@
                     voiceStatusDot.className = "status-dot active";
                     voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
                     
-                    // Resume ambient background listening
                     SystemState.shouldRestartRecognition = true;
                     if (SystemState.isListening && SystemState.recognition) {
                         try { SystemState.recognition.start(); } catch(e){}
@@ -791,27 +789,33 @@
                                 }
                             };
  
-                            // Fixes the cutoff block and restarts ambient recording cleanly
                             SystemState.recognition.onend = () => {
                                 if (SystemState.isListening && SystemState.shouldRestartRecognition && SystemState.recognition) {
-                                    try { SystemState.recognition.start(); } catch(e){}
+                                    try { SystemState.recognition.start(); } catch(e) {}
                                 }
                             };
 
                             SystemState.recognition.start();
                         }
                     }).catch(err => {
-                        console.error("Microphone Access Denied:", err);
-                        voiceStatusText.textContent = "Capture Setup Error";
+                        console.error("Audio access rejected:", err);
+                        voiceTranscript.textContent = "Error: Microphone permission denied.";
                     });
                 } else {
-                    // Turn everything off cleanly
+                    // Turn off system loop cleanly
                     SystemState.isListening = false;
                     SystemState.shouldRestartRecognition = false;
-                    if(SystemState.recognition) SystemState.recognition.stop();
-                    if(SystemState.stream) SystemState.stream.getTracks().forEach(track => track.stop());
-                    if(SystemState.audioContext) SystemState.audioContext.close();
                     
+                    if (SystemState.recognition) {
+                        SystemState.recognition.stop();
+                    }
+                    if (SystemState.stream) {
+                        SystemState.stream.getTracks().forEach(track => track.stop());
+                    }
+                    if (SystemState.audioContext) {
+                        SystemState.audioContext.close();
+                    }
+
                     voiceBtn.classList.remove("listening");
                     document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
                     voiceStatusDot.className = "status-dot";
@@ -819,83 +823,125 @@
                     voiceModuleStatus.textContent = "STANDBY";
                     voiceModuleStatus.classList.remove("active");
                     voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                    liveDecibel.textContent = "-Inf dB";
+                    liveSampleRate.textContent = "0.0 kHz";
+                    
                     resetAllUIValues();
                 }
             }
 
-            function processAutomatedSemanticResponse(command) {
-                // Front-end version of the Alexa style string pattern matcher
-                if (command.includes("system") || command.includes("play")) {
-                    let searchItem = command.replace("system", "").replace("play", "").trim();
-                    
-                    // Visual dashboard reaction simulation
-                    metricLabels.neuralVelocity.textContent = "94%";
-                    metricLabels.neuralBar.style.width = "94%";
-                    
-                    if (command.includes("latest") || command.includes("wheels")) {
-                        executeRoboticSpeech(`Locating latest matrix feeds for ${searchItem}`);
-                        // Direct browser jump to the query sorted by date upload parameters
-                        setTimeout(() => {
-                            window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(searchItem)}&sp=CAI%253D`, "_blank");
-                        }, 1200);
+            function processAutomatedSemanticResponse(text) {
+                if (text.includes("system") || text.includes("assist")) {
+                    if (text.includes("status") || text.includes("scan")) {
+                        executeRoboticSpeech("Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops.");
+                    } else if (text.includes("hello") || text.includes("hi")) {
+                        executeRoboticSpeech("Greetings user. Systems initialization check complete. All matrices are operational.");
                     } else {
-                        executeRoboticSpeech(`Initiating stream lookup array for ${searchItem}`);
-                        setTimeout(() => {
-                            window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(searchItem)}`, "_blank");
-                        }, 1200);
+                        executeRoboticSpeech("System keyword processed. Parsing command string.");
                     }
                 }
             }
 
             function runLiveTelemetryUIUpdate() {
-                if (SystemState.isListening && SystemState.analyser && SystemState.dataArray) {
+                requestAnimationFrame(runLiveTelemetryUIUpdate);
+
+                // 1. Audio Equalizer & Decibel updates
+                if (SystemState.isListening && SystemState.analyser) {
                     SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
+                    let sum = 0;
                     
-                    // Map volume frequencies onto dashboard interface elements
-                    let total = 0;
-                    for (let i = 0; i < eqBars.length; i++) {
-                        let heightVal = (SystemState.dataArray[i] || 10) / 2.5;
-                        eqBars[i].style.height = `${Math.max(10, Math.min(100, heightVal))}%`;
-                        total += SystemState.dataArray[i];
-                    }
-                    let averageVol = total / eqBars.length;
-                    liveDecibel.textContent = `${Math.round(averageVol - 60)} dB`;
-                    
-                    // Animate mock calibration gauges on active input loop
-                    emotionBars.calmBar.style.width = "85%";
-                    emotionBars.calmTxt.textContent = "85%";
-                    emotionBars.frictionBar.style.width = `${Math.round(averageVol / 3)}%`;
-                    emotionBars.frictionTxt.textContent = `${Math.round(averageVol / 3)}%`;
+                    eqBars.forEach((bar, index) => {
+                        const val = SystemState.dataArray[index] || 0;
+                        sum += val;
+                        const heightPercent = Math.max(10, Math.min(100, (val / 255) * 100));
+                        bar.style.height = `${heightPercent}%`;
+                    });
+
+                    let average = sum / eqBars.length;
+                    SystemState.currentVolume = average;
+                    let db = 20 * Math.log10(average / 255);
+                    if (average === 0) db = -100;
+                    liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
+
+                    // Animate responsive metric changes when speaking
+                    const randomFlux = () => Math.floor(Math.random() * 30);
+                    emotionBars.calmBar.style.width = `${70 + randomFlux() / 3}%`;
+                    emotionBars.calmTxt.textContent = emotionBars.calmBar.style.width;
+                    emotionBars.frictionBar.style.width = `${10 + randomFlux() / 5}%`;
+                    emotionBars.frictionTxt.textContent = emotionBars.frictionBar.style.width;
+                    emotionBars.loadBar.style.width = `${Math.min(100, average * 1.5)}%`;
+                    emotionBars.loadTxt.textContent = emotionBars.loadBar.style.width;
                 }
-                
-                // Draw decorative oscilloscope wave visuals onto dashboard engine canvases
+
+                // 2. Mocking UI matrix data updates if core is running
+                if (SystemState.isListening) {
+                    const timeSeed = Date.now();
+                    
+                    // Neural values
+                    const nVelocity = Math.floor(75 + Math.sin(timeSeed / 400) * 10);
+                    metricLabels.neuralVelocity.textContent = `${nVelocity}%`;
+                    metricLabels.neuralIndex.textContent = `${Math.floor(60 + Math.cos(timeSeed / 600) * 8)}%`;
+                    metricLabels.neuralActive.textContent = `${Math.floor(85 + Math.sin(timeSeed / 200) * 5)}%`;
+                    metricLabels.neuralBar.style.width = `${nVelocity}%`;
+
+                    // Vision values
+                    const vFPS = Math.floor(58 + Math.random() * 4);
+                    metricLabels.visionFPS.textContent = `${vFPS} FPS`;
+                    metricLabels.visionAccuracy.textContent = `${(94 + Math.sin(timeSeed / 800) * 2).toFixed(1)}%`;
+                    metricLabels.visionTracking.textContent = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
+                    metricLabels.analyticsBar.style.width = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
+
+                    // Robot Core values
+                    const rTasks = Math.floor(40 + Math.sin(timeSeed / 1000) * 20);
+                    metricLabels.robotTasks.textContent = `${rTasks}%`;
+                    metricLabels.robotLoad.textContent = `${Math.floor(35 + Math.cos(timeSeed / 700) * 12)}%`;
+                    metricLabels.robotFlow.textContent = `${(98.2 + Math.sin(timeSeed / 1500) * 1.1).toFixed(1)}%`;
+                    metricLabels.automationBar.style.width = `${rTasks}%`;
+                }
+
+                // 3. Render Simulated Telemetry Sparklines using HTML5 Canvas
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
                     if (!engine.ctx) return;
-                    let ctx = engine.ctx;
-                    let w = engine.el.width / window.devicePixelRatio;
-                    let h = engine.el.height / window.devicePixelRatio;
-                    
+
+                    const ctx = engine.ctx;
+                    const w = engine.el.width / window.devicePixelRatio;
+                    const h = engine.el.height / window.devicePixelRatio;
+
                     ctx.clearRect(0, 0, w, h);
+
+                    // Add new data point to trace array
+                    if (SystemState.isListening) {
+                        let lastPoint = engine.points[engine.points.length - 1];
+                        let change = (Math.random() - 0.5) * 12;
+                        let newPoint = Math.max(10, Math.min(h - 10, lastPoint + change));
+                        engine.points.push(newPoint);
+                        engine.points.shift();
+                    }
+
+                    // Render trace path line
                     ctx.beginPath();
                     ctx.strokeStyle = engine.color;
-                    ctx.lineWidth = 1.5;
-                    
-                    engine.points.shift();
-                    let nextPoint = SystemState.isListening ? (h/2 + (Math.random() - 0.5) * (SystemState.dataArray ? SystemState.dataArray[0]/4 : 10)) : h/2;
-                    engine.points.push(nextPoint);
-                    
-                    for(let i=0; i<engine.points.length; i++) {
-                        let x = (w / engine.points.length) * i;
-                        if(i===0) ctx.moveTo(x, engine.points[i]);
-                        else ctx.lineTo(x, engine.points[i]);
-                    }
-                    ctx.stroke();
-                });
+                    ctx.lineWidth = 2;
+                    ctx.lineJoin = "round";
 
-                requestAnimationFrame(runLiveTelemetryUIUpdate);
+                    const step = w / (engine.points.length - 1);
+                    engine.points.forEach((pt, idx) => {
+                        if (idx === 0) ctx.moveTo(0, pt);
+                        else ctx.lineTo(idx * step, pt);
+                    });
+                    ctx.stroke();
+
+                    // Render smooth area under path fill
+                    ctx.lineTo(w, h);
+                    ctx.lineTo(0, h);
+                    ctx.closePath();
+                    ctx.fillStyle = engine.color + "11"; // Add alpha opacity color fill
+                    ctx.fill();
+                });
             }
 
+            // Fire up Canvas systems mapping elements instantly
             initLiveTelemetryEngine();
         });
     </script>
