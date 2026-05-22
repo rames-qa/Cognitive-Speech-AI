@@ -795,14 +795,15 @@
                                 }
                             };
 
-                            SystemState.recognition.start();
+                           SystemState.recognition.start();
                         }
                     }).catch(err => {
-                        console.error("Audio access rejected:", err);
-                        voiceTranscript.textContent = "Error: Microphone permission denied.";
+                        console.error("Microphone hardware connection rejected:", err);
+                        voiceTranscript.innerHTML = '<span style="color:var(--neon-rose);">[Error: Hardware Microphone access denied or unavailable.]</span>';
+                        SystemState.isListening = false;
                     });
                 } else {
-                    // Turn off system loop cleanly
+                    // Turn off the system loop safely
                     SystemState.isListening = false;
                     SystemState.shouldRestartRecognition = false;
                     
@@ -815,7 +816,7 @@
                     if (SystemState.audioContext) {
                         SystemState.audioContext.close();
                     }
-
+                    
                     voiceBtn.classList.remove("listening");
                     document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
                     voiceStatusDot.className = "status-dot";
@@ -823,123 +824,92 @@
                     voiceModuleStatus.textContent = "STANDBY";
                     voiceModuleStatus.classList.remove("active");
                     voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                    liveDecibel.textContent = "-Inf dB";
-                    liveSampleRate.textContent = "0.0 kHz";
                     
                     resetAllUIValues();
                 }
             }
 
-       function processAutomatedSemanticResponse(text) {
-    // 1. Normalize the string immediately at the top
-    text = text.toLowerCase().trim();
-    console.log("Processing text:", text);
+            // ========================================================
+            // FASTAPI ROUTER CONNECTOR
+            // ========================================================
+            function processAutomatedSemanticResponse(text) {
+                text = text.toLowerCase().trim();
+                console.log("Processing text:", text);
 
-    // 2. Send command to Python backend 
-    fetch("http://127.0.0.1:8000/command", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            command: text
-        })
-    })
-    .then(response => response.json())
-    // ========================================================
-    // ADDED: Your updated handler block goes right here!
-    // ========================================================
-    .then(data => {
-        console.log("Backend Response:", data);
-        if (data.open_url) {
-            // This safely opens the calculated URL on your local browser window!
-            window.open(data.open_url, '_blank'); 
-        }
-    })
-    // ========================================================
-    .catch(error => {
-        console.error("Connection Error:", error);
-    });
+                fetch("http://127.0.0.1:8000/command", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ command: text })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Backend Response:", data);
+                    if (data.open_url) {
+                        window.open(data.open_url, '_blank'); 
+                    }
+                })
+                .catch(error => {
+                    console.error("Connection Error:", error);
+                });
 
-    // 3. Frontend fallback/immediate semantic speech matching
-    if (text.includes("system") || text.includes("assist")) {
-        if (text.includes("status") || text.includes("scan")) {
-            executeRoboticSpeech(
-                "Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops."
-            );
-        } else if (text.includes("hello") || text.includes("hi")) {
-            executeRoboticSpeech(
-                "Greetings user. Systems initialization check complete. All matrices are operational."
-            );
-        } else {
-            executeRoboticSpeech(
-                "System keyword processed. Parsing command string."
-            );
-        }
-    }
-}
+                if (text.includes("system") || text.includes("assist")) {
+                    if (text.includes("status") || text.includes("scan")) {
+                        executeRoboticSpeech("Scanning core operations. Vision grids stable. Robotics kinematics reporting nominal tracking loops.");
+                    } else if (text.includes("hello") || text.includes("hi")) {
+                        executeRoboticSpeech("Greetings user. Systems initialization check complete. All matrices are operational.");
+                    } else {
+                        executeRoboticSpeech("System keyword processed. Parsing command string.");
+                    }
+                }
+            }
 
+            // ========================================================
+            // LIVE TELEMETRY UI UPDATER LOOP
+            // ========================================================
             function runLiveTelemetryUIUpdate() {
                 requestAnimationFrame(runLiveTelemetryUIUpdate);
 
-                // 1. Audio Equalizer & Decibel updates
-                if (SystemState.isListening && SystemState.analyser) {
+                // 1. Process microphone audio data array if active
+                if (SystemState.isListening && SystemState.analyser && SystemState.dataArray) {
                     SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    let sum = 0;
                     
-                    eqBars.forEach((bar, index) => {
-                        const val = SystemState.dataArray[index] || 0;
-                        sum += val;
-                        const heightPercent = Math.max(10, Math.min(100, (val / 255) * 100));
-                        bar.style.height = `${heightPercent}%`;
-                    });
+                    let totalVolume = 0;
+                    for (let i = 0; i < eqBars.length; i++) {
+                        // Bind specific audio frequency index steps to the 10 graphic visualizer bars
+                        const dataIndex = Math.floor(i * (SystemState.dataArray.length / eqBars.length));
+                        const rawVolume = SystemState.dataArray[dataIndex] || 0;
+                        totalVolume += rawVolume;
 
-                    let average = sum / eqBars.length;
-                    SystemState.currentVolume = average;
-                    let db = 20 * Math.log10(average / 255);
-                    if (average === 0) db = -100;
-                    liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
+                        // Calculate dynamic height scaling
+                        const heightPercent = Math.max(10, Math.floor((rawVolume / 255) * 100));
+                        eqBars[i].style.height = `${heightPercent}%`;
+                    }
+                    
+                    // Update live Decibel display calculations
+                    const averageVolume = totalVolume / eqBars.length;
+                    const calculatedDb = averageVolume > 0 ? Math.floor((averageVolume / 255) * 100) - 60 : -90;
+                    liveDecibel.textContent = `${calculatedDb} dB`;
 
-                    // Animate responsive metric changes when speaking
-                    const randomFlux = () => Math.floor(Math.random() * 30);
-                    emotionBars.calmBar.style.width = `${70 + randomFlux() / 3}%`;
-                    emotionBars.calmTxt.textContent = emotionBars.calmBar.style.width;
-                    emotionBars.frictionBar.style.width = `${10 + randomFlux() / 5}%`;
-                    emotionBars.frictionTxt.textContent = emotionBars.frictionBar.style.width;
-                    emotionBars.loadBar.style.width = `${Math.min(100, average * 1.5)}%`;
-                    emotionBars.loadTxt.textContent = emotionBars.loadBar.style.width;
+                    // Generate responsive active parameters for metrics dashboard
+                    const dynamicStabilizer = Math.floor(Math.random() * 15) + 75; // 75% - 90%
+                    emotionBars.calmBar.style.width = `${dynamicStabilizer}%`;
+                    emotionBars.calmTxt.textContent = `${dynamicStabilizer}%`;
+
+                    const calculatedFriction = Math.max(0, Math.floor(averageVolume / 4));
+                    emotionBars.frictionBar.style.width = `${calculatedFriction}%`;
+                    emotionBars.frictionTxt.textContent = `${calculatedFriction}%`;
+
+                    const systemLoad = Math.floor(Math.random() * 10) + 40; // Simulated idle baseline load
+                    emotionBars.loadBar.style.width = `${systemLoad}%`;
+                    emotionBars.loadTxt.textContent = `${systemLoad}%`;
                 }
 
-                // 2. Mocking UI matrix data updates if core is running
-                if (SystemState.isListening) {
-                    const timeSeed = Date.now();
-                    
-                    // Neural values
-                    const nVelocity = Math.floor(75 + Math.sin(timeSeed / 400) * 10);
-                    metricLabels.neuralVelocity.textContent = `${nVelocity}%`;
-                    metricLabels.neuralIndex.textContent = `${Math.floor(60 + Math.cos(timeSeed / 600) * 8)}%`;
-                    metricLabels.neuralActive.textContent = `${Math.floor(85 + Math.sin(timeSeed / 200) * 5)}%`;
-                    metricLabels.neuralBar.style.width = `${nVelocity}%`;
-
-                    // Vision values
-                    const vFPS = Math.floor(58 + Math.random() * 4);
-                    metricLabels.visionFPS.textContent = `${vFPS} FPS`;
-                    metricLabels.visionAccuracy.textContent = `${(94 + Math.sin(timeSeed / 800) * 2).toFixed(1)}%`;
-                    metricLabels.visionTracking.textContent = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
-                    metricLabels.analyticsBar.style.width = `${Math.floor(80 + Math.cos(timeSeed / 500) * 15)}%`;
-
-                    // Robot Core values
-                    const rTasks = Math.floor(40 + Math.sin(timeSeed / 1000) * 20);
-                    metricLabels.robotTasks.textContent = `${rTasks}%`;
-                    metricLabels.robotLoad.textContent = `${Math.floor(35 + Math.cos(timeSeed / 700) * 12)}%`;
-                    metricLabels.robotFlow.textContent = `${(98.2 + Math.sin(timeSeed / 1500) * 1.1).toFixed(1)}%`;
-                    metricLabels.automationBar.style.width = `${rTasks}%`;
-                }
-
-                // 3. Render Simulated Telemetry Sparklines using HTML5 Canvas
+                // 2. Render Telemetry Matrix Canvases
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
-                    if (!engine.ctx) return;
+                    if (!engine.ctx || !engine.el) return;
 
                     const ctx = engine.ctx;
                     const w = engine.el.width / window.devicePixelRatio;
@@ -947,38 +917,56 @@
 
                     ctx.clearRect(0, 0, w, h);
 
-                    // Add new data point to trace array
-                    if (SystemState.isListening) {
-                        let lastPoint = engine.points[engine.points.length - 1];
-                        let change = (Math.random() - 0.5) * 12;
-                        let newPoint = Math.max(10, Math.min(h - 10, lastPoint + change));
-                        engine.points.push(newPoint);
-                        engine.points.shift();
-                    }
+                    // Drop oldest tracking value point and slide new raw telemetry tracking coordinate inside array
+                    engine.points.shift();
+                    let nextValue = engine.points[engine.points.length - 1];
 
-                    // Render trace path line
+                    if (SystemState.isListening) {
+                        // Generate dynamic tracking vectors when running active systems
+                        nextValue += (Math.random() * 12 - 6);
+                        nextValue = Math.max(10, Math.min(h - 10, nextValue));
+                    } else {
+                        // Decay line smoothly back into flatline rest vectors when systems are offline
+                        nextValue += (h / 2 - nextValue) * 0.1;
+                    }
+                    engine.points.push(nextValue);
+
+                    // Draw the cyber path line vector map
                     ctx.beginPath();
                     ctx.strokeStyle = engine.color;
                     ctx.lineWidth = 2;
                     ctx.lineJoin = "round";
 
-                    const step = w / (engine.points.length - 1);
-                    engine.points.forEach((pt, idx) => {
-                        if (idx === 0) ctx.moveTo(0, pt);
-                        else ctx.lineTo(idx * step, pt);
-                    });
+                    const sliceWidth = w / (engine.points.length - 1);
+                    for (let i = 0; i < engine.points.length; i++) {
+                        const x = i * sliceWidth;
+                        const y = engine.points[i];
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
                     ctx.stroke();
-
-                    // Render smooth area under path fill
-                    ctx.lineTo(w, h);
-                    ctx.lineTo(0, h);
-                    ctx.closePath();
-                    ctx.fillStyle = engine.color + "11"; // Add alpha opacity color fill
-                    ctx.fill();
                 });
+
+                // 3. Keep dashboard metric elements ticking with live nominal numbers when tracking loop runs
+                if (SystemState.isListening) {
+                    metricLabels.neuralVelocity.textContent = `${Math.floor(Math.random() * 15) + 80}%`;
+                    metricLabels.neuralIndex.textContent = (Math.random() * 0.5 + 1.2).toFixed(2);
+                    metricLabels.neuralActive.textContent = `${Math.floor(Math.random() * 5) + 24}`;
+                    metricLabels.neuralBar.style.width = "88%";
+
+                    metricLabels.visionFPS.textContent = `${Math.floor(Math.random() * 4) + 58} FPS`;
+                    metricLabels.visionAccuracy.textContent = `${(Math.random() * 2 + 97).toFixed(1)}%`;
+                    metricLabels.visionTracking.textContent = `${Math.floor(Math.random() * 10) + 145} Pts`;
+                    metricLabels.analyticsBar.style.width = "94%";
+
+                    metricLabels.robotTasks.textContent = `${Math.floor(Math.random() * 10) + 85}%`;
+                    metricLabels.robotLoad.textContent = `${Math.floor(Math.random() * 8) + 12}%`;
+                    metricLabels.robotFlow.textContent = "Nominal";
+                    metricLabels.automationBar.style.width = "72%";
+                }
             }
 
-            // Fire up Canvas systems mapping elements instantly
+            // Initialize telemetries tracking lines immediately upon document parsing completion
             initLiveTelemetryEngine();
         });
     </script>
