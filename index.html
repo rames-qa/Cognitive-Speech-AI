@@ -837,55 +837,69 @@
             
             resetAllUIValues();
         }
-
-        // --- NEW INTEGRATION EXTENSION LOGIC ---
+// --- NEW SERVER CONTEXT INTEGRATION EXTENSION LOGIC ---
         function processVoicePayload(rawText) {
             voiceTranscript.textContent = rawText;
             const textLower = rawText.toLowerCase().trim();
 
-            // Setup web mapping schemas
-            let searchTarget = null;
-            let baseUrl = "";
-            let cleanQuery = rawText;
+            // 1. Visually spike UI telemetry lines to show network transit
+            animatePanelSpikeMetrics();
+            
+            emotionTokenDisplay.textContent = "ROUTING PAYLOAD";
+            emotionTokenDisplay.style.color = "var(--neon-purple)";
 
-            // Strip action verbs to capture clean target entities
-            const filterRegex = /(discover|search|fix|open|find|show me|go to)\s+/i;
-            let queryPayload = textLower.replace(filterRegex, "").trim();
-
-            if (textLower.includes("gmail")) {
-                searchTarget = "Gmail";
-                baseUrl = textLower.includes("search") ? "https://mail.google.com/mail/u/0/#search/" : "https://mail.google.com/";
-            } else if (textLower.includes("amazon")) {
-                searchTarget = "Amazon";
-                baseUrl = "https://www.amazon.com/s?k=";
-            } else if (textLower.includes("flipkart")) {
-                searchTarget = "Flipkart";
-                baseUrl = "https://www.flipkart.com/search?q=";
-            } else if (textLower.includes("news") || textLower.includes("google news")) {
-                searchTarget = "Google News";
-                baseUrl = "https://news.google.com/search?q=";
-            } else if (textLower.includes("youtube")) {
-                searchTarget = "YouTube";
-                baseUrl = "https://www.youtube.com/results?search_query=";
-            }
-
-            if (searchTarget) {
-                // Strip the platform name out of query parameters to optimize result pages
-                queryPayload = queryPayload.replace(searchTarget.toLowerCase(), "").trim();
-                
-                if (baseUrl.includes("=") || baseUrl.endsWith("#search/")) {
-                    const finalUrl = baseUrl + encodeURIComponent(queryPayload);
-                    executeRoboticSpeech(`Executing structural payload routing to ${searchTarget} for ${queryPayload || 'your request'}`);
-                    window.open(finalUrl, '_blank');
-                } else {
-                    executeRoboticSpeech(`Opening ${searchTarget} panel dashboard interface.`);
-                    window.open(baseUrl, '_blank');
+            // 2. Dispatch cross-origin POST request down to local Flask core
+            fetch('http://127.0.0.1:5000/api/command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ command: rawText })
+            })
+            .then(response => {
+                if (response.status === 423) {
+                    executeRoboticSpeech("System pipeline failure. The Selenium automation engine is currently busy processing an active session.");
+                    return null;
                 }
+                return response.json();
+            })
+            .then(data => {
+                if (!data) return;
+
+                if (data.status === "success") {
+                    // Speak back the exact action description determined by your Python backend
+                    executeRoboticSpeech(`${data.action}. Execution array initialized.`);
+                    
+                    // UI Context feedback shifts
+                    voiceStatusText.textContent = `Success: ${data.action}`;
+                } else {
+                    executeRoboticSpeech("Core execution fallback. Command parsing resulted in an anomalous status matrix.");
+                }
+            })
+            .catch(err => {
+                console.error("Backend link breakdown:", err);
+                executeRoboticSpeech("Transmission connection breakdown. Core backend array appears offline.");
                 
-                // Spike UI tracking response to mirror system engagement
-                animatePanelSpikeMetrics();
+                // Graceful fallback to opening basic client-side window if backend is closed
+                handleClientSideFallback(textLower, rawText);
+            });
+        }
+
+        // Client-side fallback mapping loop in case your Python backend is shut down
+        function handleClientSideFallback(textLower, rawText) {
+            let baseUrl = "";
+            let platform = "";
+            
+            if (textLower.includes("amazon")) { platform = "Amazon"; baseUrl = "https://www.amazon.in"; }
+            else if (textLower.includes("flipkart")) { platform = "Flipkart"; baseUrl = "https://www.flipkart.com"; }
+            else if (textLower.includes("youtube")) { platform = "YouTube"; baseUrl = "https://www.youtube.com"; }
+            else if (textLower.includes("gmail")) { platform = "Gmail"; baseUrl = "https://mail.google.com"; }
+            else if (textLower.includes("news")) { platform = "Google News"; baseUrl = "https://news.google.com"; }
+
+            if (baseUrl) {
+                window.open(baseUrl, '_blank');
             } else {
-                executeRoboticSpeech("Command localized. Query parameters do not match external ecosystem mapping keys.");
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(rawText)}`, '_blank');
             }
         }
 
