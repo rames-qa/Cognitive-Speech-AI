@@ -233,7 +233,6 @@
             flex-direction: column;
             gap: 6px;
             border-bottom: 1px solid #1e2942;
-
             padding-bottom: 12px;
             margin-bottom: 15px;
         }
@@ -425,12 +424,34 @@
             .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
             .section-title { font-size: 2rem; margin-bottom: 40px; }
         }
+
+        /* --- EXPLICIT MOBILE MEDIA OVERRIDES --- */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            .hero h1 {
+                font-size: 1.8rem !important;
+                text-align: center;
+            }
+            .cognitive-grid, .dashboard-container, .dashboard-metrics-grid, .stats-matrix {
+                grid-template-columns: 1fr !important;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 15px;
+            }
+            .btn, button {
+                width: 100% !important;
+                padding: 16px !important;
+                font-size: 1.05rem !important;
+            }
+        }
     </style>
 </head>
 <body>
  
     <nav>
-        <div class="logo">Cognitive AI </div>
+        <div class="logo">Cognitive AI</div>
         <ul>
             <li><a href="#home">Console</a></li>
             <li><a href="#dashboard">Live Matrix</a></li>
@@ -438,7 +459,7 @@
     </nav>
  
     <section class="hero" id="home">
-        <h1> Cognitive Speech AI </h1>
+        <h1>Cognitive Speech AI</h1>
         <p>A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.</p>
  
         <div class="voice-console-card">
@@ -821,11 +842,7 @@
                 try { SystemState.audioContext.close(); } catch(e) {}
                 SystemState.audioContext = null;
             }
-
-            if (SystemState.animationFrameId) {
-                cancelAnimationFrame(SystemState.animationFrameId);
-            }
-
+            
             voiceBtn.classList.remove("listening");
             document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
             voiceStatusDot.className = "status-dot";
@@ -835,152 +852,86 @@
             voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
             voiceTranscript.innerHTML = '<span class="transcript-placeholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>';
             
+            if (SystemState.animationFrameId) {
+                cancelAnimationFrame(SystemState.animationFrameId);
+            }
             resetAllUIValues();
         }
-// --- NEW SERVER CONTEXT INTEGRATION EXTENSION LOGIC ---
+
+        // --- ADAPTIVE ENDPOINT INTERACTION ROUTER ---
+        const serverIP = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" 
+            ? "127.0.0.1" 
+            : window.location.hostname;
+
+        const BACKEND_API = `http://${serverIP}:5000/api/command`;
+
         function processVoicePayload(rawText) {
-            voiceTranscript.textContent = rawText;
-            const textLower = rawText.toLowerCase().trim();
-
-            // 1. Visually spike UI telemetry lines to show network transit
-            animatePanelSpikeMetrics();
+            if (voiceTranscript) {
+                voiceTranscript.textContent = rawText;
+            }
             
-            emotionTokenDisplay.textContent = "ROUTING PAYLOAD";
-            emotionTokenDisplay.style.color = "var(--neon-purple)";
+            console.log("Routing voice data payload to machine network matrix:", BACKEND_API);
 
-            // 2. Dispatch cross-origin POST request down to local Flask core
-            fetch('http://127.0.0.1:5000/api/command', {
+            fetch(BACKEND_API, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ command: rawText })
             })
             .then(response => {
                 if (response.status === 423) {
-                    executeRoboticSpeech("System pipeline failure. The Selenium automation engine is currently busy processing an active session.");
+                    executeRoboticSpeech("Automation core busy.");
                     return null;
                 }
                 return response.json();
             })
             .then(data => {
                 if (!data) return;
+                
+                if (data.action) {
+                    executeRoboticSpeech(`${data.action}`);
+                }
 
-                if (data.status === "success") {
-                    // Speak back the exact action description determined by your Python backend
-                    executeRoboticSpeech(`${data.action}. Execution array initialized.`);
-                    
-                    // UI Context feedback shifts
-                    voiceStatusText.textContent = `Success: ${data.action}`;
-                } else {
-                    executeRoboticSpeech("Core execution fallback. Command parsing resulted in an anomalous status matrix.");
+                if (data.url) {
+                    window.open(data.url, '_blank');
                 }
             })
             .catch(err => {
-                console.error("Backend link breakdown:", err);
-                executeRoboticSpeech("Transmission connection breakdown. Core backend array appears offline.");
-                
-                // Graceful fallback to opening basic client-side window if backend is closed
-                handleClientSideFallback(textLower, rawText);
+                console.error("Local network bridge matrix configuration mismatch:", err);
+                executeRoboticSpeech("Communication link failure. Core backend array appears offline.");
             });
-        }
-
-        // Client-side fallback mapping loop in case your Python backend is shut down
-        function handleClientSideFallback(textLower, rawText) {
-            let baseUrl = "";
-            let platform = "";
-            
-            if (textLower.includes("amazon")) { platform = "Amazon"; baseUrl = "https://www.amazon.in"; }
-            else if (textLower.includes("flipkart")) { platform = "Flipkart"; baseUrl = "https://www.flipkart.com"; }
-            else if (textLower.includes("youtube")) { platform = "YouTube"; baseUrl = "https://www.youtube.com"; }
-            else if (textLower.includes("gmail")) { platform = "Gmail"; baseUrl = "https://mail.google.com"; }
-            else if (textLower.includes("news")) { platform = "Google News"; baseUrl = "https://news.google.com"; }
-
-            if (baseUrl) {
-                window.open(baseUrl, '_blank');
-            } else {
-                window.open(`https://www.google.com/search?q=${encodeURIComponent(rawText)}`, '_blank');
-            }
-        }
-
-        function animatePanelSpikeMetrics() {
-            emotionBars.calmBar.style.width = "40%"; emotionBars.calmTxt.textContent = "40%";
-            emotionBars.frictionBar.style.width = "85%"; emotionBars.frictionTxt.textContent = "85%";
-            emotionBars.loadBar.style.width = "95%"; emotionBars.loadTxt.textContent = "95%";
-            
-            metricLabels.neuralVelocity.textContent = "98%";
-            metricLabels.neuralIndex.textContent = "82%";
-            metricLabels.neuralActive.textContent = "100%";
-            metricLabels.neuralBar.style.width = "98%";
         }
 
         function runLiveTelemetryUIUpdate() {
             if (!SystemState.isListening) return;
-
-            // Generate frequency node transformations for standard EQ visualization
+            SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
+            
             if (SystemState.analyser && SystemState.dataArray) {
                 SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
                 let sum = 0;
-                eqBars.forEach((bar, i) => {
-                    const value = SystemState.dataArray[i] || 0;
+                eqBars.forEach((bar, index) => {
+                    const value = SystemState.dataArray[index] || 0;
                     sum += value;
-                    const heightPercent = Math.max(10, Math.min(100, (value / 255) * 100));
-                    bar.style.height = `${heightPercent}%`;
+                    const percent = Math.min(100, Math.max(10, (value / 255) * 100));
+                    bar.style.height = `${percent}%`;
                 });
-
-                const average = sum / eqBars.length;
-                const db = average > 0 ? Math.round(20 * Math.log10(average / 255)) : -Infinity;
-                liveDecibel.textContent = db === -Infinity ? "-Inf dB" : `${db} dB`;
-            }
-
-            // Continuously drive real-time dashboard display simulation telemetry
-            const timestamp = Date.now() * 0.002;
-            
-            // 1. Update Matrix Text Nodes randomly
-            if (Math.random() > 0.85) {
-                metricLabels.visionFPS.textContent = `${Math.floor(54 + Math.random() * 7)} FPS`;
-                metricLabels.visionAccuracy.textContent = `${Math.floor(92 + Math.random() * 7)}%`;
-                metricLabels.visionTracking.textContent = `${Math.floor(88 + Math.random() * 10)}%`;
-                metricLabels.analyticsBar.style.width = metricLabels.visionAccuracy.textContent;
-
-                metricLabels.robotTasks.textContent = `${Math.floor(40 + Math.random() * 20)}%`;
-                metricLabels.robotLoad.textContent = `${Math.floor(15 + Math.random() * 15)}%`;
-                metricLabels.robotFlow.textContent = `${Math.floor(94 + Math.random() * 5)}%`;
-                metricLabels.automationBar.style.width = metricLabels.robotFlow.textContent;
-            }
-
-            // 2. Render canvas structural telemetry curves
-            Object.keys(telemetryCanvasEngines).forEach(key => {
-                const engine = telemetryCanvasEngines[key];
-                if (!engine.el) return;
-                const ctx = engine.el.getContext("2d");
-                if (!ctx) return;
-
-                // Adjust resolution scaling
-                if (engine.el.width !== engine.el.clientWidth || engine.el.height !== engine.el.clientHeight) {
-                    engine.el.width = engine.el.clientWidth;
-                    engine.el.height = engine.el.clientHeight;
-                }
-
-                ctx.clearRect(0, 0, engine.el.width, engine.el.height);
-                ctx.strokeStyle = engine.color;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-
-                const pointsCount = 30;
-                const step = engine.el.width / (pointsCount - 1);
                 
-                for (let i = 0; i < pointsCount; i++) {
-                    let modifier = key === 'neural' ? 15 : key === 'analytics' ? 22 : 10;
-                    let speedFactor = key === 'neural' ? 3 : key === 'analytics' ? 1.5 : 4;
-                    const y = (engine.el.height / 2) + Math.sin(i * 0.4 + timestamp * speedFactor) * modifier * Math.sin(timestamp * 0.5);
-                    if (i === 0) ctx.moveTo(i * step, y);
-                    else ctx.lineTo(i * step, y);
-                }
-                ctx.stroke();
-            });
-
-            SystemState.animationFrameId = requestAnimationFrame(runLiveTelemetryUIUpdate);
+                const average = sum / eqBars.length;
+                const db = average > 0 ? Math.round(20 * Math.log10(average / 255)) : -120;
+                liveDecibel.textContent = db === -120 ? "-Inf dB" : `${db} dB`;
+                
+                // Mocks varying processing fluctuations based on background ambient mic capture updates
+                const variance = average / 255;
+                const calm = Math.round(Math.min(100, 60 + variance * 40));
+                const friction = Math.round(variance * 30);
+                const load = Math.round(Math.min(100, 20 + variance * 80));
+                
+                emotionBars.calmBar.style.width = `${calm}%`;
+                emotionBars.calmTxt.textContent = `${calm}%`;
+                emotionBars.frictionBar.style.width = `${friction}%`;
+                emotionBars.frictionTxt.textContent = `${friction}%`;
+                emotionBars.loadBar.style.width = `${load}%`;
+                emotionBars.loadTxt.textContent = `${load}%`;
+            }
         }
 
         setupControlEventListeners();
