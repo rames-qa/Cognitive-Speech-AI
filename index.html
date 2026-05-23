@@ -844,24 +844,52 @@
         resetAllUIValues();
     }
 
-function processVoicePayload(transcript) {
-    const text = transcript.trim();
-    voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
-    
-    // Dispatches payload back into your local Python Flask Orchestrator
-    fetch('http://127.0.0.1:5000/api/command', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: text })
-    })
-    .then(res => res.json())
-    .then(data => {
-        console.log("Flask Response Matrix:", data);
-        if (data.status === "success") {
-            executeRoboticSpeech(data.message);
-        }
-    })
-    .catch(err => console.error("API link configuration mismatch:", err));
+function processVoicePayload(text) {
+    const command = text.toLowerCase().trim();
+
+    voiceTranscript.innerHTML = `<span style="color:var(--neon-blue);">Detected: ${text}</span>`;
+
+    // 🧠 ROUTER ENGINE
+    if (command.includes("youtube")) {
+        const query = command.replace("youtube", "").trim();
+        window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`);
+        executeRoboticSpeech("Opening YouTube search results");
+    }
+
+    else if (command.includes("gmail")) {
+        window.open("https://mail.google.com");
+        executeRoboticSpeech("Opening Gmail");
+    }
+
+    else if (command.includes("amazon")) {
+        const query = command.replace("amazon", "").trim();
+        window.open(`https://www.amazon.in/s?k=${encodeURIComponent(query)}`);
+        executeRoboticSpeech("Searching Amazon");
+    }
+
+    else if (command.includes("flipkart")) {
+        const query = command.replace("flipkart", "").trim();
+        window.open(`https://www.flipkart.com/search?q=${encodeURIComponent(query)}`);
+        executeRoboticSpeech("Searching Flipkart");
+    }
+
+    else if (command.includes("news")) {
+        const query = command.replace("news", "").trim();
+        window.open(`https://news.google.com/search?q=${encodeURIComponent(query)}`);
+        executeRoboticSpeech("Fetching latest news");
+    }
+
+    else if (command.includes("google")) {
+        const query = command.replace("google", "").trim();
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
+        executeRoboticSpeech("Searching Google");
+    }
+
+    else {
+        // default fallback
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(command)}`);
+        executeRoboticSpeech("Searching on Google");
+    }
 }
     function runLiveTelemetryUIUpdate() {
         if (!SystemState.isListening) return;
