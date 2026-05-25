@@ -8,106 +8,162 @@ import threading
 import urllib.parse
 import logging
 import sys
+import re
 
 # SYSTEM SETUP & CONFIGURATION
 app = Flask(__name__)
-
-# Production CORS: Restrict origins in production if frontend domain is known
-CORS(
-    app,
-    resources={
-        r"/api/*": {
-            "origins": "*" 
-        }
-    }
-)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # GLOBAL CONCURRENCY STATE
 automation_lock = threading.Lock()
 active_driver = None
-# DYNAMIC NLP & QUERY PROCESSING ENGINE
 
-def extract_production_intent(text, platform_tags=None):
+# COMPLETELY DYNAMIC REGISTRY CONFIGURATION
+# Scale or modify platforms here. Core processing logic reads this map dynamically.
+PLATFORM_REGISTRY = {
+    "amazon": {
+        "base_url": "https://www.amazon.in",
+        "search_path": "/s?k=",
+        "has_automation": True
+    },
+    "flipkart": {
+        "base_url": "https://www.flipkart.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "myntra": {
+        "base_url": "https://www.myntra.com",
+        "search_path": "/",
+        "aliases": ["fashion", "clothes", "shopping"],
+        "has_automation": False
+    },
+    "google maps": {
+        "base_url": "https://www.google.com/maps",
+        "search_path": "/search/",
+        "aliases": ["map", "route", "direction", "location"],
+        "has_automation": False
+    },
+    "gmail": {
+        "base_url": "https://mail.google.com",
+        "search_path": "/mail/u/0/#search/",
+        "aliases": ["mail", "inbox"],
+        "has_automation": False
+    },
+    "youtube": {
+        "base_url": "https://www.youtube.com",
+        "search_path": "/results?search_query=",
+        "aliases": ["video", "song", "music"],
+        "has_automation": False
+    },
+    # ENTIRE WORLD NEWS & UPDATES STREAM
+    "news": {
+        "base_url": "https://news.google.com",
+        "search_path": "/search?q=",
+        "aliases": ["world news", "global news", "updates", "breaking news", "current affairs"],
+        "has_automation": False
+    },
+    "reuters": {
+        "base_url": "https://www.reuters.com",
+        "search_path": "/search/ui/?q=",
+        "aliases": ["international news", "business updates"],
+        "has_automation": False
+    },
+    "bbc news": {
+        "base_url": "https://www.bbc.com/news",
+        "search_path": "/search?q=",
+        "aliases": ["bbc"],
+        "has_automation": False
+    },
+    "github": {
+        "base_url": "https://github.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "linkedin": {
+        "base_url": "https://www.linkedin.com",
+        "search_path": "/search/results/all/?keywords=",
+        "has_automation": False
+    }
+}
+
+# DYNAMIC NLP PARSING ENGINE
+def resolve_intent_and_query(command):
     """
-    Safely tokenizes natural language speech strings without 
-    accidentally destroying target phrases or substring structures.
+    Dynamically extracts the matched platform registry key and contextual 
+    search query parameters from loose natural language inputs.
     """
-    if platform_tags is None:
-        platform_tags = []
-        
-    cleaned = text.lower().strip()
-    
-    # Ordered by string length descending to guarantee maximum phrase matching first
-    action_tokens = [
-        "tell me about", "details of", "search for", 
-        "open up", "route to", "show me", "go to", 
-        "search", "launch", "start", "play", "find", "open"
+    command = command.lower().strip()
+    matched_platform = None
+
+    # 1. Prioritize multi-word aliases/keys first to prevent partial token matching
+    sorted_platforms = sorted(
+        PLATFORM_REGISTRY.items(), 
+        key=lambda item: max([len(term) for term in [item[0]] + item[1].get("aliases", [])]), 
+        reverse=True
+    )
+
+    # 2. Extract specific platform matching rules via regular expressions
+    for target_key, config in sorted_platforms:
+        search_terms = [target_key] + config.get("aliases", [])
+        for term in search_terms:
+            if re.search(r'\b' + re.escape(term) + r'\b', command):
+                matched_platform = target_key
+                command = re.sub(r'\b' + re.escape(term) + r'\b', '', command).strip()
+                break
+        if matched_platform:
+            break
+
+    # 3. Dynamic prepositions and filler-action parsing matrices
+    action_patterns = [
+        r"\btell me about\b", r"\bdetails of\b", r"\bsearch for\b", 
+        r"\bopen up\b", r"\broute to\b", r"\bshow me\b", r"\bgo to\b", 
+        r"\bsearch\b", r"\blaunch\b", r"\bstart\b", r"\bplay\b", r"\bfind\b", r"\bopen\b",
+        r"\bon\b", r"\bfor\b", r"\bat\b", r"\band\b"
     ]
     
-    # Normalize and isolate platform-specific keyword definitions
-    filter_tokens = action_tokens + [str(tag).lower() for tag in platform_tags]
+    clean_query = command
+    for pattern in action_patterns:
+        clean_query = re.sub(pattern, " ", clean_query)
     
-    for token in filter_tokens:
-        # Pad checking spaces to preserve word boundaries where possible
-        if token in cleaned:
-            cleaned = cleaned.replace(token, "")
-            
-    return cleaned.strip()
+    extracted_query = " ".join(clean_query.split())
+    return matched_platform, extracted_query
+
 
 def build_api_payload(status, action, url=""):
-    return jsonify({
-        "status": status,
-        "action": action,
-        "url": url
-    })
+    return jsonify({"status": status, "action": action, "url": url})
 
-# ASYNC AUTOMATION WORKER PIPELINES
-
+# ASYNC AUTOMATION PIPELINE RUNNER
 def execute_amazon_pipeline():
-    """
-    Handles headless-safe execution and explicitly manages target lifecycles
-    without orphaning web browser processing nodes in system memory.
-    """
     global active_driver
-
     if not automation_lock.acquire(blocking=False):
-        print("[WORKER BLOCKED] Automation routine requested while engine is locked.")
+        print("[WORKER BLOCKED] Engine is busy processing an open test pipeline.")
         return
         
-    print("\n[SELENIUM] Initializing detached infrastructure orchestration...")
-    options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
-    
-    # Keeps the session visible for manual interception post-automation pass
-    options.add_experimental_option("detach", True)
-    
+    print("\n[SELENIUM] Initializing autonomous driver orchestration sequence...")
     try:
-        # Selenium 4.6+ Native Driver Resolution
+        options = webdriver.ChromeOptions()
+        options.add_argument("--start-maximized")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--no-sandbox")
+        options.add_experimental_option("detach", True)
+        
         active_driver = webdriver.Chrome(options=options)
-        active_driver.get("https://www.amazon.in")
+        active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])
         
         wait = WebDriverWait(active_driver, 12)
-        signin_node = wait.until(
-            EC.element_to_be_clickable((By.ID, "nav-link-accountList"))
-        )
+        signin_node = wait.until(EC.element_to_be_clickable((By.ID, "nav-link-accountList")))
         signin_node.click()
-        print("[SELENIUM] Verification target achieved: Login gateway reached.")
-        
+        print("[SELENIUM] Routine target reached: Login screen deployed.")
     except Exception as error:
-        print(f"[SELENIUM ERROR] Pipe failure detected: {error}", file=sys.stderr)
+        print(f"[SELENIUM ERROR] Automation execution faulted: {error}", file=sys.stderr)
         if active_driver:
-            try:
-                active_driver.quit()
-            except Exception:
-                pass
+            try: active_driver.quit()
+            except: pass
             active_driver = None
     finally:
         automation_lock.release()
 
-# PRODUCTION ROUTING GATEWAYS
-
+# DYNAMIC ENDPOINT ROUTING MANAGEMENT
 @app.route("/api/command", methods=["POST"])
 def process_incoming_command():
     try:
@@ -115,99 +171,57 @@ def process_incoming_command():
         raw_input = payload.get("command", "").strip()
         
         if not raw_input:
-            return build_api_payload("empty", "No payload vector received.")
+            return build_api_payload("empty", "No payload execution vector supplied.")
             
         command = raw_input.lower()
-        print(f"[INGRESS] Core Token Vector -> {command}")
+        print(f"[INGRESS] Routing Vector Received -> {command}")
         
-        # SYSTEM UTILITIES
+        # System Health Monitoring Shortcut Toggles
         if any(token in command for token in ["system", "status", "connected", "dashboard"]):
-            return build_api_payload("success", "Production gateway infrastructure operational.")
+            return build_api_payload("success", "Dynamic infrastructure matrix operational.")
             
-        # AMAZON TARGET ROUTING
-        elif "amazon" in command:
-            if any(act in command for act in ["login", "automation", "run"]):
+        # Parsing registry targets dynamically
+        platform, query = resolve_intent_and_query(command)
+        
+        if platform:
+            platform_config = PLATFORM_REGISTRY[platform]
+            
+            # Decoupled Browser Execution Toggles
+            if platform_config["has_automation"] and any(act in command for act in ["login", "automation", "run"]):
                 if automation_lock.locked():
-                    return build_api_payload("busy", "Engine is currently executing a standard block.")
+                    return build_api_payload("busy", "Selenium instance pipeline is currently locked.")
                 
                 threading.Thread(target=execute_amazon_pipeline, daemon=True).start()
-                return build_api_payload("success", "Spawning decoupled Amazon automated runner.", "https://www.amazon.in")
+                return build_api_payload("success", f"Triggered active thread runner for {platform}.", platform_config["base_url"])
             
-            search_query = extract_production_intent(command, ["amazon"])
-            if search_query:
-                target_url = f"https://www.amazon.in/s?k={urllib.parse.quote(search_query)}"
-                return build_api_payload("success", f"Redirecting to Amazon search: {search_query}", target_url)
-            return build_api_payload("success", "Redirecting to Amazon main interface.", "https://www.amazon.in")
+            # Dynamic search URL build sequences
+            if query:
+                # Specific Myntra Search Formatting Hack (Uses standard param string generation)
+                if platform == "myntra":
+                    target_url = f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
+                else:
+                    target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"
+                    
+                return build_api_payload("success", f"Dynamic mapping to {platform} query parameter: '{query}'", target_url)
             
-        # FLIPKART TARGET ROUTING
-        elif "flipkart" in command:
-            search_query = extract_production_intent(command, ["flipkart"])
-            if search_query:
-                target_url = f"https://www.flipkart.com/search?q={urllib.parse.quote(search_query)}"
-                return build_api_payload("success", f"Redirecting to Flipkart search: {search_query}", target_url)
-            return build_api_payload("success", "Redirecting to Flipkart marketplace.", "https://www.flipkart.com")
+            # Main interface target fallback configuration
+            return build_api_payload("success", f"Routing request forward to {platform} root interface.", platform_config["base_url"])
             
-        # GOOGLE MAPS (Fixed Production-Grade Geo Endpoints)
-        elif any(token in command for token in ["map", "route", "direction", "location"]):
-            search_query = extract_production_intent(command, ["map", "route", "direction", "location"])
-            if search_query:
-                target_url = f"https://www.google.com/maps/search/{urllib.parse.quote(search_query)}"
-                return build_api_payload("success", f"Generating dynamic mapping path for: {search_query}", target_url)
-            return build_api_payload("success", "Redirecting to primary Google Maps engine.", "https://www.google.com/maps")
-            
-        # GLOBAL COMMUNICATIONS (GMAIL)
-        elif any(token in command for token in ["gmail", "mail", "inbox"]):
-            search_query = extract_production_intent(command, ["gmail", "mail", "inbox"])
-            if search_query:
-                target_url = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(search_query)}"
-                return build_api_payload("success", f"Filtering messaging archive for: {search_query}", target_url)
-            return build_api_payload("success", "Opening central communications workspace.", "https://mail.google.com")
-            
-        # CONTENT DELIVERY (YOUTUBE)
-        elif any(token in command for token in ["youtube", "video", "song", "music"]):
-            search_query = extract_production_intent(command, ["youtube", "video", "song", "music"])
-            if search_query:
-                target_url = f"https://www.youtube.com/results?search_query={urllib.parse.quote(search_query)}"
-                return build_api_payload("success", f"Streaming search indexing array for: {search_query}", target_url)
-            return build_api_payload("success", "Opening content platform dashboard.", "https://www.youtube.com")
-            
-        # NEWS STRATIFICATION
-        elif "news" in command:
-            search_query = extract_production_intent(command, ["news"])
-            if search_query:
-                target_url = f"https://news.google.com/search?q={urllib.parse.quote(search_query)}"
-                return build_api_payload("success", f"Isolating dynamic press feeds for: {search_query}", target_url)
-            return build_api_payload("success", "Opening centralized global press feeds.", "https://news.google.com")
-            
-        # PORTAL FALLBACK DEFAULTS
-        elif "google" in command:
-            return build_api_payload("success", "Resolving portal home.", "https://www.google.com")
-        elif "github" in command:
-            return build_api_payload("success", "Resolving version control hub.", "https://github.com")
-        elif "linkedin" in command:
-            return build_api_payload("success", "Resolving business index professional channels.", "https://www.linkedin.com")
-            
-        # WEB SEARCH FALLBACK
-        else:
-            fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(command)}"
-            return build_api_payload("success", f"Processing wide-spectrum web search fallback for: {command}", fallback_target)
+        # Standard Global Open Web Query Search Engine Resolution
+        fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(command)}"
+        return build_api_payload("success", f"No localized workspace hit. Fallback query to open web: {command}", fallback_target)
             
     except Exception as runtime_error:
-        print(f"[CRITICAL ERROR] Core runtime fault: {runtime_error}", file=sys.stderr)
+        print(f"[CRITICAL ERORR] Process pipeline crashed: {runtime_error}", file=sys.stderr)
         return jsonify({
             "status": "error",
             "action": "Internal API infrastructure exception encountered.",
             "details": str(runtime_error)
         }), 500
 
-# RESOURCE LIFECYCLE MANAGEMENT ENDPOINTS
-
+# ADMINISTRATIVE RUNTIME OPERATIONS
 @app.route("/api/close_session", methods=["POST"])
 def terminate_orphaned_drivers():
-    """
-    Explicit administrative webhook to clean up trailing Chrome runtimes
-    leveraging the detached experimental flag state.
-    """
     global active_driver
     try:
         if active_driver:
@@ -220,25 +234,15 @@ def terminate_orphaned_drivers():
 
 @app.route("/")
 def health_check():
-    return jsonify({
-        "status": "online",
-        "service": "Cognitive Enterprise Pipeline"
-    })
+    return jsonify({"status": "online", "service": "Adaptive Pipeline Framework"})
 
-# SERVER BOOTSTRAPPING ENGINE
 if __name__ == "__main__":
-    # Suppress verbose development routing entries
     logging.getLogger("werkzeug").setLevel(logging.ERROR)
     
     print("\n" + "=" * 65)
-    print("    COGNITIVE SPEECH AI ")
-    print("   Operational Scope: Threaded API Ingress + Selenium Engine")
+    print("   COGNITIVE SPEECH AI ")
+    print("   Operational Scope: Registry-Driven Route Processing Engine")
     print("   Network Target:    http://0.0.0.0:5000")
     print("=" * 65 + "\n")
     
-    app.run(
-        host="0.0.0.0",
-        port=5000,
-        debug=False,
-        threaded=True
-    )
+    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
