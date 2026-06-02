@@ -1,228 +1,307 @@
-<!-- ... Rest of your dashboard sections and footer above ... -->
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import threading
+import urllib.parse
+import logging
+import sys
+import re
 
-    <footer> 
-        &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
-    </footer>
+# SYSTEM SETUP & CONFIGURATION
+app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    <!-- REPLACE THE OLD SCRIPT TAG WITH THIS: -->
-    <script>
-        /**
-         * Cognitive AI - Voice Interface & Signal Engine
-         * Handles Speech Recognition, Dashboard Component Activation, and Live Canvas Telemetry
-         */
+# GLOBAL CONCURRENCY STATE
+automation_lock = threading.Lock()
+active_driver = None
 
-        // --- 1. Global State Configuration ---
-        const SystemState = {
-            activeModule: null,
-            workingMode: "STANDBY",
-            animationFrameIds: { neural: null, analytics: null, automation: null },
-            canvasContexts: {},
-            waveOffsets: { neural: 0, analytics: 0, automation: 0 }
-        };
+# COMPLETELY DYNAMIC REGISTRY CONFIGURATION
+PLATFORM_REGISTRY = {
+    "amazon": {
+        "base_url": "https://www.amazon.in",
+        "search_path": "/s?k=",
+        "has_automation": True
+    },
+    "flipkart": {
+        "base_url": "https://www.flipkart.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "myntra": {
+        "base_url": "https://www.myntra.com",
+        "search_path": "/",
+        "aliases": ["fashion", "clothes", "shopping"],
+        "has_automation": False
+    },
+    "google maps": {
+        "base_url": "https://maps.google.com",
+        "search_path": "/search/",
+        "aliases": ["map", "route", "direction", "location"],
+        "has_automation": False
+    },
+    "gmail": {
+        "base_url": "https://mail.google.com",
+        "search_path": "/mail/u/0/#search/",
+        "aliases": ["mail", "inbox"],
+        "has_automation": False
+    },
+    "youtube": {
+        "base_url": "https://www.youtube.com",
+        "search_path": "/results?search_query=",
+        "aliases": ["video", "song", "music"],
+        "has_automation": False
+    },
+    "news": {
+        "base_url": "https://news.google.com",
+        "search_path": "/search?q=",
+        "aliases": ["world news", "global news", "updates", "breaking news", "current affairs"],
+        "has_automation": False
+    },
+    "reuters": {
+        "base_url": "https://www.reuters.com",
+        "search_path": "/search/ui/?q=",
+        "aliases": ["international news", "business updates"],
+        "has_automation": False
+    },
+    "bbc news": {
+        "base_url": "https://www.bbc.com/news",
+        "search_path": "/search?q=",
+        "aliases": ["bbc"],
+        "has_automation": False
+    },
+    "github": {
+        "base_url": "https://github.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "linkedin": {
+        "base_url": "https://www.linkedin.com",
+        "search_path": "/search/results/all/?keywords=",
+        "has_automation": False
+    },
+    "google": {
+        "base_url": "https://www.google.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "bing": {
+        "base_url": "https://www.bing.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "duckduckgo": {
+        "base_url": "https://duckduckgo.com",
+        "search_path": "/?q=",
+        "has_automation": False
+    },
+    "yahoo": {
+        "base_url": "https://search.yahoo.com",
+        "search_path": "/search/p=",
+        "has_automation": False
+    },
+    "stackoverflow": {
+        "base_url": "https://stackoverflow.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "reddit": {
+        "base_url": "https://www.reddit.com",
+        "search_path": "/search/?q=",
+        "has_automation": False
+    },
+    "wikipedia": {
+        "base_url": "https://en.wikipedia.org",
+        "search_path": "/wiki/Special:Search?search=",
+        "has_automation": False
+    },
+    "twitter": {
+        "base_url": "https://twitter.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "facebook": {
+        "base_url": "https://www.facebook.com",
+        "search_path": "/search/top?q=",
+        "has_automation": False
+    },
+    "instagram": {
+        "base_url": "https://www.instagram.com",
+        "search_path": "/explore/tags/",
+        "has_automation": False
+    },
+    "npm": {
+        "base_url": "https://www.npmjs.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "pypi": {
+        "base_url": "https://pypi.org",
+        "search_path": "/search/?q=",
+        "has_automation": False
+    },
+    "medium": {
+        "base_url": "https://medium.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "quora": {
+        "base_url": "https://www.quora.com",
+        "search_path": "/search?q=",
+        "has_automation": False
+    },
+    "bus": {
+        "base_url": "https://www.busbud.com",
+        "search_path": "/en/search/-/USD/",
+        "aliases": ["book bus", "bus ticket", "greyhound", "coach"],
+        "has_automation": False
+    },
+    "train": {
+        "base_url": "https://www.amtrak.com",
+        "search_path": "/home.html",
+        "aliases": ["book train", "train ticket", "railway ticket", "amtrak", "eurostar"],
+        "has_automation": False
+    },
+    "flights": {
+        "base_url": "https://www.expedia.com",
+        "search_path": "/Flights-Search?leg1=from::to:,departure::T&mode=search&passengers=adults:1",
+        "aliases": ["air ticket", "book flight", "flight ticket", "airline ticket", "plane ticket"],
+        "has_automation": False
+    }
+}
 
-        // --- 2. Initialize Web Speech API ---
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const voiceButton = document.getElementById('btnVoiceTrigger');
-        const statusDot = document.getElementById('voiceStatusDot');
-        const statusText = document.getElementById('voiceStatusText');
-        const transcriptBox = document.getElementById('voiceTranscript');
+# DYNAMIC NLP PARSING ENGINE
+def resolve_intent_and_query(command):
+    command = command.lower().strip()
+    matched_platform = None
+    
+    sorted_platforms = sorted(
+        PLATFORM_REGISTRY.items(), 
+        key=lambda item: max([len(term) for term in [item[0]] + item[1].get("aliases", [])]), 
+        reverse=True
+    )
+    for target_key, config in sorted_platforms:
+        search_terms = [target_key] + config.get("aliases", [])
+        for term in search_terms:
+            if re.search(r'\b' + re.escape(term) + r'\b', command):
+                matched_platform = target_key
+                command = re.sub(r'\b' + re.escape(term) + r'\b', '', command).strip()
+                break
+        if matched_platform:
+            break
 
-        let recognition = null;
+    action_patterns = [
+        r"\btell me about\b", r"\bdetails of\b", r"\bsearch for\b", 
+        r"\bopen up\b", r"\broute to\b", r"\bshow me\b", r"\bgo to\b", 
+        r"\bsearch\b", r"\blaunch\b", r"\bstart\b", r"\bplay\b", r"\bfind\b", r"\bopen\b",
+        r"\bon\b", r"\bfor\b", r"\bat\b", r"\band\b"
+    ]   
+    clean_query = command
+    for pattern in action_patterns:
+        clean_query = re.sub(pattern, " ", clean_query) 
+    extracted_query = " ".join(clean_query.split())
+    return matched_platform, extracted_query
 
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.lang = 'en-US';
-            recognition.interimResults = false;
+def build_api_payload(status, action, url=""):
+    return jsonify({"status": status, "action": action, "url": url})
 
-            recognition.onstart = () => {
-                voiceButton.classList.add('listening');
-                voiceButton.innerHTML = `
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="spin-icon">
-                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                    </svg> Listening...`;
-                statusDot.classList.add('active');
-                statusText.innerText = "Acoustic Engine Active";
-                transcriptBox.innerText = "Listening for control phrase...";
-            };
+# ASYNC AUTOMATION PIPELINE RUNNER
+def execute_amazon_pipeline():
+    global active_driver
+    if not automation_lock.acquire(blocking=False):
+        print("[WORKER BLOCKED] Engine is busy processing an open test pipeline.")
+        return     
+    print("\n[SELENIUM] Initializing autonomous Codespace driver orchestration sequence...")
+    try:
+        options = webdriver.ChromeOptions()
+        
+        # --- CRITICAL CODESPACE/HEADLESS ENVIRONMENT ARGUMENTS ---
+        options.add_argument("--headless=new") # Instructs Chrome to run in background without a GUI window
+        options.add_argument("--disable-gpu")     # Overrides hardware UI rendering pipeline limitations
+        options.add_argument("--window-size=1920,1080") # Simulates a standard crisp layout resolution
+        
+        # Original Sandbox safety setups
+        options.add_argument("--start-maximized")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--no-sandbox")
+        options.add_experimental_option("detach", True)       
+        
+        active_driver = webdriver.Chrome(options=options)
+        active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])      
+        
+        wait = WebDriverWait(active_driver, 12)
+        signin_node = wait.until(EC.element_to_be_clickable((By.ID, "nav-link-accountList")))
+        signin_node.click()
+        print("[SELENIUM] Routine target reached inside Codespace: Login target node located safely.")
+    except Exception as error:
+        print(f"[SELENIUM ERROR] Codespace automation execution faulted: {error}", file=sys.stderr)
+        if active_driver:
+            try: active_driver.quit()
+            except: pass
+            active_driver = None
+    finally:
+        automation_lock.release()
 
-            recognition.onerror = (event) => {
-                console.error("Speech Error:", event.error);
-                resetVoiceUI("Error Detecting Audio");
-            };
+# DYNAMIC ENDPOINT ROUTING MANAGEMENT
+@app.route("/api/command", methods=["POST"])
+def process_incoming_command():
+    try:
+        payload = request.get_json(force=True) or {}
+        raw_input = payload.get("command", "").strip()       
+        if not raw_input:
+            return build_api_payload("empty", "No payload execution vector supplied.")          
+        command = raw_input.lower()
+        print(f"[INGRESS] Routing Vector Received -> {command}")        
+        if any(token in command for token in ["system", "status", "connected", "dashboard"]):
+            return build_api_payload("success", "Dynamic infrastructure matrix operational.")          
+        platform, query = resolve_intent_and_query(command)       
+        if platform:
+            platform_config = PLATFORM_REGISTRY[platform]          
+            if platform_config["has_automation"] and any(act in command for act in ["login", "automation", "run"]):
+                if automation_lock.locked():
+                    return build_api_payload("busy", "Selenium instance pipeline is currently locked.")              
+                threading.Thread(target=execute_amazon_pipeline, daemon=True).start()
+                return build_api_payload("success", f"Triggered active thread runner for {platform}.", platform_config["base_url"])          
+            if query:
+                if platform == "myntra":
+                    target_url = f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
+                else:
+                    target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"                 
+                return build_api_payload("success", f"Dynamic mapping to {platform} query parameter: '{query}'", target_url)         
+            return build_api_payload("success", f"Routing request forward to {platform} root interface.", platform_config["base_url"])           
+        fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(raw_input)}"
+        return build_api_payload("success", f"No localized workspace hit. Fallback query to open web: {raw_input}", fallback_target)           
+    except Exception as runtime_error:
+        print(f"[CRITICAL ERROR] Process pipeline crashed: {runtime_error}", file=sys.stderr)
+        return jsonify({
+            "status": "error",
+            "action": "Internal API infrastructure exception encountered.",
+            "details": str(runtime_error)
+        }), 500
 
-            recognition.onend = () => {
-                resetVoiceUI("Acoustic Engine Offline");
-            };
+@app.route("/api/close_session", methods=["POST"])
+def terminate_orphaned_drivers():
+    global active_driver
+    try:
+        if active_driver:
+            active_driver.quit()
+            active_driver = None
+            return build_api_payload("success", "Active infrastructure nodes terminated cleanly.")
+        return build_api_payload("empty", "No standalone processes found active.")
+    except Exception as error:
+        return build_api_payload("error", f"Node teardown exception: {str(error)}")
 
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript.toLowerCase();
-                transcriptBox.innerHTML = `Received: "<span>${event.results[0][0].transcript}</span>"`;
-                processVoiceCommand(transcript);
-            };
-        } else {
-            voiceButton.style.display = "none";
-            transcriptBox.innerText = "Web Speech API is not supported in this browser.";
-        }
+@app.route("/")
+def health_check():
+    return jsonify({"status": "online", "service": "Adaptive Codespace Pipeline"})
 
-        function resetVoiceUI(msg) {
-            voiceButton.classList.remove('listening');
-            voiceButton.innerHTML = `
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                    <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
-                    <line x1="12" x2="12" y1="19" y2="22"/>
-                </svg> Initialize Voice Listening`;
-            statusDot.classList.remove('active');
-            statusText.innerText = msg;
-        }
-
-        // --- 3. Command Processing & Mode Routing ---
-        function processVoiceCommand(cmd) {
-            document.querySelectorAll('.dashboard-box').forEach(box => box.classList.remove('voice-pulse-highlight'));
-            
-            let targetModule = null;
-            let modeDescription = "";
-
-            if (cmd.includes("neural") || cmd.includes("processing") || cmd.includes("brain")) {
-                targetModule = "neural";
-                SystemState.workingMode = "COGNITIVE MATRIX SYNAPSE";
-                modeDescription = "Mode: Synaptic Overclocking. Animating logic arrays.";
-                animateProgressBar("neuralBar", 94);
-            } 
-            else if (cmd.includes("analytics") || cmd.includes("smart") || cmd.includes("data")) {
-                targetModule = "analytics";
-                SystemState.workingMode = "PREDICTIVE VECTOR EVALUATION";
-                modeDescription = "Mode: High-Precision Forecasting. Charting pattern matrices.";
-                animateProgressBar("analyticsBar", 99);
-            } 
-            else if (cmd.includes("automation") || cmd.includes("engine") || cmd.includes("robot")) {
-                targetModule = "automation";
-                SystemState.workingMode = "AUTONOMOUS ORCHESTRATION";
-                modeDescription = "Mode: Thread Scaling. Dispatched background processes.";
-                animateProgressBar("automationBar", 84);
-            } 
-            else if (cmd.includes("sync") || cmd.includes("all") || cmd.includes("system")) {
-                triggerGlobalSync();
-                return;
-            }
-            else {
-                SystemState.workingMode = "UNKNOWN PARAMETER";
-                transcriptBox.innerHTML += `<br><small style="color:#ef4444;">Command unmapped. Try saying 'Neural', 'Analytics', or 'Automation'.</small>`;
-                return;
-            }
-
-            if (targetModule) {
-                SystemState.activeModule = targetModule;
-                const box = document.getElementById(`${targetModule}Box`);
-                if (box) box.classList.add('voice-pulse-highlight');
-                
-                statusText.innerText = SystemState.workingMode;
-                transcriptBox.innerHTML += `<br><strong style="color:#10b981;">${modeDescription}</strong>`;
-            }
-        }
-
-        function animateProgressBar(barId, targetValue) {
-            const bar = document.getElementById(barId);
-            if (bar) {
-                bar.style.width = "0%";
-                setTimeout(() => {
-                    bar.style.width = `${targetValue}%`;
-                }, 100);
-            }
-        }
-
-        // --- 4. Signal Telemetry Rendering Engine (Canvas) ---
-        function initCanvasTelemetry() {
-            const modules = ["neural", "analytics", "automation"];
-            
-            modules.forEach(mod => {
-                const canvas = document.getElementById(`${mod}Canvas`);
-                if (!canvas) return;
-                
-                const ctx = canvas.getContext('2d');
-                SystemState.canvasContexts[mod] = ctx;
-                
-                canvas.width = canvas.clientWidth;
-                canvas.height = canvas.clientHeight;
-                
-                window.addEventListener('resize', () => {
-                    canvas.width = canvas.clientWidth;
-                    canvas.height = canvas.clientHeight;
-                });
-
-                renderSignalWave(mod);
-            });
-        }
-
-        function renderSignalWave(mod) {
-            const ctx = SystemState.canvasContexts[mod];
-            const canvas = document.getElementById(`${mod}Canvas`);
-            if (!ctx || !canvas) return;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            const isSelected = (SystemState.activeModule === mod);
-            const amplitude = isSelected ? 22 : 6;  
-            const frequency = isSelected ? 0.04 : 0.015;
-            const speed = isSelected ? 0.12 : 0.03;
-            
-            let strokeGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-            if (mod === "neural") {
-                strokeGradient.addColorStop(0, '#00ffff');
-                strokeGradient.addColorStop(1, '#8b5cf6');
-            } else if (mod === "analytics") {
-                strokeGradient.addColorStop(0, '#8b5cf6');
-                strokeGradient.addColorStop(1, '#10b981');
-            } else {
-                strokeGradient.addColorStop(0, '#10b981');
-                strokeGradient.addColorStop(1, '#38bdf8');
-            }
-
-            ctx.beginPath();
-            ctx.lineWidth = isSelected ? 2.5 : 1.2;
-            ctx.strokeStyle = strokeGradient;
-
-            SystemState.waveOffsets[mod] += speed;
-            for (let x = 0; x < canvas.width; x++) {
-                const y = (canvas.height / 2) + Math.sin(x * frequency + SystemState.waveOffsets[mod]) * amplitude;
-                if (x === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
-            }
-            ctx.stroke();
-
-            SystemState.animationFrameIds[mod] = requestAnimationFrame(() => renderSignalWave(mod));
-        }
-
-        // --- 5. Manual Fallback & Global Handlers ---
-        function triggerGlobalSync() {
-            SystemState.activeModule = null;
-            SystemState.workingMode = "FULL CORE ALIGNMENT";
-            statusText.innerText = SystemState.workingMode;
-            transcriptBox.innerHTML = "🎯 Manual Sync: Broadcasting signal updates across all engines simultaneously.";
-            
-            document.querySelectorAll('.dashboard-box').forEach(box => box.classList.add('voice-pulse-highlight'));
-            animateProgressBar("neuralBar", 94);
-            animateProgressBar("analyticsBar", 99);
-            animateProgressBar("automationBar", 84);
-        }
-
-        // --- 6. Event Initializers ---
-        voiceButton.addEventListener('click', () => {
-            if (recognition) {
-                try {
-                    recognition.start();
-                } catch (e) {
-                    recognition.stop();
-                }
-            }
-        });
-
-        document.getElementById('btnManualSync').addEventListener('click', triggerGlobalSync);
-        window.addEventListener('DOMContentLoaded', initCanvasTelemetry);
-    </script>
-</body>
-</html>
+if __name__ == "__main__":
+    logging.getLogger("werkzeug").setLevel(logging.ERROR)    
+    print("\n" + "=" * 65)
+    print("   COGNITIVE SPEECH AI (CODESPACE EDITION)")
+    print("   Operational Scope: Registry-Driven Route Processing Engine")
+    print("   Network Target:    http://0.0.0.0:5000")
+    print("=" * 65 + "\n")   
+    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
