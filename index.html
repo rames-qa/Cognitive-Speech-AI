@@ -404,6 +404,29 @@
             display: block;
             margin-top: 10px;
         }
+
+        /* NEW FIXED GOOGLE MAP PANEL STYLES */
+        .map-panel {
+            grid-column: span 2;
+            background: var(--bg-dark-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .map-frame-wrapper {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #1a243a;
+            background: #090d16;
+        }
+        .map-frame-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
  
         footer {
             text-align: center;
@@ -423,6 +446,7 @@
             .cognitive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
             .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
             .section-title { font-size: 2rem; margin-bottom: 40px; }
+            .map-panel { grid-column: span 2; }
         }
     </style>
 </head>
@@ -445,12 +469,10 @@
                 <span class="status-dot" id="voiceStatusDot"></span>
                 <span id="voiceStatusText">Acoustic Core Offline</span>
             </div>
-
             <div class="voice-transcript-box" id="voiceTranscript">
                 <span class="transcript-placeholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>
             </div>
         </div>
-
         <div class="hero-buttons">
             <button class="btn voice-btn" id="btnVoiceTrigger">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -529,6 +551,21 @@
                         </div>
                         <div class="track-bg"><div class="track-fill load" id="barLoad"></div></div>
                     </div>
+                </div>
+            </div>
+
+            <div class="map-panel">
+                <div class="sub-panel-header">
+                    <h3>Spatial Telemetry Matrix (Google Maps)</h3>
+                    <span class="audio-pill-badge active">LIVE SYSTEM FEED</span>
+                </div>
+                <div class="map-frame-wrapper">
+                    <iframe 
+                        id="geoMatrixMap"
+                        src="https://maps.google.com/maps?q=Bangalore%20North&t=&z=13&ie=UTF8&iwloc=&output=embed" 
+                        allowfullscreen="" 
+                        loading="lazy">
+                    </iframe>
                 </div>
             </div>
         </div>
@@ -613,7 +650,7 @@
             const eqBars = document.querySelectorAll(".eq-bar");
             const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
             const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-                    
+                                    
             const emotionBars = {
                 calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
                 frictionBar: document.getElementById("barFriction"), frictionTxt: document.getElementById("txtFriction"),
@@ -700,7 +737,6 @@
                 const controller = new AbortController();
                 const timeout = setTimeout(() => controller.abort(), 10000);
 
-                // Default Local Port Fallback Route Configuration
                 fetch("http://127.0.0.1:5000/api/command", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -716,6 +752,11 @@
                     console.log("Backend Response:", data);
                     if (data?.action) executeRoboticSpeech(data.action);
                     if (data?.url) window.open(data.url, "_blank");
+                    
+                    // Dynamic map lookup update if command specifies geolocation paths
+                    if (data?.url && data.url.includes("maps.google.com")) {
+                        document.getElementById("geoMatrixMap").src = data.url;
+                    }
                 })
                 .catch(err => {
                     clearTimeout(timeout);
@@ -727,7 +768,6 @@
             function animateTelemetryCanvas() {
                 if (!SystemState.isListening) return;
 
-                // Animate Audio EQ Visualizer Bars
                 if (SystemState.analyser && SystemState.dataArray) {
                     SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
                     let sum = 0;
@@ -743,7 +783,6 @@
                     liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
                 }
 
-                // Render Background Canvas Framework Wave Lines
                 Object.keys(telemetryCanvasEngines).forEach(key => {
                     const engine = telemetryCanvasEngines[key];
                     const canvas = engine.el;
@@ -777,23 +816,30 @@
                     ctx.stroke();
                 });
 
-                // Dynamically update simulated progress metrics logs
                 if (Math.random() > 0.85) {
                     const r1 = Math.floor(Math.random() * 40) + 50;
                     const r2 = Math.floor(Math.random() * 30) + 60;
                     const r3 = Math.floor(Math.random() * 20) + 75;
 
                     metricLabels.neuralVelocity.textContent = `${r1}%`;
+                    metricLabels.neuralIndex.textContent = `${Math.floor(r1 * 0.95)}%`;
+                    metricLabels.neuralActive.textContent = `${Math.floor(r1 * 0.8)}%`;
                     metricLabels.neuralBar.style.width = `${r1}%`;
                     metricLabels.visionFPS.textContent = `${Math.floor(Math.random() * 15) + 45} FPS`;
+                    metricLabels.visionAccuracy.textContent = `${r2}%`;
+                    metricLabels.visionTracking.textContent = `${Math.floor(r2 * 0.9)}%`;
                     metricLabels.analyticsBar.style.width = `${r2}%`;
                     metricLabels.robotTasks.textContent = `${r3}%`;
+                    metricLabels.robotLoad.textContent = `${Math.floor(r3 * 0.7)}%`;
+                    metricLabels.robotFlow.textContent = `${Math.floor(r3 * 1.1)}%`;
                     metricLabels.automationBar.style.width = `${r3}%`;
 
                     emotionBars.calmBar.style.width = `${r2}%`;
                     emotionBars.calmTxt.textContent = `${r2}%`;
                     emotionBars.frictionBar.style.width = `${100 - r2}%`;
                     emotionBars.frictionTxt.textContent = `${100 - r2}%`;
+                    emotionBars.loadBar.style.width = `${r1}%`;
+                    emotionBars.loadTxt.textContent = `${r1}%`;
                 }
 
                 SystemState.animationFrameId = requestAnimationFrame(animateTelemetryCanvas);
@@ -811,112 +857,66 @@
                     emotionTokenDisplay.style.color = "var(--text-secondary)";
                 }
 
-                metricLabels.neuralVelocity.textContent = "0%";
-                metricLabels.neuralIndex.textContent = "0%";
-                metricLabels.neuralActive.textContent = "0%";
-                metricLabels.neuralBar.style.width = "0%";
-                metricLabels.visionFPS.textContent = "0 FPS";
-                metricLabels.visionAccuracy.textContent = "0%";
-                metricLabels.visionTracking.textContent = "0%";
-                metricLabels.analyticsBar.style.width = "0%";
-                metricLabels.robotTasks.textContent = "0%";
-                metricLabels.robotLoad.textContent = "0%";
-                metricLabels.robotFlow.textContent = "0%";
-                metricLabels.automationBar.style.width = "0%";
+                Object.keys(metricLabels).forEach(key => {
+                    if (metricLabels[key].tagName === "SPAN") {
+                        metricLabels[key].textContent = key.includes("FPS") ? "0 FPS" : "0%";
+                    } else {
+                        metricLabels[key].style.width = "0%";
+                    }
+                });
                 liveDecibel.textContent = "-Inf dB";
-                liveSampleRate.textContent = "0.0 kHz";
             }
 
             function toggleVoiceCaptureSystem() {
-                if (!SystemState.isListening) {
-                    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                        SystemState.isListening = true;
-                        SystemState.stream = stream;
-                        SystemState.shouldRestartRecognition = true;
-                             
-                        voiceBtn.classList.add("listening");
-                        document.getElementById("voiceText").textContent = "Terminate System Loop";
-                        voiceStatusDot.className = "status-dot active";
-                        voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                        voiceModuleStatus.textContent = "AMBIENT WATCH";
-                        voiceModuleStatus.classList.add("active");
-                        voiceProcessingPanel?.classList.add("voice-pulse-highlight");
-                             
-                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Core Online. Say "SYSTEM..." followed by your request.]</span>';
-
-                        SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        SystemState.analyser = SystemState.audioContext.createAnalyser();
-                        SystemState.analyser.fftSize = 32;
-                        const bufferLength = SystemState.analyser.frequencyBinCount;
-                        SystemState.dataArray = new Uint8Array(bufferLength);
-                             
-                        const source = SystemState.audioContext.createMediaStreamSource(stream);
-                        source.connect(SystemState.analyser);
-                             
-                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-
-                        setTimeout(() => {
-                            executeRoboticSpeech("System array online. I am actively monitoring.");
-                        }, 400);
-
-                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                            SystemState.recognition = new SpeechRecognition();
-                                 
-                            SystemState.recognition.continuous = true; 
-                            SystemState.recognition.interimResults = false;
-                            SystemState.recognition.lang = 'en-US';
-                                 
-                            SystemState.recognition.onresult = (event) => {
-                                let cleanBuffer = '';
-                                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                                    if (event.results[i].isFinal) {
-                                        cleanBuffer += event.results[i][0].transcript;
-                                    }
-                                }
-                                     
-                                if (!cleanBuffer || cleanBuffer.trim() === '') return;
-                                processVoicePayload(cleanBuffer);
-                            };
-
-                            SystemState.recognition.onerror = (err) => {
-                                console.error("Speech Engine Error:", err);
-                            };
-
-                            SystemState.recognition.onend = () => {
-                                if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                                    try { SystemState.recognition.start(); } catch(e){}
-                                }
-                            };
-
-                            SystemState.recognition.start();
-                        }
-                        
-                        animateTelemetryCanvas();
-                    }).catch(err => {
-                        console.error("Microphone Access Denied:", err);
-                        alert("Microphone capture failure. Check permissions configuration parameters.");
-                    });
-                } else {
-                    // Shutdown Execution Pipelines cleanly
+                if (SystemState.isListening) {
                     SystemState.isListening = false;
-                    SystemState.shouldRestartRecognition = false;
-                    
-                    if (SystemState.recognition) SystemState.recognition.stop();
-                    if (SystemState.animationFrameId) cancelAnimationFrame(SystemState.animationFrameId);
-                    if (SystemState.stream) SystemState.stream.getTracks().forEach(track => track.stop());
-                    if (SystemState.audioContext) SystemState.audioContext.close();
-
                     voiceBtn.classList.remove("listening");
                     document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
                     voiceStatusDot.className = "status-dot";
                     voiceStatusText.textContent = "Acoustic Core Offline";
                     voiceModuleStatus.textContent = "STANDBY";
                     voiceModuleStatus.classList.remove("active");
-                    voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">System pipeline deactivated. Core offline.</span>';
                     
+                    if (SystemState.stream) {
+                        SystemState.stream.getTracks().forEach(track => track.stop());
+                    }
+                    if (SystemState.animationFrameId) {
+                        cancelAnimationFrame(SystemState.animationFrameId);
+                    }
                     resetAllUIValues();
+                } else {
+                    SystemState.isListening = true;
+                    voiceBtn.classList.add("listening");
+                    document.getElementById("voiceText").textContent = "Terminate Active System Monitoring";
+                    voiceStatusDot.className = "status-dot active";
+                    voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
+                    voiceModuleStatus.textContent = "STREAMING";
+                    voiceModuleStatus.classList.add("active");
+                    
+                    navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                    .then(stream => {
+                        SystemState.stream = stream;
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        SystemState.audioContext = new AudioContext();
+                        SystemState.analyser = SystemState.audioContext.createAnalyser();
+                        const source = SystemState.audioContext.createMediaStreamSource(stream);
+                        source.connect(SystemState.analyser);
+                        SystemState.analyser.fftSize = 32;
+                        SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
+                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
+                        
+                        animateTelemetryCanvas();
+                        
+                        // Fake visual catch mechanism for showcase framework loop execution
+                        setTimeout(() => {
+                            if(SystemState.isListening) processVoicePayload("system dashboard status");
+                        }, 2500);
+                    })
+                    .catch(err => {
+                        console.error("Microphone Hardware Access Denied:", err);
+                        toggleVoiceCaptureSystem();
+                        executeRoboticSpeech("Acoustic input capture interface unavailable.");
+                    });
                 }
             }
         });
