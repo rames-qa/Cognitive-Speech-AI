@@ -18,6 +18,20 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 automation_lock = threading.Lock()
 active_driver = None
 
+# HELPER FUNCTIONS (Moved outside the dictionary block to fix syntax errors)
+def build_google_maps_search(query):
+    return (
+        f"https://www.google.com/maps/search/"
+        f"{urllib.parse.quote(query)}"
+    )
+
+def build_google_maps_direction(source, destination):
+    return (
+        f"https://www.google.com/maps/dir/"
+        f"{urllib.parse.quote(source)}/"
+        f"{urllib.parse.quote(destination)}"
+    )
+
 # COMPLETELY DYNAMIC REGISTRY CONFIGURATION
 PLATFORM_REGISTRY = {
     "amazon": {
@@ -34,12 +48,6 @@ PLATFORM_REGISTRY = {
         "base_url": "https://www.myntra.com",
         "search_path": "/",
         "aliases": ["fashion", "clothes", "shopping"],
-        "has_automation": False
-    },
-    "google maps": {
-        "base_url": "https://maps.google.com",
-        "search_path": "/search/",
-        "aliases": ["map", "route", "direction", "location"],
         "has_automation": False
     },
     "gmail": {
@@ -218,9 +226,9 @@ def execute_amazon_pipeline():
         options = webdriver.ChromeOptions()
         
         # --- CRITICAL CODESPACE/HEADLESS ENVIRONMENT ARGUMENTS ---
-        options.add_argument("--headless=new") # Instructs Chrome to run in background without a GUI window
-        options.add_argument("--disable-gpu")     # Overrides hardware UI rendering pipeline limitations
-        options.add_argument("--window-size=1920,1080") # Simulates a standard crisp layout resolution
+        options.add_argument("--headless=new") 
+        options.add_argument("--disable-gpu")     
+        options.add_argument("--window-size=1920,1080") 
         
         # Original Sandbox safety setups
         options.add_argument("--start-maximized")
