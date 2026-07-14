@@ -1,8 +1,12 @@
-import logging
+import os
 import re
 import sys
+import logging
 import threading
 import urllib.parse
+import random
+import psutil
+import requests
 from flask import Flask, jsonify, request, render_template_string
 from flask_cors import CORS
 from selenium import webdriver
@@ -12,24 +16,19 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-# SYSTEM SETUP & CONFIGURATION
+# --- SYSTEM SETUP & CONFIGURATION ---
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# GLOBAL CONCURRENCY STATE
+# Disable excessive Flask/Werkzeug logs in terminal
+logging.getLogger("werkzeug").setLevel(logging.ERROR)
+
+# --- GLOBAL CONCURRENCY STATE ---
 automation_lock = threading.Lock()
 active_driver = None
+current_automation_status = "Awaiting instructions..."
 
-# HELPER FUNCTIONS
-def build_google_maps_search(query):
-    return f"https://www.google.com/maps/search/{urllib.parse.quote(query)}"
-
-
-def build_google_maps_direction(source, destination):
-    return f"https://www.google.com/maps/dir/{urllib.parse.quote(source)}/{urllib.parse.quote(destination)}"
-
-
-# COMPLETELY DYNAMIC REGISTRY CONFIGURATION
+# --- COMPLETELY DYNAMIC REGISTRY CONFIGURATION ---
 PLATFORM_REGISTRY = {
     "amazon": {
         "base_url": "https://www.amazon.in",
@@ -98,21 +97,6 @@ PLATFORM_REGISTRY = {
         "search_path": "/search?q=",
         "has_automation": False,
     },
-    "bing": {
-        "base_url": "https://www.bing.com",
-        "search_path": "/search?q=",
-        "has_automation": False,
-    },
-    "duckduckgo": {
-        "base_url": "https://duckduckgo.com",
-        "search_path": "/?q=",
-        "has_automation": False,
-    },
-    "yahoo": {
-        "base_url": "https://search.yahoo.com",
-        "search_path": "/search/p=",
-        "has_automation": False,
-    },
     "stackoverflow": {
         "base_url": "https://stackoverflow.com",
         "search_path": "/search?q=",
@@ -128,74 +112,9 @@ PLATFORM_REGISTRY = {
         "search_path": "/wiki/Special:Search?search=",
         "has_automation": False,
     },
-    "twitter": {
-        "base_url": "https://twitter.com",
-        "search_path": "/search?q=",
-        "has_automation": False,
-    },
-    "facebook": {
-        "base_url": "https://www.facebook.com",
-        "search_path": "/search/top?q=",
-        "has_automation": False,
-    },
-    "instagram": {
-        "base_url": "https://www.instagram.com",
-        "search_path": "/explore/tags/",
-        "has_automation": False,
-    },
-    "npm": {
-        "base_url": "https://www.npmjs.com",
-        "search_path": "/search?q=",
-        "has_automation": False,
-    },
-    "pypi": {
-        "base_url": "https://pypi.org",
-        "search_path": "/search/?q=",
-        "has_automation": False,
-    },
-    "medium": {
-        "base_url": "https://medium.com",
-        "search_path": "/search?q=",
-        "has_automation": False,
-    },
-    "quora": {
-        "base_url": "https://www.quora.com",
-        "search_path": "/search?q=",
-        "has_automation": False,
-    },
-    "bus": {
-        "base_url": "https://www.busbud.com",
-        "search_path": "/en/search/-/USD/",
-        "aliases": ["book bus", "bus ticket", "greyhound", "coach"],
-        "has_automation": False,
-    },
-    "train": {
-        "base_url": "https://www.amtrak.com",
-        "search_path": "/home.html",
-        "aliases": [
-            "book train",
-            "train ticket",
-            "railway ticket",
-            "amtrak",
-            "eurostar",
-        ],
-        "has_automation": False,
-    },
-    "flights": {
-        "base_url": "https://www.expedia.com",
-        "search_path": "/Flights-Search?leg1=from::to:,departure::T&mode=search&passengers=adults:1",
-        "aliases": [
-            "air ticket",
-            "book flight",
-            "flight ticket",
-            "airline ticket",
-            "plane ticket",
-        ],
-        "has_automation": False,
-    },
 }
 
-# DYNAMIC NLP PARSING ENGINE
+# --- DYNAMIC NLP PARSING ENGINE ---
 def resolve_intent_and_query(command):
     command = command.lower().strip()
     matched_platform = None
@@ -245,56 +164,42 @@ def resolve_intent_and_query(command):
     return matched_platform, extracted_query
 
 
-def build_api_payload(status, action, url=""):
-    return jsonify({"status": status, "action": action, "url": url})
-
-
-# ASYNC AUTOMATION PIPELINE RUNNER
+# --- ASYNC AUTOMATION PIPELINE RUNNER ---
 def execute_amazon_pipeline():
-    global active_driver
+    global active_driver, current_automation_status
     if not automation_lock.acquire(blocking=False):
-        print(
-            "[WORKER BLOCKED] Engine is busy processing an open test pipeline."
-        )
+        current_automation_status = "Engine locked. Pipeline busy."
+        print("[WORKER BLOCKED] Engine is busy processing an open test pipeline.")
         return
-    print(
-        "\n[SELENIUM] Initializing autonomous WebDriver orchestration sequence..."
-    )
+    
+    current_automation_status = "Initializing Chrome Driver..."
+    print("\n[SELENIUM] Initializing autonomous WebDriver orchestration sequence...")
     try:
         options = webdriver.ChromeOptions()
-
-        # Headless Configuration
         options.add_argument("--headless=new")
         options.add_argument("--disable-gpu")
         options.add_argument("--window-size=1920,1080")
-
-        # Sandbox Safety Setups
-        options.add_argument("--start-maximized")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
         options.add_experimental_option("detach", True)
 
-        # Standardizing driver executable setup via Service object instantiation
         chrome_service = Service(ChromeDriverManager().install())
-        active_driver = webdriver.Chrome(
-            service=chrome_service, options=options
-        )
+        active_driver = webdriver.Chrome(service=chrome_service, options=options)
 
+        current_automation_status = "Navigating to Amazon..."
         active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])
 
         wait = WebDriverWait(active_driver, 12)
+        current_automation_status = "Waiting for Login element..."
         signin_node = wait.until(
             EC.element_to_be_clickable((By.ID, "nav-link-accountList"))
         )
         signin_node.click()
-        print(
-            "[SELENIUM] Routine target reached: Login target node located safely."
-        )
+        current_automation_status = "Automation Task Completed."
+        print("[SELENIUM] Routine target reached: Login target node located safely.")
     except Exception as error:
-        print(
-            f"[SELENIUM ERROR] Automation execution faulted: {error}",
-            file=sys.stderr,
-        )
+        current_automation_status = f"Automation Error: {str(error)[:30]}..."
+        print(f"[SELENIUM ERROR] Automation execution faulted: {error}", file=sys.stderr)
         if active_driver:
             try:
                 active_driver.quit()
@@ -305,469 +210,566 @@ def execute_amazon_pipeline():
         automation_lock.release()
 
 
-# DYNAMIC ENDPOINT ROUTING MANAGEMENT
-@app.route("/api/command", methods=["POST"])
-def process_incoming_command():
-    try:
-        payload = request.get_json(force=True) or {}
-        raw_input = payload.get("command", "").strip()
-        if not raw_input:
-            return build_api_payload(
-                "empty", "No payload execution vector supplied."
-            )
-        command = raw_input.lower()
-        print(f"[INGRESS] Routing Vector Received -> {command}")
-        if any(
-            token in command
-            for token in ["system", "status", "connected", "dashboard"]
-        ):
-            return build_api_payload(
-                "success", "Dynamic infrastructure matrix operational."
-            )
-        platform, query = resolve_intent_and_query(command)
-        if platform:
-            platform_config = PLATFORM_REGISTRY[platform]
-            if platform_config["has_automation"] and any(
-                act in command for act in ["login", "automation", "run"]
-            ):
-                if automation_lock.locked():
-                    return build_api_payload(
-                        "busy", "Selenium instance pipeline is currently locked."
-                    )
-                threading.Thread(
-                    target=execute_amazon_pipeline, daemon=True
-                ).start()
-                return build_api_payload(
-                    "success",
-                    f"Triggered active thread runner for {platform}.",
-                    platform_config["base_url"],
-                )
-            if query:
-                if platform == "myntra":
-                    target_url = f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
-                else:
-                    target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"
-                return build_api_payload(
-                    "success",
-                    f"Dynamic mapping to {platform} query parameter: '{query}'",
-                    target_url,
-                )
-            return build_api_payload(
-                "success",
-                f"Routing request forward to {platform} root interface.",
-                platform_config["base_url"],
-            )
-        fallback_target = (
-            f"https://www.google.com/search?q={urllib.parse.quote(raw_input)}"
-        )
-        return build_api_payload(
-            "success",
-            f"No localized workspace hit. Fallback query to open web: {raw_input}",
-            fallback_target,
-        )
-    except Exception as runtime_error:
-        print(
-            f"[CRITICAL ERROR] Process pipeline crashed: {runtime_error}",
-            file=sys.stderr,
-        )
-        return (
-            jsonify(
-                {
-                    "status": "error",
-                    "action": "Internal API infrastructure exception encountered.",
-                    "details": str(runtime_error),
-                }
-            ),
-            500,
-        )
-
-
-@app.route("/api/close_session", methods=["POST"])
-def terminate_orphaned_drivers():
-    global active_driver
-    try:
-        if active_driver:
-            active_driver.quit()
-            active_driver = None
-            return build_api_payload(
-                "success", "Active infrastructure nodes terminated cleanly."
-            )
-        return build_api_payload(
-            "empty", "No standalone processes found active."
-        )
-    except Exception as error:
-        return build_api_payload(
-            "error", f"Node teardown exception: {str(error)}"
-        )
-
-
-@app.route("/api/health")
-def health_check():
-    return jsonify(
-        {"status": "online", "service": "Adaptive Codespace Pipeline"}
-    )
-
-
-# RESPONSIBLE WEB INTERFACE HTML TEMPLATE
+# --- HTML / JAVASCRIPT / CSS HUD FRONTEND ---
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Codespace Pipeline Control</title>
+    <title>Cognitive AI OS v3.0</title>
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --accent-color: #58a6ff;
-            --text-color: #c9d1d9;
-            --text-muted: #8b949e;
-            --border-color: #30363d;
-            --success-color: #2ea44f;
-            --danger-color: #da3633;
+            --neon-blue: #00f3ff;
+            --glass-bg: rgba(10, 25, 50, 0.6);
+            --border-glow: rgba(0, 243, 255, 0.25);
+            --font-family: 'Courier New', Courier, monospace;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: var(--font-family);
+            background: #010409; overflow: hidden; color: #ffffff;
         }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            padding: 20px;
+        #canvas-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
         }
 
-        .container {
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .ui-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2; display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            grid-template-rows: 70px 1fr;
+            padding: 20px; box-sizing: border-box; gap: 20px;
+            pointer-events: none;
         }
 
-        header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
+        .interactive { pointer-events: auto; }
+
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px; padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 0 15px rgba(0, 243, 255, 0.05);
+            display: flex; flex-direction: column; gap: 15px;
+            transition: all 0.3s ease;
+        }
+        .panel:hover {
+            border-color: rgba(0, 243, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.1);
         }
 
+        header { 
+            grid-column: 1 / -1; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 20px;
+            height: 100%;
+        }
         header h1 {
-            font-size: 1.8rem;
-            color: #ffffff;
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
+            margin: 0; font-size: 20px; letter-spacing: 3px;
+            color: var(--neon-blue); text-shadow: 0 0 10px rgba(0,243,255,0.5);
+        }
+        .widget-data {
+            font-size: 13px; color: var(--neon-blue);
+            border-left: 2px solid var(--neon-blue); padding-left: 10px;
         }
 
-        header p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
+        .avatar-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+        }
+        .avatar-box { 
+            width: 140px; height: 140px; border-radius: 50%; 
+            border: 2px dashed var(--neon-blue); 
+            display: flex; align-items: center; justify-content: center; position: relative; 
+        }
+        .avatar-glow { 
+            width: 85%; height: 85%; 
+            background: radial-gradient(circle, rgba(0,243,255,0.6) 0%, transparent 70%); 
+            border-radius: 50%; 
+            animation: pulse 2.5s infinite ease-in-out; 
+        }
+        @keyframes pulse { 
+            0%, 100% { transform: scale(0.9); opacity: 0.5; filter: drop-shadow(0 0 2px rgba(0,243,255,0.4)); } 
+            50% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 15px rgba(0,243,255,0.8)); } 
         }
 
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        .sys-btn {
+            background: rgba(0, 243, 255, 0.05); 
+            border: 1px solid var(--neon-blue); 
+            color: var(--neon-blue); padding: 12px; 
+            cursor: pointer; border-radius: 6px; font-family: var(--font-family);
+            font-weight: bold; letter-spacing: 1px; transition: all 0.2s ease;
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .sys-btn:hover {
+            background: var(--neon-blue); color: #000;
+            box-shadow: 0 0 15px var(--neon-blue);
         }
-
-        label {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-
-        input[type="text"] {
-            flex-grow: 1;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px;
-            color: #ffffff;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--accent-color);
-        }
-
-        button {
-            cursor: pointer;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            padding: 12px 24px;
-            transition: filter 0.2s ease, transform 0.1s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-        }
-
         .btn-danger {
-            background-color: var(--danger-color);
+            border-color: #da3633;
+            color: #da3633;
+        }
+        .btn-danger:hover {
+            background-color: #da3633;
+            color: #fff;
+            box-shadow: 0 0 15px #da3633;
         }
 
-        .btn-secondary {
-            background-color: var(--border-color);
-            color: var(--text-color);
-            border: 1px solid #484f58;
+        .metrics-grid {
+            display: grid; grid-template-columns: 1fr; gap: 10px; font-size: 12px;
+        }
+        .metric-card {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05);
+            padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .metric-value { font-weight: bold; color: var(--neon-blue); }
+
+        .network-canvas { 
+            width: 100%; height: 150px; background: rgba(0,0,0,0.4); 
+            border-radius: 8px; border: 1px solid rgba(0,243,255,0.1);
         }
 
-        .btn-secondary:hover {
-            background-color: #30363d;
+        .chat-section { display: flex; flex-direction: column; flex-grow: 1; min-height: 0; }
+        #chat-output { 
+            flex-grow: 1; overflow-y: auto; font-size: 12px; 
+            margin-bottom: 12px; border-bottom: 1px solid var(--border-glow);
+            padding-right: 5px; display: flex; flex-direction: column; gap: 8px;
         }
+        #chat-output::-webkit-scrollbar { width: 4px; }
+        #chat-output::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 2px; }
 
-        .response-card {
-            display: none;
-        }
+        .chat-msg { margin: 2px 0; line-height: 1.4; }
+        .user-msg { color: #88c0d0; }
+        .ai-msg { color: var(--neon-blue); }
 
-        .response-header {
-            font-weight: 600;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        .badge-success { background-color: rgba(46, 164, 79, 0.2); color: #57ab5a; border: 1px solid rgba(46, 164, 79, 0.4); }
-        .badge-error { background-color: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid rgba(218, 54, 51, 0.4); }
-        .badge-empty { background-color: rgba(139, 148, 158, 0.2); color: var(--text-muted); border: 1px solid rgba(139, 148, 158, 0.4); }
-
-        .response-body {
-            background-color: var(--bg-color);
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            font-family: monospace;
-            font-size: 0.9rem;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .action-tray {
-            margin-top: 15px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .control-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /* Responsive Mobile Scaling */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .input-wrapper {
-                flex-direction: column;
-            }
-            button {
-                width: 100%;
-                padding: 14px;
-            }
-            .control-panel {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .action-tray {
-                flex-direction: column;
-            }
+        .console-input {
+            background: rgba(0,0,0,0.6); border: 1px solid var(--neon-blue); 
+            color: #fff; padding: 12px; border-radius: 6px;
+            font-family: var(--font-family); width: calc(100% - 26px); outline: none;
+            box-shadow: inset 0 0 5px rgba(0,243,255,0.2);
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>COGNITIVE SPEECH AI</h1>
-            <p>Registry-Driven Route Processing Engine Dashboard</p>
+
+    <div id="canvas-container"></div>
+
+    <div class="ui-layer">
+        <header class="panel interactive">
+            <h1>COGNITIVE AI OS v3.0</h1>
+            <div style="display: flex; gap: 20px;">
+                <div class="widget-data" id="time-widget">SYSTEM TIME: --:--:--</div>
+            </div>
         </header>
 
-        <div class="card">
-            <form id="commandForm" class="form-group">
-                <label for="commandInput">Enter Execution Command</label>
-                <div class="input-wrapper">
-                    <input 
-                        type="text" 
-                        id="commandInput" 
-                        placeholder="e.g., search for shoes on amazon, play music..." 
-                        required
-                        autocomplete="off"
-                    >
-                    <button type="submit" class="btn-primary" id="submitBtn">Execute</button>
+        <div class="panel interactive">
+            <h3 style="margin: 0; color: var(--neon-blue); font-size: 13px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 5px;">[01] COGNITIVE AVATAR NODE</h3>
+            <div class="avatar-container">
+                <div class="avatar-box">
+                    <div class="avatar-glow" id="avatar-core"></div>
                 </div>
-            </form>
-        </div>
-
-        <div class="card response-card" id="responseCard">
-            <div class="response-header">
-                <span>Execution Output</span>
-                <span class="badge" id="statusBadge">Success</span>
+                <button id="mic-btn" class="sys-btn" style="width: 100%;">INITIALIZE SPEECH COMMS</button>
             </div>
-            <div class="response-body" id="responseBody"></div>
-            <div class="action-tray" id="actionTray">
+            
+            <h3 style="margin: 10px 0 0 0; color: var(--neon-blue); font-size: 13px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 5px;">[02] ANALYTICS TELEMETRY</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <span>CPU MATRIX</span>
+                    <span id="cpu-metric" class="metric-value">--%</span>
                 </div>
+                <div class="metric-card">
+                    <span>RAM LOAD</span>
+                    <span id="ram-metric" class="metric-value">--%</span>
+                </div>
+                <div class="metric-card">
+                    <span>AUTOMATION</span>
+                    <span id="auto-metric" class="metric-value" style="font-size:10px; text-align:right;">IDLE</span>
+                </div>
+            </div>
+            
+            <button id="kill-btn" class="sys-btn btn-danger" style="margin-top:auto;">KILL ACTIVE DRIVERS</button>
         </div>
 
-        <div class="card control-panel">
-            <span style="font-size: 0.9rem; color: var(--text-muted);">
-                State Engine: <strong>Operational</strong>
-            </span>
-            <button class="btn-danger" id="closeSessionBtn">Kill Session Drivers</button>
+        <div></div>
+
+        <div class="panel interactive">
+            <h3 style="margin: 0; color: var(--neon-blue); font-size: 13px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 5px;">[03] NEURAL NETWORK VISUALIZER</h3>
+            <canvas id="neural-canvas" class="network-canvas"></canvas>
+
+            <h3 style="margin: 10px 0 0 0; color: var(--neon-blue); font-size: 13px; border-bottom: 1px solid rgba(0,243,255,0.2); padding-bottom: 5px;">[04] COGNITIVE CHAT RECORDS</h3>
+            <div class="chat-section">
+                <div id="chat-output">
+                    <div class="chat-msg ai-msg"><strong>[JARVIS]:</strong> Core mainframe operational. Awaiting command parameters.</div>
+                </div>
+                <input type="text" id="chat-input" class="console-input" placeholder="Execute command..." autocomplete="off">
+            </div>
         </div>
     </div>
 
     <script>
-        const commandForm = document.getElementById('commandForm');
-        const commandInput = document.getElementById('commandInput');
-        const submitBtn = document.getElementById('submitBtn');
-        const responseCard = document.getElementById('responseCard');
-        const statusBadge = document.getElementById('statusBadge');
-        const responseBody = document.getElementById('responseBody');
-        const actionTray = document.getElementById('actionTray');
-        const closeSessionBtn = document.getElementById('closeSessionBtn');
+        // --- 1. THREE.JS 3D BACKGROUND ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
 
-        commandForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const commandValue = commandInput.value.trim();
-            if(!commandValue) return;
+        const particleCount = 180;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = [];
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing...';
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 800;
+            positions[i + 1] = (Math.random() - 0.5) * 800;
+            positions[i + 2] = (Math.random() - 0.5) * 800;
+            velocities.push({
+                x: (Math.random() - 0.5) * 0.4,
+                y: (Math.random() - 0.5) * 0.4,
+                z: (Math.random() - 0.5) * 0.4
+            });
+        }
 
-            try {
-                const response = await fetch('/api/command', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ command: commandValue })
-                });
-                const data = await response.json();
-                renderResponse(data);
-            } catch (err) {
-                renderResponse({
-                    status: 'error',
-                    action: 'Failures occurring on pipeline network requests.',
-                    details: err.message
-                });
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Execute';
-            }
-        });
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const material = new THREE.PointsMaterial({ color: 0x00f3ff, size: 3.5, transparent: true, opacity: 0.65 });
+        const particleSystem = new THREE.Points(geometry, material);
+        scene.add(particleSystem);
+        camera.position.z = 250;
 
-        closeSessionBtn.addEventListener('click', async () => {
-            closeSessionBtn.disabled = true;
-            closeSessionBtn.textContent = 'Terminating...';
-            try {
-                const response = await fetch('/api/close_session', { method: 'POST' });
-                const data = await response.json();
-                renderResponse(data);
-            } catch (err) {
-                renderResponse({
-                    status: 'error',
-                    action: 'Failed to complete session teardown.',
-                    details: err.message
-                });
-            } finally {
-                closeSessionBtn.disabled = false;
-                closeSessionBtn.textContent = 'Kill Session Drivers';
-            }
-        });
-
-        function renderResponse(data) {
-            responseCard.style.display = 'block';
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            const positionsArr = particleSystem.geometry.attributes.position.array;
             
-            // Render Badge Styles
-            statusBadge.className = 'badge';
-            if (data.status === 'success') {
-                statusBadge.classList.add('badge-success');
-                statusBadge.textContent = 'Success';
-            } else if (data.status === 'error') {
-                statusBadge.classList.add('badge-error');
-                statusBadge.textContent = 'Error';
-            } else {
-                statusBadge.classList.add('badge-empty');
-                statusBadge.textContent = data.status || 'System';
+            for (let i = 0; i < particleCount; i++) {
+                const idx = i * 3;
+                positionsArr[idx] += velocities[i].x;
+                positionsArr[idx + 1] += velocities[i].y;
+                positionsArr[idx + 2] += velocities[i].z;
+
+                if (Math.abs(positionsArr[idx]) > 400) velocities[i].x *= -1;
+                if (Math.abs(positionsArr[idx + 1]) > 400) velocities[i].y *= -1;
+                if (Math.abs(positionsArr[idx + 2]) > 400) velocities[i].z *= -1;
             }
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+            particleSystem.rotation.y += 0.0008;
+            renderer.render(scene, camera);
+        }
+        animate3D();
 
-            // Populate text
-            let contentText = `Action Context:\n${data.action || 'None'}`;
-            if (data.details) contentText += `\n\nDebug Details:\n${data.details}`;
-            if (data.url) contentText += `\n\nTarget URL:\n${data.url}`;
-            responseBody.textContent = contentText;
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
 
-            // Clear and dynamically populate interaction tray
-            actionTray.innerHTML = '';
-            if (data.url) {
-                const linkBtn = document.createElement('button');
-                linkBtn.className = 'btn-secondary';
-                linkBtn.textContent = 'Open Target URL';
-                linkBtn.onclick = () => window.open(data.url, '_blank');
-                actionTray.appendChild(linkBtn);
+        // --- 2. TIME & SYSTEM TELEMETRY ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('time-widget').innerText = `SYSTEM TIME: ${now.toTimeString().split(' ')[0]}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function updateTelemetry() {
+            fetch('/api/system-metrics')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('cpu-metric').innerText = `${data.cpu}%`;
+                    document.getElementById('ram-metric').innerText = `${data.ram}%`;
+                    document.getElementById('auto-metric').innerText = data.automation_status.toUpperCase();
+                });
+        }
+        setInterval(updateTelemetry, 1500);
+        updateTelemetry();
+
+        // --- 3. SPEECH RECOGNITION & TTS VOICE ASSISTANT ---
+        const micBtn = document.getElementById('mic-btn');
+        const avatarCore = document.getElementById('avatar-core');
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+
+            micBtn.addEventListener('click', () => {
+                recognition.start();
+                avatarCore.style.background = "radial-gradient(circle, rgba(255,0,85,0.8) 0%, transparent 70%)";
+                avatarCore.style.animation = "pulse 0.4s infinite";
+                micBtn.innerText = "CAPTURING AUDIO DATA...";
+            });
+
+            recognition.onresult = (event) => {
+                const speechToText = event.results[0][0].transcript;
+                processCommand(speechToText);
+            };
+
+            recognition.onend = () => {
+                avatarCore.style.background = "radial-gradient(circle, rgba(0,243,255,0.6) 0%, transparent 70%)";
+                avatarCore.style.animation = "pulse 2.5s infinite ease-in-out";
+                micBtn.innerText = "INITIALIZE SPEECH COMMS";
+            };
+        } else {
+            micBtn.innerText = "SPEECH ENGINE UNSUPPORTED";
+            micBtn.disabled = true;
+        }
+
+        function speak(text) {
+            const synth = window.speechSynthesis;
+            if (synth.speaking) synth.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            avatarCore.style.animation = "pulse 0.3s infinite";
+            utterance.onend = () => {
+                avatarCore.style.animation = "pulse 2.5s infinite ease-in-out";
+            };
+            synth.speak(utterance);
+        }
+
+        // --- 4. HUD CHAT MANAGEMENT ---
+        const chatOutput = document.getElementById('chat-output');
+        const chatInput = document.getElementById('chat-input');
+        const killBtn = document.getElementById('kill-btn');
+
+        function appendMessage(sender, text, url = null) {
+            const container = document.createElement('div');
+            container.className = `chat-msg ${sender === 'USER' ? 'user-msg' : 'ai-msg'}`;
+            let baseHTML = `<strong>[${sender}]:</strong> ${text}`;
+            if (url) {
+                baseHTML += ` <a href="${url}" target="_blank" style="color:#ff0055; text-decoration: underline;">Open Node Link</a>`;
+            }
+            container.innerHTML = baseHTML;
+            chatOutput.appendChild(container);
+            chatOutput.scrollTop = chatOutput.scrollHeight;
+        }
+
+        function processCommand(userText) {
+            if (!userText.trim()) return;
+            appendMessage("USER", userText);
+
+            fetch('/api/command', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: userText })
+            })
+            .then(res => res.json())
+            .then(data => {
+                appendMessage("JARVIS", data.action, data.url);
+                speak(data.action);
+                triggerNeuralSpike();
+            });
+        }
+
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                processCommand(chatInput.value);
+                chatInput.value = '';
+            }
+        });
+
+        killBtn.addEventListener('click', () => {
+            fetch('/api/close_session', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    appendMessage("JARVIS", data.action);
+                    speak(data.action);
+                });
+        });
+
+        // --- 5. NEURAL NETWORK VISUALIZER ---
+        const canvas = document.getElementById('neural-canvas');
+        const ctx = canvas.getContext('2d');
+        let nodes = [];
+
+        function resizeCanvas() {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            initializeNeuralNodes();
+        }
+
+        function initializeNeuralNodes() {
+            nodes = [];
+            const cols = 4;
+            const rows = [3, 4, 4, 3];
+            const colWidth = canvas.width / (cols + 1);
+
+            for (let i = 0; i < cols; i++) {
+                const rowHeight = canvas.height / (rows[i] + 1);
+                for (let j = 0; j < rows[i]; j++) {
+                    nodes.push({
+                        x: colWidth * (i + 1),
+                        y: rowHeight * (j + 1),
+                        baseActivation: 0.1,
+                        currentActivation: 0.1,
+                        layer: i
+                    });
+                }
             }
         }
+
+        function triggerNeuralSpike() {
+            nodes.forEach(node => {
+                node.currentActivation = Math.random() * 0.9 + 0.1;
+            });
+        }
+
+        function drawNeuralNetwork() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 1;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = 0; j < nodes.length; j++) {
+                    if (nodes[j].layer === nodes[i].layer + 1) {
+                        const distance = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
+                        if (distance < canvas.width / 2.5) {
+                            const activationAlpha = (nodes[i].currentActivation + nodes[j].currentActivation) / 2;
+                            ctx.strokeStyle = `rgba(0, 243, 255, ${activationAlpha * 0.3})`;
+                            ctx.beginPath();
+                            ctx.moveTo(nodes[i].x, nodes[i].y);
+                            ctx.lineTo(nodes[j].x, nodes[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            nodes.forEach(node => {
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, 4.5, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 243, 255, ${node.currentActivation})`;
+                ctx.shadowColor = 'rgba(0, 243, 255, 0.8)';
+                ctx.shadowBlur = node.currentActivation * 10;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+
+                if (node.currentActivation > node.baseActivation) {
+                    node.currentActivation -= 0.01;
+                }
+            });
+
+            requestAnimationFrame(drawNeuralNetwork);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        drawNeuralNetwork();
     </script>
 </body>
 </html>
 """
 
-# Serve responsive UI from server root
+# --- DYNAMIC ENDPOINT ROUTING MANAGEMENT ---
+
 @app.route("/")
 def index():
     return render_template_string(HTML_TEMPLATE)
 
 
+@app.route("/api/system-metrics", methods=["GET"])
+def get_system_metrics():
+    cpu = psutil.cpu_percent(interval=None)
+    ram = psutil.virtual_memory().percent
+    return jsonify({
+        "cpu": cpu,
+        "ram": ram,
+        "automation_status": current_automation_status
+    })
+
+
+@app.route("/api/command", methods=["POST"])
+def process_incoming_command():
+    try:
+        payload = request.get_json(force=True) or {}
+        raw_input = payload.get("command", "").strip()
+        if not raw_input:
+            return build_api_payload("empty", "No payload execution vector supplied.")
+        
+        command = raw_input.lower()
+        print(f"[INGRESS] Routing Vector Received -> {command}")
+        
+        if any(token in command for token in ["system", "status", "connected", "dashboard"]):
+            return build_api_payload("success", "Dynamic infrastructure matrix operational.")
+        
+        platform, query = resolve_intent_and_query(command)
+        if platform:
+            platform_config = PLATFORM_REGISTRY[platform]
+            
+            # Check for automation triggering parameters
+            if platform_config["has_automation"] and any(
+                act in command for act in ["login", "automation", "run", "start"]
+            ):
+                if automation_lock.locked():
+                    return build_api_payload("busy", "Selenium instance pipeline is currently locked.")
+                
+                threading.Thread(target=execute_amazon_pipeline, daemon=True).start()
+                return build_api_payload(
+                    "success",
+                    f"Triggered active automation workflow on {platform.title()}.",
+                    platform_config["base_url"],
+                )
+            
+            # Handle URL queries dynamically
+            if query:
+                if platform == "myntra":
+                    target_url = f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
+                else:
+                    target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"
+                
+                return build_api_payload(
+                    "success",
+                    f"Dynamic routing mapping for {platform.title()} searching for '{query}'.",
+                    target_url,
+                )
+                
+            return build_api_payload(
+                "success",
+                f"Routing request forward to {platform.title()} root node.",
+                platform_config["base_url"],
+            )
+            
+        fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(raw_input)}"
+        return build_api_payload(
+            "success",
+            f"No localized workspace hit. Default fallback query initiated.",
+            fallback_target,
+        )
+    except Exception as runtime_error:
+        print(f"[CRITICAL ERROR] Process pipeline crashed: {runtime_error}", file=sys.stderr)
+        return jsonify({
+            "status": "error",
+            "action": "Internal API infrastructure exception encountered.",
+            "details": str(runtime_error),
+        }), 500
+
+
+@app.route("/api/close_session", methods=["POST"])
+def terminate_orphaned_drivers():
+    global active_driver, current_automation_status
+    try:
+        if active_driver:
+            active_driver.quit()
+            active_driver = None
+            current_automation_status = "Teardown complete."
+            return build_api_payload("success", "Active infrastructure nodes terminated cleanly.")
+        
+        current_automation_status = "IDLE"
+        return build_api_payload("empty", "No standalone processes found active.")
+    except Exception as error:
+        return build_api_payload("error", f"Node teardown exception: {str(error)}")
+
+
+def build_api_payload(status, action, url=""):
+    return jsonify({"status": status, "action": action, "url": url})
+
+
 if __name__ == "__main__":
-    logging.getLogger("werkzeug").setLevel(logging.ERROR)
     print("\n" + "=" * 65)
-    print("    COGNITIVE SPEECH AI ")
-    print("    Operational Scope: Registry-Driven Route Processing Engine")
-    print("    Network Target:    http://0.0.0.0:5000")
+    print("    COGNITIVE SPEECH AI OS v3.0")
+    print("    Scope: Unified HUD & Registry Route Pipeline")
+    print("    Endpoint Node: http://127.0.0.1:5000")
     print("=" * 65 + "\n")
-    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
+    app.run(host="127.0.0.1", port=5000, debug=False, threaded=True)
