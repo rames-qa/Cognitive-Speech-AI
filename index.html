@@ -8,17 +8,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark-main: #060913;
-            --bg-dark-panel: #0d1527;
-            --border-color: #1e2d4a;
+            --bg-dark-main: #0b0f19;
+            --bg-dark-panel: #141b2d;
+            --border-color: #222f4c;
             --neon-blue: #00f3ff;
             --neon-purple: #8b5cf6;
             --neon-green: #10b981;
             --neon-rose: #ff3366;
             --neon-amber: #f59e0b;
             --text-primary: #f0f4f8;
-            --text-secondary: #7e8f9f;
-            --glow-blue: rgba(0, 243, 255, 0.15);
+            --text-secondary: #8a99ad;
         }
  
         * {
@@ -35,21 +34,6 @@
             line-height: 1.6;
             -webkit-tap-highlight-color: transparent;
         }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-dark-main);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--neon-blue);
-        }
  
         nav {
             display: flex;
@@ -57,8 +41,8 @@
             align-items: center;
             gap: 15px;
             padding: 15px 5%;
-            background: rgba(13, 21, 39, 0.85);
-            backdrop-filter: blur(16px);
+            background: rgba(20, 27, 45, 0.9);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
@@ -68,22 +52,16 @@
         nav .logo {
             font-size: 1.4rem;
             font-weight: 700;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        nav .logo::before {
-            content: '';
-            width: 10px;
-            height: 10px;
-            background: var(--neon-blue);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-blue);
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
  
         nav ul {
@@ -97,123 +75,123 @@
             text-decoration: none;
             font-weight: 500;
             font-size: 0.95rem;
-            transition: all 0.3s ease;
-            padding: 6px 12px;
-            border-radius: 6px;
+            transition: color 0.3s ease;
+            padding: 5px 10px;
         }
  
         nav ul li a:hover {
             color: var(--neon-blue);
-            background: rgba(0, 243, 255, 0.05);
+        }
+
+        .lang-selector-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #090d16;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .lang-selector-wrapper label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .lang-select {
+            background: transparent;
+            color: #fff;
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .lang-select option {
+            background: var(--bg-dark-panel);
+            color: #fff;
         }
  
         .hero {
-            padding: 50px 5% 30px;
+            padding: 40px 5% 20px;
             text-align: center;
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
         }
  
         .hero h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            line-height: 1.2;
-            letter-spacing: -0.5px;
-            background: linear-gradient(to right, #ffffff, var(--text-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
         }
  
         .hero p {
             color: var(--text-secondary);
-            margin-bottom: 30px;
-            font-size: 1rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
         }
  
         .voice-console-card {
             background: var(--bg-dark-panel);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .voice-console-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-blue));
-            background-size: 200% auto;
-            animation: flowGlow 4s linear infinite;
-        }
-
-        @keyframes flowGlow {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
  
         .voice-status-indicator {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 15px;
             font-weight: 600;
-            font-size: 0.95rem;
-            letter-spacing: 0.5px;
+            font-size: 0.9rem;
         }
  
         .status-dot {
-            width: 12px;
-            height: 12px;
-            background-color: #475569;
+            width: 10px;
+            height: 10px;
+            background-color: #64748b;
             border-radius: 50%;
             transition: all 0.4s ease;
         }
  
         .status-dot.active {
             background-color: var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green);
+            box-shadow: 0 0 12px var(--neon-green);
             animation: pulseGlow 1.5s infinite alternate;
         }
 
         .status-dot.speaking {
             background-color: var(--neon-blue);
-            box-shadow: 0 0 15px var(--neon-blue);
-            animation: pulseGlow 0.6s infinite alternate;
+            box-shadow: 0 0 12px var(--neon-blue);
+            animation: pulseGlow 0.5s infinite alternate;
         }
  
         @keyframes pulseGlow {
-            0% { opacity: 0.5; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1.05); }
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
         }
  
         .voice-transcript-box {
-            background: #04070d;
-            padding: 20px;
-            border-radius: 12px;
+            background: #090d16;
+            padding: 15px;
+            border-radius: 10px;
             font-family: 'JetBrains Mono', monospace;
-            min-height: 100px;
+            min-height: 80px;
             font-size: 0.95rem;
             color: #ffffff;
-            border: 1px solid var(--border-color);
+            border: 1px solid #1a243a;
             word-break: break-word;
             text-align: left;
             position: relative;
-            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
  
         .transcript-placeholder {
@@ -224,206 +202,117 @@
         .hero-buttons {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             width: 100%;
-            max-width: 450px;
+            max-width: 400px;
             margin: 0 auto;
         }
  
         .btn {
             width: 100%;
-            padding: 16px 24px;
-            border-radius: 10px;
+            padding: 15px 20px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
+            gap: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
  
         .voice-btn {
             background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
             color: #fff;
-            box-shadow: 0 4px 20px rgba(0, 243, 255, 0.25);
-        }
-
-        .voice-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 243, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
         }
  
         .voice-btn.listening {
-            background: linear-gradient(135deg, var(--neon-rose), #e11d48);
-            box-shadow: 0 4px 20px rgba(255, 51, 102, 0.35);
-        }
-
-        .voice-btn.listening:hover {
-            box-shadow: 0 6px 25px rgba(255, 51, 102, 0.5);
-        }
-
-        /* Mode Selection Toggle styling */
-        .simulation-mode-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #04070d;
-            border: 1px solid var(--border-color);
-            padding: 10px 16px;
-            border-radius: 8px;
-            margin-top: 15px;
-            font-size: 0.85rem;
-        }
-
-        .simulation-mode-toggle label {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 22px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #1e2d4a;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--neon-purple);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(22px);
+            background: var(--neon-rose);
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
         }
  
         .dashboard {
-            padding: 40px 5% 60px;
+            padding: 20px 5% 40px;
         }
  
         .section-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             text-align: center;
-            margin-bottom: 40px;
-            letter-spacing: -0.5px;
-            background: linear-gradient(to right, #ffffff, var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
         }
  
         .cognitive-grid, .dashboard-container {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
             width: 100%;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
  
         .sub-panel, .dashboard-box {
             background: var(--bg-dark-panel);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
+            border-radius: 14px;
+            padding: 20px;
             position: relative;
             overflow: hidden;
-            transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
-        }
-
-        .sub-panel:hover, .dashboard-box:hover {
-            border-color: rgba(0, 243, 255, 0.3);
-            transform: translateY(-2px);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
         }
  
         .voice-pulse-highlight {
             border-color: var(--neon-blue) !important;
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.25);
         }
  
         .sub-panel-header, .dashboard-header-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            border-bottom: 1px solid #142037;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            gap: 6px;
+            border-bottom: 1px solid #1e2942;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
         }
  
         .sub-panel-header h3, .glow-title {
-            font-size: 1.15rem;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
-            letter-spacing: 0.5px;
+            gap: 8px;
         }
  
         .audio-pill-badge {
             align-self: flex-start;
             background: rgba(16, 185, 129, 0.1);
             color: var(--neon-green);
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 600;
             border: 1px solid rgba(16, 185, 129, 0.2);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
         }
  
         .audio-pill-badge.active {
             background: rgba(0, 243, 255, 0.1);
             color: var(--neon-blue);
             border: 1px solid rgba(0, 243, 255, 0.2);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
         }
  
         .emotion-tracker-container {
-            background: #04070d;
+            background: #090d16;
             border: 1px dashed var(--border-color);
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 20px;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100px;
+            min-height: 90px;
         }
  
         .emotion-tracker-label {
@@ -431,12 +320,12 @@
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
  
         .emotion-token-display {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-secondary);
             transition: all 0.3s ease;
@@ -450,30 +339,28 @@
  
         .voice-bar-container {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             justify-content: center;
             gap: 6px;
-            height: 90px;
-            margin: 15px 0;
-            background: #04070d;
-            border-radius: 12px;
-            padding: 10px 15px;
-            border: 1px solid #142037;
+            height: 70px;
+            margin: 10px 0;
+            background: #090d16;
+            border-radius: 8px;
+            padding: 0 10px;
         }
  
         .eq-bar {
-            flex: 1;
-            max-width: 12px;
+            width: 8px;
             height: 10%;
-            background: linear-gradient(to top, var(--neon-blue), var(--neon-purple));
+            background: var(--neon-blue);
             border-radius: 3px;
-            transition: height 0.08s ease;
+            transition: height 0.1s ease;
         }
  
         .matrix-track-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 15px;
         }
  
         .metric-label-row {
@@ -481,34 +368,33 @@
             justify-content: space-between;
             font-size: 0.8rem;
             color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
  
         .metric-label-row .metric-value {
             font-family: 'JetBrains Mono', monospace;
             color: #fff;
-            font-weight: 700;
+            font-weight: 600;
         }
  
         .track-bg, .progress-bar {
-            background: #04070d;
+            background: #090d16;
             height: 8px;
             border-radius: 4px;
             overflow: hidden;
-            margin-bottom: 4px;
-            border: 1px solid #142037;
+            margin-bottom: 12px;
         }
  
         .track-fill, .progress {
             height: 100%;
             width: 0%;
             border-radius: 4px;
-            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: width 0.4s ease;
         }
  
         .progress { background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); }
-        #analyticsBox .progress { background: linear-gradient(to right, var(--neon-purple), var(--neon-rose)); }
-        #automationBox .progress { background: linear-gradient(to right, var(--neon-rose), var(--neon-green)); }
+        #analyticsBox .progress { background: linear-gradient(to right, var(--neon-purple), var(--neon-green)); }
+        #automationBox .progress { background: linear-gradient(to right, var(--neon-green), var(--neon-blue)); }
  
         .track-fill.calm { background: var(--neon-green); }
         .track-fill.friction { background: var(--neon-amber); }
@@ -517,7 +403,7 @@
         .dashboard-metrics-grid, .stats-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 10px;
             margin: 15px 0;
         }
  
@@ -526,10 +412,10 @@
         }
  
         .sub-metric-card, .stat-node {
-            background: #04070d;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
+            background: #090d16;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #1a243a;
             text-align: center;
         }
  
@@ -539,81 +425,82 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             display: block;
-            margin-bottom: 4px;
         }
  
         .sub-metric-card h5, .stat-node span {
             font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 600;
             color: #fff;
+            margin-top: 2px;
         }
  
         .live-telemetry-canvas {
             width: 100%;
-            height: 80px;
-            background: #04070d;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
+            height: 65px;
+            background: #0d1322;
+            border-radius: 6px;
             display: block;
-            margin-top: 15px;
+            margin-top: 10px;
         }
  
         footer {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             color: var(--text-secondary);
             border-top: 1px solid var(--border-color);
-            font-size: 0.85rem;
-            background: #04070d;
-            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+            background: #090d16;
         }
  
         @media (min-width: 768px) {
-            nav { flex-direction: row; justify-content: space-between; padding: 20px 8%; }
-            .hero { padding: 70px 8% 40px; }
-            .hero h1 { font-size: 2.8rem; }
+            nav { flex-direction: row; justify-content: space-between; padding: 18px 8%; }
+            .hero { padding: 60px 8% 30px; }
+            .hero h1 { font-size: 2.6rem; }
             .sub-panel-header { flex-direction: row; justify-content: space-between; align-items: center; }
             .audio-pill-badge { align-self: center; }
-            .cognitive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-            .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-            .section-title { font-size: 2.2rem; margin-bottom: 50px; }
+            .cognitive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+            .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+            .section-title { font-size: 2rem; margin-bottom: 40px; }
         }
     </style>
 </head>
 <body>
  
     <nav>
-        <div class="logo">Cognitive AI</div>
-        <ul>
-            <li><a href="#home">Console</a></li>
-            <li><a href="#dashboard">Live Matrix</a></li>
-        </ul>
+        <div class="logo" id="navLogo">Cognitive AI</div>
+        <div class="nav-controls">
+            <ul>
+                <li><a href="#home" id="navLinkConsole">Console</a></li>
+                <li><a href="#dashboard" id="navLinkMatrix">Live Matrix</a></li>
+            </ul>
+            <div class="lang-selector-wrapper">
+                <label for="langSelect" id="langLabel">LN:</label>
+                <select id="langSelect" class="lang-select">
+                    <option value="en">EN</option>
+                    <option value="ta">TA</option>
+                    <option value="hi">HI</option>
+                    <option value="kn">KN</option>
+                </select>
+            </div>
+        </div>
     </nav>
  
     <section class="hero" id="home">
-        <h1>Cognitive Speech AI</h1>
-        <p>An advanced multimodal machine array stream synthesizing robotic neural processing loops with direct visual and semantic execution environments.</p>
+        <h1 id="heroTitle">Cognitive Speech AI</h1>
+        <p id="heroDesc">A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.</p>
  
         <div class="voice-console-card">
             <div class="voice-status-indicator">
                 <span class="status-dot" id="voiceStatusDot"></span>
                 <span id="voiceStatusText">Acoustic Core Offline</span>
             </div>
-
+ 
             <div class="voice-transcript-box" id="voiceTranscript">
-                <span class="transcript-placeholder">Say "SYSTEM" followed by your command (e.g. "SYSTEM DIAGNOSTICS" or "SYSTEM VISION"). Click trigger below to initialize.</span>
-            </div>
-
-            <div class="simulation-mode-toggle">
-                <label for="simulationToggle">Run with Backend Simulator (No Flask backend required)</label>
-                <label class="switch">
-                    <input type="checkbox" id="simulationToggle" checked>
-                    <span class="slider"></span>
-                </label>
+                <span class="transcript-placeholder" id="transcriptPlaceholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>
             </div>
         </div>
-
+ 
         <div class="hero-buttons">
             <button class="btn voice-btn" id="btnVoiceTrigger">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -627,12 +514,12 @@
     </section>
  
     <section class="dashboard" id="dashboard">
-        <h2 class="section-title">Cognitive Operations Interface Matrix</h2>
-         
+        <h2 class="section-title" id="sectionTitleMatrix">Cognitive Operations Interface Matrix</h2>
+          
         <div class="cognitive-grid">
             <div class="sub-panel" id="voiceProcessingPanel">
                 <div class="sub-panel-header">
-                    <h3>Acoustic Capture Buffer</h3>
+                    <h3 id="panelHeaderCapture">Acoustic Capture Buffer</h3>
                     <span class="audio-pill-badge" id="voiceModuleStatus">STANDBY</span>
                 </div>
                 <div class="voice-bar-container" id="eqContainer">
@@ -649,11 +536,11 @@
                 </div>
                 <div class="dashboard-metrics-grid">
                     <div class="sub-metric-card">
-                        <p>Acoustic Decibels</p>
+                        <p id="metricLabelDecibel">Acoustic Decibels</p>
                         <h5 id="liveDecibel">-Inf dB</h5>
                     </div>
                     <div class="sub-metric-card">
-                        <p>Stream Frequency</p>
+                        <p id="metricLabelFrequency">Stream Frequency</p>
                         <h5 id="liveSampleRate">0.0 kHz</h5>
                     </div>
                 </div>
@@ -661,33 +548,33 @@
  
             <div class="sub-panel">
                 <div class="sub-panel-header">
-                    <h3>Cognitive Vocal Signature</h3>
+                    <h3 id="panelHeaderSignature">Cognitive Vocal Signature</h3>
                     <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight:600;" id="cognitiveModality">Acoustic Signal Processing</span>
                 </div>
-                 
+                  
                 <div class="emotion-tracker-container">
-                    <div class="emotion-tracker-label">Current Node Assistant Status</div>
+                    <div class="emotion-tracker-label" id="panelHeaderStatus">Current Node Assistant Status</div>
                     <div class="emotion-token-display" id="emotionTokenDisplay">SYSTEM SILENT</div>
                 </div>
  
                 <div class="matrix-track-wrapper">
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
-                            <span>Calm Stability</span>
+                            <span id="labelCalm">Calm Stability</span>
                             <span class="metric-value" id="txtCalm">0%</span>
                         </div>
                         <div class="track-bg"><div class="track-fill calm" id="barCalm"></div></div>
                     </div>
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
-                            <span>Vocal Friction</span>
+                            <span id="labelFriction">Vocal Friction</span>
                             <span class="metric-value" id="txtFriction">0%</span>
                         </div>
                         <div class="track-bg"><div class="track-fill friction" id="barFriction"></div></div>
                     </div>
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
-                            <span>Dynamic Processing Load</span>
+                            <span id="labelLoad">Dynamic Processing Load</span>
                             <span class="metric-value" id="txtLoad">0%</span>
                         </div>
                         <div class="track-bg"><div class="track-fill load" id="barLoad"></div></div>
@@ -699,494 +586,611 @@
         <div class="dashboard-container">
             <div class="dashboard-box" id="neuralBox">
                 <div class="dashboard-header-group">
-                    <h3 class="glow-title" style="color: var(--neon-blue);">Neural Processing</h3>
-                    <p class="live-description">Evaluating language tokens and acoustic matrices across hardware array tracks.</p>
+                    <h3 class="glow-title" style="color: var(--neon-blue);" id="cardTitleNeural">Neural Processing</h3>
+                    <p class="live-description" id="cardDescNeural">Evaluating language tokens and acoustic matrices across hardware array tracks.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="neuralBar"></div></div>
                 <div class="stats-matrix">
-                    <div class="stat-node"><span id="valNeuralVelocity">0%</span><small>Velocity</small></div>
-                    <div class="stat-node"><span id="valNeuralIndex">0%</span><small>Index</small></div>
-                    <div class="stat-node"><span id="valNeuralActive">0%</span><small>Active</small></div>
+                    <div class="stat-node"><span id="valNeuralVelocity">0%</span><small id="subMetricNeuralVelocity">Velocity</small></div>
+                    <div class="stat-node"><span id="valNeuralIndex">0%</span><small id="subMetricNeuralIndex">Index</small></div>
+                    <div class="stat-node"><span id="valNeuralActive">0%</span><small id="subMetricNeuralActive">Active</small></div>
                 </div>
                 <canvas id="neuralCanvas" class="live-telemetry-canvas"></canvas>
             </div>
  
             <div class="dashboard-box" id="analyticsBox">
                 <div class="dashboard-header-group">
-                    <h3 class="glow-title" style="color: var(--neon-purple);">Vision AI Matrix</h3>
-                    <p class="live-description">Processing spatial environment tracking, matrix frameworks, and vector points.</p>
+                    <h3 class="glow-title" style="color: var(--neon-purple);" id="cardTitleVision">Vision AI Matrix</h3>
+                    <p class="live-description" id="cardDescVision">Processing spatial environment tracking, matrix frameworks, and vector points.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="analyticsBar"></div></div>
                 <div class="stats-matrix">
-                    <div class="stat-node"><span id="valVisionFPS">0 FPS</span><small>FPS Feed</small></div>
-                    <div class="stat-node"><span id="valVisionAccuracy">0%</span><small>Accuracy</small></div>
-                    <div class="stat-node"><span id="valVisionTracking">0%</span><small>Tracking</small></div>
+                    <div class="stat-node"><span id="valVisionFPS">0 FPS</span><small id="subMetricVisionFPS">FPS Feed</small></div>
+                    <div class="stat-node"><span id="valVisionAccuracy">0%</span><small id="subMetricVisionAccuracy">Accuracy</small></div>
+                    <div class="stat-node"><span id="valVisionTracking">0%</span><small id="subMetricVisionTracking">Tracking</small></div>
                 </div>
                 <canvas id="analyticsCanvas" class="live-telemetry-canvas"></canvas>
             </div>
  
             <div class="dashboard-box" id="automationBox">
                 <div class="dashboard-header-group">
-                    <h3 class="glow-title" style="color: var(--neon-green);">Robotics Core</h3>
-                    <p class="live-description">Automated kinematics telemetry, hardware mapping, and thread scheduling loops.</p>
+                    <h3 class="glow-title" style="color: var(--neon-green);" id="cardTitleRobotics">Robotics Core</h3>
+                    <p class="live-description" id="cardDescRobotics">Automated kinematics telemetry, hardware mapping, and thread scheduling loops.</p>
                 </div>
                 <div class="progress-bar"><div class="progress" id="automationBar"></div></div>
                 <div class="stats-matrix">
-                    <div class="stat-node"><span id="valRobotTasks">0%</span><small>Tasks</small></div>
-                    <div class="stat-node"><span id="valRobotLoad">0%</span><small>Load</small></div>
-                    <div class="stat-node"><span id="valRobotFlow">0%</span><small>Flow</small></div>
+                    <div class="stat-node"><span id="valRobotTasks">0%</span><small id="subMetricRobotTasks">Tasks</small></div>
+                    <div class="stat-node"><span id="valRobotLoad">0%</span><small id="subMetricRobotLoad">Load</small></div>
+                    <div class="stat-node"><span id="valRobotFlow">0%</span><small id="subMetricRobotFlow">Flow</small></div>
                 </div>
                 <canvas id="automationCanvas" class="live-telemetry-canvas"></canvas>
             </div>
         </div>
     </section>
  
-    <footer> 
+    <footer id="footerText">
         &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
     </footer>
  
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const SystemState = {
-                isListening: false,
-                audioContext: null,
-                analyser: null,
-                dataArray: null,
-                stream: null,
-                recognition: null,
-                voiceSynth: window.speechSynthesis,
-                roboticVoice: null,
-                shouldRestartRecognition: true,
-                animationFrameId: null
+            // Multilingual Translation Matrix Object Mapping
+            const LocalizationMatrix = {
+                en: {
+                    navLogo: "Cognitive AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
+                    heroTitle: "Cognitive Speech AI Automation", heroDesc: "A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.",
+                    voiceStatusOffline: "Acoustic Core Offline", voiceStatusActive: "Ambient Wake-Word Engine Operational",
+                    voiceStatusSpeaking: "Broadcasting Audio Output Array...", transcriptPlaceholder: "Say \"SYSTEM\" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.",
+                    voiceTextInit: "Initialize Ambient Assistant Loop", voiceTextStop: "Terminate Matrix Operations Loop",
+                    sectionTitleMatrix: "Cognitive Operations Interface Matrix", panelHeaderCapture: "Acoustic Capture Buffer",
+                    metricLabelDecibel: "Acoustic Decibels", metricLabelFrequency: "Stream Frequency", panelHeaderSignature: "Cognitive Vocal Signature",
+                    cognitiveModality: "Acoustic Signal Processing", panelHeaderStatus: "Current Node Assistant Status",
+                    statusSilent: "SYSTEM SILENT", statusTransmitting: "TRANSMITTING RESPONSE", statusActive: "AMBIENT WATCH ACTIVE", statusOffline: "SYSTEM OFFLINE",
+                    labelCalm: "Calm Stability", labelFriction: "Vocal Friction", labelLoad: "Dynamic Processing Load",
+                    cardTitleNeural: "Neural Processing", cardDescNeural: "Evaluating language tokens and acoustic matrices across hardware array tracks.",
+                    subMetricNeuralVelocity: "Velocity", subMetricNeuralIndex: "Index", subMetricNeuralActive: "Active",
+                    cardTitleVision: "Vision AI Matrix", cardDescVision: "Processing spatial environment tracking, matrix frameworks, and vector points.",
+                    subMetricVisionFPS: "FPS Feed", subMetricVisionAccuracy: "Accuracy", subMetricVisionTracking: "Tracking",
+                    cardTitleRobotics: "Robotics Core", cardDescRobotics: "Automated kinematics telemetry, hardware mapping, and thread scheduling loops.",
+                    subMetricRobotTasks: "Tasks", subMetricRobotLoad: "Load", subMetricRobotFlow: "Flow",
+                    footerText: "© 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K",
+                    backendFail: "Backend connection failed."
+                },
+                ta: {
+                    navLogo: "அறிவுசார் செயற்கை நுண்ணறிவு", navLinkConsole: "முனையம்", navLinkMatrix: "நேரடி மேட்ரிக்ஸ்",
+                    heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நரம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
+                    voiceStatusOffline: "ஒலி கோர் ஆஃப்லைனில் உள்ளது", voiceStatusActive: "சுற்றுப்புற விழித்தெழு சொல் எஞ்சின் செயல்படுகிறது",
+                    voiceStatusSpeaking: "ஒலி வெளியீட்டு வரிசையை ஒளிபரப்புகிறது...", transcriptPlaceholder: "வழக்கமான ஸ்மார்ட் லூப் கண்காணிப்பைத் தொடங்க கீழே உள்ள தூண்டுதலைக் கிளிக் செய்து, \"SYSTEM\" எனக்கூறி உங்கள் கட்டளையை வழங்கவும்.",
+                    voiceTextInit: "சுற்றுப்புற உதவி வளையத்தைத் தொடங்கு", voiceTextStop: "செயல்பாட்டு வளையத்தை நிறுத்து",
+                    sectionTitleMatrix: "அறிவுசார் செயல்பாட்டு இடைமுக மேட்ரிக்ஸ்", panelHeaderCapture: "ஒலி பிடிப்பு இடையக பகுதி",
+                    metricLabelDecibel: "ஒலி டெசிபல்கள்", metricLabelFrequency: "அலைவரிசை அதிர்வெண்", panelHeaderSignature: "அறிவுசார் குரல் கையொப்பம்",
+                    cognitiveModality: "ஒலி சமிக்ஞை செயலாக்கம்", panelHeaderStatus: "தற்போதைய கணினி உதவி நிலை",
+                    statusSilent: "கணினி அமைதி", statusTransmitting: "பதிலை அனுப்புகிறது", statusActive: "சுற்றுப்புற கண்காணிப்பு செயலில் உள்ளது", statusOffline: "கணினி ஆஃப்லைனில் உள்ளது",
+                    labelCalm: "அமைதியான நிலைத்தன்மை", labelFriction: "குரல் உராய்வு", labelLoad: "இயக்க முறை செயலாக்க சுமை",
+                    cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
+                    subMetricNeuralVelocity: "வேகம்", subMetricNeuralIndex: "குறியீடு", subMetricNeuralActive: "செயலில்",
+                    cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்", cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு, மேட்ரிக்ஸ் கட்டமைப்புகள் மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
+                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபೀட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காणीப்பு",
+                    cardTitleRobotics: "ரோபாட்டிக்ஸ் கோர்", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
+                    subMetricRobotTasks: "பணிகள்", subMetricRobotLoad: "சுமை", subMetricRobotFlow: "பாய்ச்சல்",
+                    footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம் | வடிவமைத்தவர் ரமேஷ் குமார் K",
+                    backendFail: "பின்னணி இணைப்பு தோல்வியடைந்தது."
+                },
+                hi: {
+                    navLogo: "कॉग्निटिव एआई", navLinkConsole: "कंसोल", navLinkMatrix: "लाइव मैट्रिक्स",
+                    heroTitle: "कॉग्निटिव स्पीच एआई ऑटोमेशन", heroDesc: "वास्तविक समय के सिमेंटिक निष्पादन के साथ रोबोटिक न्यूरल प्रोसेसिंग पैटर्न को संश्लेषित करने वाला एक भारती-मोडल मशीन एरे स्ट्रीम।",
+                    voiceStatusOffline: "ध्वनिक कोर ऑफ़लाइन", voiceStatusActive: "वेक-वर्ड इंजन सक्रिय है",
+                    voiceStatusSpeaking: "ऑडियो आउटपुट एरे प्रसारित हो रहा है...", transcriptPlaceholder: "मानक स्मार्ट लूप निगरानी शुरू करने के लिए नीचे दिए गए ट्रिगर पर क्लिक करें, और \"SYSTEM\" बोलने के बाद अपना कमांड दें।",
+                    voiceTextInit: "असिस्टेंट लूप प्रारंभ करें", voiceTextStop: "मैट्रिक्स ऑपरेशंस लूप समाप्त करें",
+                    sectionTitleMatrix: "कॉग्निटिव ऑपरेशंस इंटरफेस मैट्रिक्स", panelHeaderCapture: "ध्वनिक कैप्चर बफर",
+                    metricLabelDecibel: "ध्वनिक डेसिबल", metricLabelFrequency: "स्ट्रीम फ्रीक्वेंसी", panelHeaderSignature: "कॉग्निटिव वोकल सिग्नेचर",
+                    cognitiveModality: "ध्वनिक सिग्नल प्रोसेसिंग", panelHeaderStatus: "वर्तमान नोड असिस्टेंट स्थिति",
+                    statusSilent: "सिस्टम मौन", statusTransmitting: "प्रतिक्रिया प्रसारित हो रही है", statusActive: "असिस्टेंट वॉच सक्रिय", statusOffline: "सिस्टम ऑफ़लाइन",
+                    labelCalm: "शांत स्थिरता", labelFriction: "मुखर घर्षण", labelLoad: "डायनेमिक प्रोसेसिंग लोड",
+                    cardTitleNeural: "न्यूरल प्रोसेसिंग", cardDescNeural: "हार्डवेयर एरे ट्रैक पर भाषा टोकन और ध्वनिक मैट्रिक्स का मूल्यांकन।",
+                    subMetricNeuralVelocity: "गति", subMetricNeuralIndex: "इंडेक्स", subMetricNeuralActive: "सक्रिय",
+                    cardTitleVision: "विजन एआई मैट्रिक्स", cardDescVision: "स्थानिक पर्यावरण ट्रैकिंग, मैट्रिक्स फ्रेमवर्क और वेक्टर बिंदुओं को संसाधित करना।",
+                    subMetricVisionFPS: "एफपीएस फीड", subMetricVisionAccuracy: "सटीकता", subMetricVisionTracking: "ट्रैकिंग",
+                    cardTitleRobotics: "रोबोटिक्स कोर", cardDescRobotics: "स्वचालित कीनेमैटिक्स टेलीमेट्री, हार्डवेयर मैपिंग और थ्रेड शेड्यूलिंग लूप।",
+                    subMetricRobotTasks: "कार्य", subMetricRobotLoad: "लोड", subMetricRobotFlow: "प्रवाह",
+                    footerText: "© 2026 कॉग्निटिव एआई एडवांस्ड वेब प्रोजेक्ट | रमेश कुमार के द्वारा डिज़ाइन किया गया",
+                    backendFail: "बैकएंड कनेक्शन विफल रहा।"
+                },
+                kn: {
+                    navLogo: "ಕಾಗ್ನಿಟಿವ್ ಎಐ", navLinkConsole: "ಕನ್ಸೋಲ್", navLinkMatrix: "ಲೈವ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್",
+                    heroTitle: "ಕಾಗ್ನಿಟಿವ್ ಸ್ಪೀಚ್ ಎಐ ಆಟೊಮೇಷನ್", heroDesc: "ನೈಜ-ಸಮಯದ ಲಾಕ್ಷಣಿಕ ಮರಣದಂಡನೆಯೊಂದಿಗೆ ರೋಬೋಟಿಕ್ ನರ ಸಂಸ್ಕರಣಾ ಮಾದರಿಗಳನ್ನು ಸಂಯೋಜಿಸುವ ಮಲ್ಟಿ-ಮೋಡಲ್ ಯಂತ್ರ ಅರೇ ಸ್ಟ್ರೀಮ್.",
+                    voiceStatusOffline: "ಅಕೌಸ್ಟಿಕ್ ಕೋರ್ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದೆ", voiceStatusActive: "ವೇಕ್-ವರ್ಡ್ ಇಂಜಿನ್ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆ",
+                    voiceStatusSpeaking: "ಆಡಿಯೊ ಔಟ್‌ಪುಟ್ ಪ್ರಸಾರವಾಗುತ್ತಿದೆ...", transcriptPlaceholder: "ಪ್ರಮಾಣಿತ ಸ್ಮಾರ್ಟ್ ಲೂಪ್ ಮಾನಿಟರಿಂಗ್ ಪ್ರಾರಂಭಿಸಲು ಕೆಳಗಿನ ಪ್ರಚೋದಕವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ, ಮತ್ತು \"SYSTEM\" ಎಂದು ಹೇಳಿದ ನಂತರ ನಿಮ್ಮ ಆದೇಶವನ್ನು ನೀಡಿ.",
+                    voiceTextInit: "ಅಸಿಸ್ಟೆಂಟ್ ಲೂಪ್ ಪ್ರಾರಂಭಿಸಿ", voiceTextStop: "ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಕಾರ್ಯಾಚರಣೆಗಳ ಲೂಪ್ ನಿಲ್ಲಿಸಿ",
+                    sectionTitleMatrix: "ಕಾಗ್ನಿಟಿವ್ ಆಪರೇಷನ್ಸ್ ಇಂಟರ್ಫೇಸ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್", panelHeaderCapture: "ಅಕೌಸ್ಟಿಕ್ ಕ್ಯಾಪ್ಚರ್ ಬಫರ್",
+                    metricLabelDecibel: "ಅಕೌಸ್ಟಿಕ್ ಡೆಸಿಬಲ್ಸ್", metricLabelFrequency: "ಸ್ಟ್ರೀಮ್ ಆವರ್ತನ", panelHeaderSignature: "ಕಾಗ್ನಿಟಿವ್ ವೋಕಲ್ ಸಿಗ್ನೇಚರ್",
+                    cognitiveModality: "ಅಕೌಸ್ಟಿಕ್ ಸಿಗ್ನಲ್ ಪ್ರೊಸೆಸಿಂಗ್", panelHeaderStatus: "ಪ್ರಸ್ತುತ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ಥಿತಿ",
+                    statusSilent: "ಸಿಸ್ಟಮ್ ಸೈಲೆಂಟ್", statusTransmitting: "ಪ್ರತಿಕ್ರಿಯೆ ರವಾನೆಯಾಗುತ್ತಿದೆ", statusActive: "ಸಿಸ್ಟಮ್ ವಾಚ್ ಸಕ್ರಿಯವಾಗಿದೆ", statusOffline: "ಸಿಸ್ಟಮ್ ಆಫ್‌ಲೈನ್",
+                    labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ನಾದದ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಪ್ರೊಸೆಸಿಂಗ್ ಲೋಡ್",
+                    cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
+                    subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
+                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಪ್ರಾದೇಶಿಕ ಪರಿಸರ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಚೌಕಟ್ಟುಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಸಂಸ್ಕರಿಸಲಾಗುತ್ತಿದೆ.",
+                    subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
+                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಚಲನಶಾಸ್ತ್ರ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
+                    subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಹರಿವು",
+                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ಅವರಿಂದ ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ",
+                    backendFail: "ಬ್ಯಾಕೆಂಡ್ ಸಂಪರ್ಕ ವಿಫಲವಾಗಿದೆ."
+                }
             };
 
-            const telemetryCanvasEngines = {
-                neural: { el: document.getElementById("neuralCanvas"), points: [], color: '#00f3ff', mode: 'oscilloscope' },
-                analytics: { el: document.getElementById("analyticsCanvas"), points: [], color: '#8b5cf6', mode: 'vectors' },
-                automation: { el: document.getElementById("automationCanvas"), points: [], color: '#10b981', mode: 'spectrum' }
-            };
+            // Selected Language
+            let currentLang = 'en';
 
-            const voiceBtn = document.getElementById("btnVoiceTrigger");
+            // DOM Selectors
+            const langSelect = document.getElementById("langSelect");
+            const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
+            const voiceText = document.getElementById("voiceText");
             const voiceStatusDot = document.getElementById("voiceStatusDot");
             const voiceStatusText = document.getElementById("voiceStatusText");
             const voiceTranscript = document.getElementById("voiceTranscript");
             const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+            const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
             const liveDecibel = document.getElementById("liveDecibel");
             const liveSampleRate = document.getElementById("liveSampleRate");
-            const eqBars = document.querySelectorAll(".eq-bar");
-            const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
             const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-            const simulationToggle = document.getElementById("simulationToggle");
-                                
-            const emotionBars = {
-                calmBar: document.getElementById("barCalm"), calmTxt: document.getElementById("txtCalm"),
-                frictionBar: document.getElementById("barFriction"), frictionTxt: document.getElementById("txtFriction"),
-                loadBar: document.getElementById("barLoad"), loadTxt: document.getElementById("txtLoad")
-            };
 
-            const metricLabels = {
-                neuralVelocity: document.getElementById("valNeuralVelocity"),
-                neuralIndex: document.getElementById("valNeuralIndex"),
-                neuralActive: document.getElementById("valNeuralActive"),
-                neuralBar: document.getElementById("neuralBar"),
-                visionFPS: document.getElementById("valVisionFPS"),
-                visionAccuracy: document.getElementById("valVisionAccuracy"),
-                visionTracking: document.getElementById("valVisionTracking"),
-                analyticsBar: document.getElementById("analyticsBar"),
-                robotTasks: document.getElementById("valRobotTasks"),
-                robotLoad: document.getElementById("valRobotLoad"),
-                robotFlow: document.getElementById("valRobotFlow"),
-                automationBar: document.getElementById("automationBar")
-            };
+            const barCalm = document.getElementById("barCalm");
+            const txtCalm = document.getElementById("txtCalm");
+            const barFriction = document.getElementById("barFriction");
+            const txtFriction = document.getElementById("txtFriction");
+            const barLoad = document.getElementById("barLoad");
+            const txtLoad = document.getElementById("txtLoad");
 
-            if (voiceBtn) {
-                voiceBtn.addEventListener("click", toggleVoiceCaptureSystem);
-            }
+            const eqBars = document.querySelectorAll(".eq-bar");
 
-            function initVoiceProfiles() {
-                if (!SystemState.voiceSynth) return;
-                let voices = SystemState.voiceSynth.getVoices();
-                SystemState.roboticVoice = voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('google')) || 
-                                           voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('natural')) || 
-                                           voices.find(v => v.lang.includes('en-US')) || 
-                                           voices[0];
-            }
+            // Web Audio Variables
+            let audioContext = null;
+            let analyser = null;
+            let microphoneStream = null;
+            let javascriptNode = null;
+            let isLoopRunning = false;
 
-            if (window.speechSynthesis) {
-                window.speechSynthesis.onvoiceschanged = initVoiceProfiles;
-                initVoiceProfiles();
-            }
+            // Speech Recognition Variables
+            let recognition = null;
 
-            function executeRoboticSpeech(phrase) {
-                if (!SystemState.voiceSynth) return;
-                
-                if (SystemState.recognition) {
-                    SystemState.shouldRestartRecognition = false;
-                    SystemState.recognition.stop();
-                }
+            // Canvas & Telemetry System
+            const neuralCanvas = document.getElementById("neuralCanvas");
+            const analyticsCanvas = document.getElementById("analyticsCanvas");
+            const automationCanvas = document.getElementById("automationCanvas");
 
-                SystemState.voiceSynth.cancel();
-                     
-                const utterance = new SpeechSynthesisUtterance(phrase);
-                if (SystemState.roboticVoice) {
-                    utterance.voice = SystemState.roboticVoice;
-                }
-                     
-                utterance.pitch = 0.85; 
-                utterance.rate = 1.05;    
-                utterance.volume = 1.0;  
-                     
-                utterance.onstart = () => {
-                    emotionTokenDisplay.textContent = "TRANSMITTING OUTPUT";
-                    emotionTokenDisplay.style.color = "var(--neon-blue)";
-                    voiceStatusDot.className = "status-dot speaking";
-                    voiceStatusText.textContent = "Broadcasting Audio Output Array...";
-                };
+            const neuralCtx = neuralCanvas.getContext("2d");
+            const analyticsCtx = analyticsCanvas.getContext("2d");
+            const automationCtx = automationCanvas.getContext("2d");
 
-                utterance.onend = () => {
-                    emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
-                    emotionTokenDisplay.style.color = "var(--neon-green)";
-                    voiceStatusDot.className = "status-dot active";
-                    voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                        
-                    SystemState.shouldRestartRecognition = true;
-                    if (SystemState.isListening && SystemState.recognition) {
-                        try { SystemState.recognition.start(); } catch(e){}
-                    }
-                };
-
-                SystemState.voiceSynth.speak(utterance);
-            }
-
-            // High-fidelity speech execution simulations when backend is offline
-            function runLocalSimulationCore(command) {
-                const normalized = command.toUpperCase().trim();
-                let reply = "Standard command recognized. Processing array sequence.";
-                
-                if (normalized.includes("DIAGNOSTICS") || normalized.includes("STATUS")) {
-                    reply = "Running automation suite diagnostics. All micro services reporting optimal framework integrity at ninety eight point seven percent accuracy.";
-                } else if (normalized.includes("VISION") || normalized.includes("CAMERA") || normalized.includes("TRACK")) {
-                    reply = "Activating spatial tracking vectors. Frame rates verified at sixty frames per second. Spatial depth mappings are completed.";
-                } else if (normalized.includes("ROBOT") || normalized.includes("KINEMATICS") || normalized.includes("FLOW")) {
-                    reply = "Initializing kinematics scheduling loop. Core motor paths mapping clean. Hardware array load at fourteen percent.";
-                } else if (normalized.includes("HELLO") || normalized.includes("SYSTEM")) {
-                    reply = "Cognitive System wake-word detected. I am fully initialized and waiting for matrix operations instructions.";
-                } else {
-                    reply = `Executing sequence processing routine for code: ${command}. Standard command array loop active.`;
-                }
-                
-                setTimeout(() => {
-                    executeRoboticSpeech(reply);
-                }, 500);
-            }
-
-            function processVoicePayload(transcript) {
-                const text = transcript.trim();
-                voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
-
-                if (text.toUpperCase().startsWith("SYSTEM")) {
-                    const parsedCommand = text.substring(6).trim();
-                    emotionTokenDisplay.textContent = "COMPUTING MATRIX PATH";
-                    emotionTokenDisplay.style.color = "var(--neon-purple)";
-
-                    if (simulationToggle && simulationToggle.checked) {
-                        console.log("Running in Local Simulation Core...");
-                        runLocalSimulationCore(parsedCommand);
-                    } else {
-                        // Attempting live backend contact
-                        const controller = new AbortController();
-                        const timeout = setTimeout(() => controller.abort(), 4000);
-
-                        fetch("http://127.0.0.1:5000/api/command", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ command: parsedCommand }),
-                            signal: controller.signal
-                        })
-                        .then(async (res) => {
-                            clearTimeout(timeout);
-                            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-                            return await res.json();
-                        })
-                        .then(data => {
-                            console.log("Backend Response Received:", data);
-                            if (data?.action) executeRoboticSpeech(data.action);
-                            if (data?.url) window.open(data.url, "_blank");
-                        })
-                        .catch(err => {
-                            clearTimeout(timeout);
-                            console.warn("Flask Connection Refused. Engaging Local Simulation Core:", err);
-                            runLocalSimulationCore(parsedCommand);
-                        });
-                    }
-                } else {
-                    console.log("Ignored transcript (missing prefix 'SYSTEM'):", text);
-                }
-            }
-
-            async function startLiveAudioContext() {
-                try {
-                    SystemState.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    SystemState.analyser = SystemState.audioContext.createAnalyser();
-                    SystemState.analyser.fftSize = 64;
-                    
-                    const source = SystemState.audioContext.createMediaStreamSource(SystemState.stream);
-                    source.connect(SystemState.analyser);
-                    
-                    SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
-                    liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-                } catch (err) {
-                    console.warn("Microphone connection denied or unavailable. Visualizing telemetry synthetically.", err);
-                    liveSampleRate.textContent = "44.1 kHz (Synth)";
-                }
-            }
-
-            function toggleVoiceCaptureSystem() {
-                if (SystemState.isListening) {
-                    deactivateVoiceSystem();
-                } else {
-                    activateVoiceSystem();
-                }
-            }
-
-            async function activateVoiceSystem() {
-                SystemState.isListening = true;
-                voiceBtn.className = "btn voice-btn listening";
-                document.getElementById("voiceText").textContent = "Deactivate Ambient System Loop";
-                voiceStatusDot.className = "status-dot active";
-                voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                voiceModuleStatus.textContent = "LIVE STREAM";
-                voiceModuleStatus.className = "audio-pill-badge active";
-                voiceProcessingPanel.classList.add("voice-pulse-highlight");
-                emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
-                emotionTokenDisplay.style.color = "var(--neon-green)";
-
-                await startLiveAudioContext();
-
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (SpeechRecognition) {
-                    SystemState.recognition = new SpeechRecognition();
-                    SystemState.recognition.continuous = true;
-                    SystemState.recognition.interimResults = false;
-                    SystemState.recognition.lang = 'en-US';
-
-                    SystemState.recognition.onresult = (event) => {
-                        const transcript = event.results[event.results.length - 1][0].transcript;
-                        processVoicePayload(transcript);
-                    };
-
-                    SystemState.recognition.onerror = (e) => {
-                        console.error("Speech Recognition Error:", e);
-                    };
-
-                    SystemState.recognition.onend = () => {
-                        if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                            try { SystemState.recognition.start(); } catch(err){}
-                        }
-                    };
-
-                    try {
-                        SystemState.recognition.start();
-                    } catch(err) {
-                        console.error("Failed to start Speech Recognition:", err);
-                    }
-                } else {
-                    voiceTranscript.innerHTML = `<span style="color:var(--neon-rose);">> API Missing: Web Speech Recognition API is unsupported on this browser. Simulated commands can be entered manually into the stream loop.</span>`;
-                }
-
-                animateTelemetryCanvas();
-            }
-
-            function deactivateVoiceSystem() {
-                SystemState.isListening = false;
-                SystemState.shouldRestartRecognition = false;
-                
-                if (SystemState.recognition) {
-                    SystemState.recognition.stop();
-                }
-                if (SystemState.voiceSynth) {
-                    SystemState.voiceSynth.cancel();
-                }
-                if (SystemState.stream) {
-                    SystemState.stream.getTracks().forEach(track => track.stop());
-                }
-                if (SystemState.audioContext) {
-                    SystemState.audioContext.close();
-                }
-                if (SystemState.animationFrameId) {
-                    cancelAnimationFrame(SystemState.animationFrameId);
-                }
-
-                voiceBtn.className = "btn voice-btn";
-                document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
-                voiceStatusDot.className = "status-dot";
-                voiceStatusText.textContent = "Acoustic Core Offline";
-                voiceModuleStatus.textContent = "STANDBY";
-                voiceModuleStatus.className = "audio-pill-badge";
-                voiceProcessingPanel.classList.remove("voice-pulse-highlight");
-                emotionTokenDisplay.textContent = "SYSTEM SILENT";
-                emotionTokenDisplay.style.color = "var(--text-secondary)";
-                
-                resetAllUIValues();
-            }
-
-            function animateTelemetryCanvas() {
-                if (!SystemState.isListening) return;
-
-                // 1. Process Live Microphone Data into Real DB & Frequency Bars
-                if (SystemState.analyser && SystemState.dataArray) {
-                    SystemState.analyser.getByteFrequencyData(SystemState.dataArray);
-                    let sum = 0;
-                    eqBars.forEach((bar, index) => {
-                        const value = SystemState.dataArray[index] || 0;
-                        sum += value;
-                        const heightPercent = Math.max(10, (value / 255) * 100);
-                        bar.style.height = `${heightPercent}%`;
-                    });
-                    
-                    const average = sum / eqBars.length;
-                    const db = average > 0 ? 20 * Math.log10(average / 255) : -90;
-                    liveDecibel.textContent = isFinite(db) ? `${db.toFixed(1)} dB` : "-Inf dB";
-                } else {
-                    // Synthetic fallback visualizer simulation
-                    eqBars.forEach((bar) => {
-                        const randomHeight = Math.floor(Math.random() * 85) + 15;
-                        bar.style.height = `${randomHeight}%`;
-                    });
-                    liveDecibel.textContent = "-48.2 dB";
-                }
-
-                // 2. Render Hardware-Accelerated Distinct Canvas Visualization Types
-                Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const engine = telemetryCanvasEngines[key];
-                    const canvas = engine.el;
-                    if (!canvas) return;
-                    const ctx = canvas.getContext("2d");
-                    
-                    if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
-                        canvas.width = canvas.clientWidth;
-                        canvas.height = canvas.clientHeight;
-                    }
-
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.strokeStyle = engine.color;
-                    ctx.lineWidth = 2;
-
-                    if (engine.mode === 'oscilloscope') {
-                        // Render Beautiful Smooth Sine Oscillation Waveform
-                        ctx.beginPath();
-                        const sliceWidth = canvas.width / 100;
-                        const time = Date.now() * 0.006;
-                        for (let i = 0; i < 100; i++) {
-                            const x = i * sliceWidth;
-                            const y = (canvas.height / 2) + Math.sin(i * 0.15 + time) * 15;
-                            if (i === 0) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
-                        }
-                        ctx.stroke();
-                    } 
-                    else if (engine.mode === 'vectors') {
-                        // Render Geometric Track Scanning Grid Points
-                        ctx.fillStyle = engine.color;
-                        const numPoints = 8;
-                        const space = canvas.width / (numPoints + 1);
-                        const time = Date.now() * 0.003;
-                        ctx.beginPath();
-                        for (let i = 1; i <= numPoints; i++) {
-                            const x = i * space;
-                            const y = (canvas.height / 2) + Math.sin(i + time) * 18;
-                            ctx.arc(x, y, 3, 0, 2 * Math.PI);
-                            if (i > 1) {
-                                const prevX = (i - 1) * space;
-                                const prevY = (canvas.height / 2) + Math.sin((i - 1) + time) * 18;
-                                ctx.moveTo(prevX, prevY);
-                                ctx.lineTo(x, y);
-                            }
-                        }
-                        ctx.stroke();
-                    } 
-                    else if (engine.mode === 'spectrum') {
-                        // Render Frequency Bars spectrum
-                        const numBars = 20;
-                        const barWidth = canvas.width / numBars - 2;
-                        const time = Date.now() * 0.005;
-                        ctx.fillStyle = engine.color;
-                        for (let i = 0; i < numBars; i++) {
-                            const x = i * (barWidth + 2);
-                            const val = Math.abs(Math.sin(i * 0.5 + time)) * (canvas.height - 20);
-                            ctx.fillRect(x, canvas.height - val, barWidth, val);
-                        }
-                    }
+            // Handle Canvas Sizing
+            function resizeCanvases() {
+                [neuralCanvas, analyticsCanvas, automationCanvas].forEach(canvas => {
+                    canvas.width = canvas.clientWidth * window.devicePixelRatio;
+                    canvas.height = canvas.clientHeight * window.devicePixelRatio;
                 });
+            }
+            window.addEventListener('resize', resizeCanvases);
+            resizeCanvases();
 
-                // 3. Update Simulated Live Progress metrics
-                if (Math.random() > 0.85) {
-                    const r1 = Math.floor(Math.random() * 25) + 65;
-                    const r2 = Math.floor(Math.random() * 20) + 70;
-                    const r3 = Math.floor(Math.random() * 15) + 80;
+            // Language Switcher function
+            function applyLocalization(lang) {
+                currentLang = lang;
+                const matrix = LocalizationMatrix[lang];
+                if (!matrix) return;
 
-                    metricLabels.neuralVelocity.textContent = `${r1}%`;
-                    metricLabels.neuralIndex.textContent = `0.${r2}`;
-                    metricLabels.neuralActive.textContent = `${r3}`;
-                    metricLabels.neuralBar.style.width = `${r1}%`;
+                // Nav & Headers
+                document.getElementById("navLogo").textContent = matrix.navLogo;
+                document.getElementById("navLinkConsole").textContent = matrix.navLinkConsole;
+                document.getElementById("navLinkMatrix").textContent = matrix.navLinkMatrix;
+                document.getElementById("heroTitle").textContent = matrix.heroTitle;
+                document.getElementById("heroDesc").textContent = matrix.heroDesc;
+                document.getElementById("sectionTitleMatrix").textContent = matrix.sectionTitleMatrix;
+                document.getElementById("panelHeaderCapture").textContent = matrix.panelHeaderCapture;
+                document.getElementById("metricLabelDecibel").textContent = matrix.metricLabelDecibel;
+                document.getElementById("metricLabelFrequency").textContent = matrix.metricLabelFrequency;
+                document.getElementById("panelHeaderSignature").textContent = matrix.panelHeaderSignature;
+                document.getElementById("cognitiveModality").textContent = matrix.cognitiveModality;
+                document.getElementById("panelHeaderStatus").textContent = matrix.panelHeaderStatus;
 
-                    metricLabels.visionFPS.textContent = `${Math.floor(Math.random() * 10) + 50} FPS`;
-                    metricLabels.visionAccuracy.textContent = `${r2}%`;
-                    metricLabels.visionTracking.textContent = `${r3}%`;
-                    metricLabels.analyticsBar.style.width = `${r2}%`;
+                // Visual metric labels
+                document.getElementById("labelCalm").textContent = matrix.labelCalm;
+                document.getElementById("labelFriction").textContent = matrix.labelFriction;
+                document.getElementById("labelLoad").textContent = matrix.labelLoad;
 
-                    metricLabels.robotTasks.textContent = `${Math.floor(r3 / 10)}`;
-                    metricLabels.robotLoad.textContent = `${r1 - 30}%`;
-                    metricLabels.robotFlow.textContent = `${r2}%`;
-                    metricLabels.automationBar.style.width = `${r3}%`;
+                // Cards
+                document.getElementById("cardTitleNeural").textContent = matrix.cardTitleNeural;
+                document.getElementById("cardDescNeural").textContent = matrix.cardDescNeural;
+                document.getElementById("subMetricNeuralVelocity").textContent = matrix.subMetricNeuralVelocity;
+                document.getElementById("subMetricNeuralIndex").textContent = matrix.subMetricNeuralIndex;
+                document.getElementById("subMetricNeuralActive").textContent = matrix.subMetricNeuralActive;
 
-                    emotionBars.calmBar.style.width = `${r2}%`;
-                    emotionBars.calmTxt.textContent = `${r2}%`;
-                    emotionBars.frictionBar.style.width = `${100 - r2}%`;
-                    emotionBars.frictionTxt.textContent = `${100 - r2}%`;
-                    emotionBars.loadBar.style.width = `${r3}%`;
-                    emotionBars.loadTxt.textContent = `${r3}%`;
+                document.getElementById("cardTitleVision").textContent = matrix.cardTitleVision;
+                document.getElementById("cardDescVision").textContent = matrix.cardDescVision;
+                document.getElementById("subMetricVisionFPS").textContent = matrix.subMetricVisionFPS;
+                document.getElementById("subMetricVisionAccuracy").textContent = matrix.subMetricVisionAccuracy;
+                document.getElementById("subMetricVisionTracking").textContent = matrix.subMetricVisionTracking;
+
+                document.getElementById("cardTitleRobotics").textContent = matrix.cardTitleRobotics;
+                document.getElementById("cardDescRobotics").textContent = matrix.cardDescRobotics;
+                document.getElementById("subMetricRobotTasks").textContent = matrix.subMetricRobotTasks;
+                document.getElementById("subMetricRobotLoad").textContent = matrix.subMetricRobotLoad;
+                document.getElementById("subMetricRobotFlow").textContent = matrix.subMetricRobotFlow;
+
+                document.getElementById("footerText").innerHTML = matrix.footerText;
+
+                // Dynamic values checking current states
+                if (!isLoopRunning) {
+                    voiceText.textContent = matrix.voiceTextInit;
+                    voiceStatusText.textContent = matrix.voiceStatusOffline;
+                    emotionTokenDisplay.textContent = matrix.statusOffline;
+                    voiceModuleStatus.textContent = "STANDBY";
+                    voiceModuleStatus.className = "audio-pill-badge";
+                } else {
+                    voiceText.textContent = matrix.voiceTextStop;
+                    if (voiceStatusDot.classList.contains("speaking")) {
+                        voiceStatusText.textContent = matrix.voiceStatusSpeaking;
+                        emotionTokenDisplay.textContent = matrix.statusTransmitting;
+                    } else {
+                        voiceStatusText.textContent = matrix.voiceStatusActive;
+                        emotionTokenDisplay.textContent = matrix.statusActive;
+                    }
                 }
-
-                SystemState.animationFrameId = requestAnimationFrame(animateTelemetryCanvas);
             }
 
-            function resetAllUIValues() {
-                eqBars.forEach(b => b.style.height = "10%");
+            langSelect.addEventListener("change", (e) => applyLocalization(e.target.value));
+
+            // Initialize Speech Recognition Loop
+            function initializeRecognition() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    console.warn("Speech recognition is not supported in this browser.");
+                    return;
+                }
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+
+                recognition.onstart = () => {
+                    voiceProcessingPanel.classList.add("voice-pulse-highlight");
+                };
+
+                recognition.onresult = (event) => {
+                    let interimTranscript = '';
+                    let finalTranscript = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        } else {
+                            interimTranscript += event.results[i][0].transcript;
+                        }
+                    }
+
+                    const activeTranscript = finalTranscript || interimTranscript;
+                    if (activeTranscript.trim().length > 0) {
+                        voiceTranscript.innerHTML = `<span>${activeTranscript}</span>`;
+                        // Switch indicators dynamically to transmit mode when audio is captured
+                        triggerTransmittingDisplay(true);
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error("Speech Recognition Error", event.error);
+                };
+
+                recognition.onend = () => {
+                    if (isLoopRunning) {
+                        recognition.start(); // Auto-restart context if session active
+                    } else {
+                        voiceProcessingPanel.classList.remove("voice-pulse-highlight");
+                    }
+                };
+            }
+
+            function triggerTransmittingDisplay(isTransmitting) {
+                const matrix = LocalizationMatrix[currentLang];
+                if (isTransmitting) {
+                    voiceStatusDot.className = "status-dot speaking";
+                    voiceStatusText.textContent = matrix.voiceStatusSpeaking;
+                    emotionTokenDisplay.textContent = matrix.statusTransmitting;
+                    voiceModuleStatus.textContent = "CAPTURE";
+                    voiceModuleStatus.className = "audio-pill-badge active";
+                } else {
+                    voiceStatusDot.className = "status-dot active";
+                    voiceStatusText.textContent = matrix.voiceStatusActive;
+                    emotionTokenDisplay.textContent = matrix.statusActive;
+                    voiceModuleStatus.textContent = "ONLINE";
+                    voiceModuleStatus.className = "audio-pill-badge active";
+                }
+            }
+
+            // Real Web Audio API Input Processing
+            async function startAudioProcessing() {
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    analyser.fftSize = 256;
+
+                    microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                    const source = audioContext.createMediaStreamSource(microphoneStream);
+                    source.connect(analyser);
+
+                    // Track values dynamically
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+
+                    liveSampleRate.textContent = `${(audioContext.sampleRate / 1000).toFixed(1)} kHz`;
+
+                    function updateAudioData() {
+                        if (!isLoopRunning) return;
+                        requestAnimationFrame(updateAudioData);
+
+                        analyser.getByteFrequencyData(dataArray);
+
+                        // Calculate RMS/Decibels
+                        let sum = 0;
+                        for (let i = 0; i < bufferLength; i++) {
+                            sum += dataArray[i] * dataArray[i];
+                        }
+                        let rms = Math.sqrt(sum / bufferLength);
+                        let db = 20 * Math.log10(rms / 255);
+                        if (db < -100 || isNaN(db) || !isFinite(db)) db = -90;
+
+                        liveDecibel.textContent = `${db.toFixed(1)} dB`;
+
+                        // Feed live spectrum values into EQ bars dynamically
+                        const step = Math.floor(bufferLength / eqBars.length);
+                        eqBars.forEach((bar, index) => {
+                            const value = dataArray[index * step] || 0;
+                            const heightPercent = Math.max(10, Math.min(100, (value / 255) * 100));
+                            bar.style.height = `${heightPercent}%`;
+                        });
+
+                        // Dynamic Vocal Signatures based on decibel activity
+                        if (rms > 10) {
+                            triggerTransmittingDisplay(true);
+                            // Simulated vocal profile parsing calculations
+                            const calmVal = Math.max(10, Math.floor(90 - rms * 0.5));
+                            const frictionVal = Math.min(95, Math.floor(rms * 0.6));
+                            const loadVal = Math.min(100, Math.floor(30 + rms * 0.7));
+
+                            barCalm.style.width = `${calmVal}%`;
+                            txtCalm.textContent = `${calmVal}%`;
+
+                            barFriction.style.width = `${frictionVal}%`;
+                            txtFriction.textContent = `${frictionVal}%`;
+
+                            barLoad.style.width = `${loadVal}%`;
+                            txtLoad.textContent = `${loadVal}%`;
+                        } else {
+                            triggerTransmittingDisplay(false);
+                            // Standard active ambient noise values
+                            barCalm.style.width = `95%`;
+                            txtCalm.textContent = `95%`;
+
+                            barFriction.style.width = `2%`;
+                            txtFriction.textContent = `2%`;
+
+                            barLoad.style.width = `5%`;
+                            txtLoad.textContent = `5%`;
+                        }
+                    }
+
+                    updateAudioData();
+
+                } catch (err) {
+                    console.error("Microphone Access Denied / Audio Pipeline Error: ", err);
+                    voiceTranscript.innerHTML = `<span style="color: var(--neon-rose);">${LocalizationMatrix[currentLang].backendFail}</span>`;
+                }
+            }
+
+            function stopAudioProcessing() {
+                if (microphoneStream) {
+                    microphoneStream.getTracks().forEach(track => track.stop());
+                }
+                if (audioContext) {
+                    audioContext.close();
+                }
+                isLoopRunning = false;
+                
+                // Reset standard metrics visual parameters
                 liveDecibel.textContent = "-Inf dB";
                 liveSampleRate.textContent = "0.0 kHz";
-                
-                Object.keys(emotionBars).forEach(k => {
-                    if(k.includes('Bar')) emotionBars[k].style.width = "0%";
-                    if(k.includes('Txt')) emotionBars[k].textContent = "0%";
-                });
+                eqBars.forEach(bar => bar.style.height = '10%');
 
-                // Clear canvases
-                Object.keys(telemetryCanvasEngines).forEach(key => {
-                    const canvas = telemetryCanvasEngines[key].el;
-                    if (canvas) {
-                        const ctx = canvas.getContext("2d");
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    }
-                });
-
-                // Reset labels
-                metricLabels.neuralVelocity.textContent = "0%";
-                metricLabels.neuralIndex.textContent = "0%";
-                metricLabels.neuralActive.textContent = "0%";
-                metricLabels.neuralBar.style.width = "0%";
-                
-                metricLabels.visionFPS.textContent = "0 FPS";
-                metricLabels.visionAccuracy.textContent = "0%";
-                metricLabels.visionTracking.textContent = "0%";
-                metricLabels.analyticsBar.style.width = "0%";
-
-                metricLabels.robotTasks.textContent = "0%";
-                metricLabels.robotLoad.textContent = "0%";
-                metricLabels.robotFlow.textContent = "0%";
-                metricLabels.automationBar.style.width = "0%";
+                barCalm.style.width = '0%';
+                txtCalm.textContent = '0%';
+                barFriction.style.width = '0%';
+                txtFriction.textContent = '0%';
+                barLoad.style.width = '0%';
+                txtLoad.textContent = '0%';
             }
+
+            // Central Operations Loop State Switch
+            btnVoiceTrigger.addEventListener("click", async () => {
+                const matrix = LocalizationMatrix[currentLang];
+                if (!isLoopRunning) {
+                    isLoopRunning = true;
+                    btnVoiceTrigger.classList.add("listening");
+                    btnVoiceTrigger.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
+                        </svg>
+                        <span id="voiceText">${matrix.voiceTextStop}</span>
+                    `;
+
+                    voiceStatusDot.className = "status-dot active";
+                    voiceStatusText.textContent = matrix.voiceStatusActive;
+                    emotionTokenDisplay.textContent = matrix.statusActive;
+                    voiceModuleStatus.textContent = "ONLINE";
+                    voiceModuleStatus.className = "audio-pill-badge active";
+                    voiceTranscript.innerHTML = `<span class="transcript-placeholder">Monitoring ambient array tracks... System active.</span>`;
+
+                    // Run real inputs
+                    await startAudioProcessing();
+                    if (!recognition) initializeRecognition();
+                    if (recognition) {
+                        try { recognition.start(); } catch(e) {}
+                    }
+                } else {
+                    isLoopRunning = false;
+                    btnVoiceTrigger.classList.remove("listening");
+                    btnVoiceTrigger.innerHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                            <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+                            <line x1="12" x2="12" y1="19" y2="22"/>
+                        </svg>
+                        <span id="voiceText">${matrix.voiceTextInit}</span>
+                    `;
+
+                    voiceStatusDot.className = "status-dot";
+                    voiceStatusText.textContent = matrix.voiceStatusOffline;
+                    emotionTokenDisplay.textContent = matrix.statusOffline;
+                    voiceModuleStatus.textContent = "STANDBY";
+                    voiceModuleStatus.className = "audio-pill-badge";
+                    voiceTranscript.innerHTML = `<span class="transcript-placeholder">${matrix.transcriptPlaceholder}</span>`;
+                    
+                    stopAudioProcessing();
+                    if (recognition) {
+                        try { recognition.stop(); } catch(e) {}
+                    }
+                }
+            });
+
+
+            // ==========================================
+            // REAL-TIME CANVAS MATRIX & TELEMETRY ENGINE
+            // ==========================================
+            let matrixAnimationId = null;
+            let time = 0;
+
+            function runMatrixSimulations() {
+                time += 0.03;
+                
+                // Determine multipliers based on system activity
+                const speedMult = isLoopRunning ? 1.5 : 0.5;
+
+                // 1. Neural Canvas Simulator
+                const nW = neuralCanvas.width;
+                const nH = neuralCanvas.height;
+                neuralCtx.clearRect(0, 0, nW, nH);
+                neuralCtx.strokeStyle = "rgba(0, 243, 255, 0.4)";
+                neuralCtx.lineWidth = 1.5;
+                neuralCtx.beginPath();
+                for (let x = 0; x < nW; x += 10) {
+                    // Compose multi-phase wave pattern calculations
+                    const y = nH / 2 + Math.sin(x * 0.015 + time * speedMult) * 15 * Math.cos(x * 0.005 + time * 0.5);
+                    if (x === 0) neuralCtx.moveTo(x, y);
+                    else neuralCtx.lineTo(x, y);
+                }
+                neuralCtx.stroke();
+
+                // Connect digital nodes visually
+                for (let x = 30; x < nW; x += 60) {
+                    const y = nH / 2 + Math.sin(x * 0.015 + time * speedMult) * 15 * Math.cos(x * 0.005 + time * 0.5);
+                    neuralCtx.fillStyle = "var(--neon-blue)";
+                    neuralCtx.beginPath();
+                    neuralCtx.arc(x, y, 3, 0, Math.PI * 2);
+                    neuralCtx.fill();
+                }
+
+                // Update sub metric text loops
+                const velocity = isLoopRunning ? Math.floor(75 + Math.sin(time) * 10) : 0;
+                const indexVal = isLoopRunning ? Math.floor(82 + Math.cos(time * 0.5) * 8) : 0;
+                const activeVal = isLoopRunning ? Math.floor(90 + Math.sin(time * 1.5) * 5) : 0;
+
+                document.getElementById("neuralBar").style.width = `${isLoopRunning ? 88 : 0}%`;
+                document.getElementById("valNeuralVelocity").textContent = `${velocity}%`;
+                document.getElementById("valNeuralIndex").textContent = `${indexVal}%`;
+                document.getElementById("valNeuralActive").textContent = `${activeVal}%`;
+
+
+                // 2. Vision AI Canvas Simulator (Matrix Vector Tracking Field)
+                const aW = analyticsCanvas.width;
+                const aH = analyticsCanvas.height;
+                analyticsCtx.clearRect(0, 0, aW, aH);
+                analyticsCtx.fillStyle = "rgba(139, 92, 246, 0.08)";
+                analyticsCtx.fillRect(0, 0, aW, aH);
+
+                // Draw bounding system boxes dynamically
+                const boxSize = 35;
+                const boxX = (aW / 2 - boxSize / 2) + Math.cos(time * 0.8 * speedMult) * (aW / 3);
+                const boxY = (aH / 2 - boxSize / 2) + Math.sin(time * 0.5 * speedMult) * (aH / 4);
+
+                analyticsCtx.strokeStyle = "var(--neon-purple)";
+                analyticsCtx.lineWidth = 1;
+                analyticsCtx.strokeRect(boxX, boxY, boxSize, boxSize);
+
+                // Target system crosshair point
+                analyticsCtx.beginPath();
+                analyticsCtx.moveTo(boxX + boxSize/2 - 8, boxY + boxSize/2);
+                analyticsCtx.lineTo(boxX + boxSize/2 + 8, boxY + boxSize/2);
+                analyticsCtx.moveTo(boxX + boxSize/2, boxY + boxSize/2 - 8);
+                analyticsCtx.lineTo(boxX + boxSize/2, boxY + boxSize/2 + 8);
+                analyticsCtx.stroke();
+
+                // Update metrics values
+                const fps = isLoopRunning ? Math.floor(58 + Math.random() * 3) : 0;
+                const accuracy = isLoopRunning ? Math.floor(96 + Math.sin(time) * 2) : 0;
+                const tracking = isLoopRunning ? Math.floor(88 + Math.cos(time) * 4) : 0;
+
+                document.getElementById("analyticsBar").style.width = `${isLoopRunning ? 94 : 0}%`;
+                document.getElementById("valVisionFPS").textContent = isLoopRunning ? `${fps} FPS` : "0 FPS";
+                document.getElementById("valVisionAccuracy").textContent = `${accuracy}%`;
+                document.getElementById("valVisionTracking").textContent = `${tracking}%`;
+
+
+                // 3. Robotics Core (Kinematic System Grid)
+                const rW = automationCanvas.width;
+                const rH = automationCanvas.height;
+                automationCtx.clearRect(0, 0, rW, rH);
+                
+                // Draw digital robotic grid mesh base
+                automationCtx.strokeStyle = "rgba(16, 185, 129, 0.15)";
+                automationCtx.lineWidth = 1;
+                for(let g = 0; g < rW; g += 20) {
+                    automationCtx.beginPath();
+                    automationCtx.moveTo(g, 0);
+                    automationCtx.lineTo(g, rH);
+                    automationCtx.stroke();
+                }
+
+                // Render dynamic vector kinematics thread path
+                automationCtx.strokeStyle = "var(--neon-green)";
+                automationCtx.lineWidth = 2;
+                automationCtx.beginPath();
+                const armLength = 40;
+                const originX = rW / 2;
+                const originY = rH - 10;
+                const jointX = originX + Math.cos(time * speedMult) * armLength;
+                const jointY = originY - Math.sin(time * 0.8 * speedMult) * (rH * 0.6);
+                
+                automationCtx.moveTo(originX, originY);
+                automationCtx.lineTo(jointX, jointY);
+                automationCtx.stroke();
+
+                // Pivot Joint circle
+                automationCtx.fillStyle = "var(--text-primary)";
+                automationCtx.beginPath();
+                automationCtx.arc(jointX, jointY, 4, 0, Math.PI * 2);
+                automationCtx.fill();
+
+                // Update metrics values
+                const tasks = isLoopRunning ? Math.floor(45 + Math.sin(time * 0.8) * 15) : 0;
+                const load = isLoopRunning ? Math.floor(62 + Math.cos(time * 1.2) * 10) : 0;
+                const flow = isLoopRunning ? Math.floor(78 + Math.sin(time) * 5) : 0;
+
+                document.getElementById("automationBar").style.width = `${isLoopRunning ? 72 : 0}%`;
+                document.getElementById("valRobotTasks").textContent = `${tasks}%`;
+                document.getElementById("valRobotLoad").textContent = `${load}%`;
+                document.getElementById("valRobotFlow").textContent = `${flow}%`;
+
+                matrixAnimationId = requestAnimationFrame(runMatrixSimulations);
+            }
+
+            // Start Canvas Rendering Cycles
+            runMatrixSimulations();
         });
     </script>
 </body>
