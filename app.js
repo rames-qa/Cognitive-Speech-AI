@@ -3,7 +3,7 @@ import re
 import sys
 import threading
 import urllib.parse
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template_string
 from flask_cors import CORS
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -274,7 +274,7 @@ def execute_amazon_pipeline():
         options.add_argument("--no-sandbox")
         options.add_experimental_option("detach", True)
 
-        # Standardizing driver executable setup via Service object object instantiation
+        # Standardizing driver executable setup via Service object instantiation
         chrome_service = Service(ChromeDriverManager().install())
         active_driver = webdriver.Chrome(
             service=chrome_service, options=options
@@ -401,18 +401,373 @@ def terminate_orphaned_drivers():
         )
 
 
-@app.route("/")
+@app.route("/api/health")
 def health_check():
     return jsonify(
         {"status": "online", "service": "Adaptive Codespace Pipeline"}
     )
 
 
+# RESPONSIBLE WEB INTERFACE HTML TEMPLATE
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codespace Pipeline Control</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-color: #58a6ff;
+            --text-color: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+            --success-color: #2ea44f;
+            --danger-color: #da3633;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 12px 24px;
+            transition: filter 0.2s ease, transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-color);
+            border: 1px solid #484f58;
+        }
+
+        .btn-secondary:hover {
+            background-color: #30363d;
+        }
+
+        .response-card {
+            display: none;
+        }
+
+        .response-header {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .badge-success { background-color: rgba(46, 164, 79, 0.2); color: #57ab5a; border: 1px solid rgba(46, 164, 79, 0.4); }
+        .badge-error { background-color: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid rgba(218, 54, 51, 0.4); }
+        .badge-empty { background-color: rgba(139, 148, 158, 0.2); color: var(--text-muted); border: 1px solid rgba(139, 148, 158, 0.4); }
+
+        .response-body {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .action-tray {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Responsive Mobile Scaling */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .input-wrapper {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+                padding: 14px;
+            }
+            .control-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .action-tray {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>COGNITIVE SPEECH AI</h1>
+            <p>Registry-Driven Route Processing Engine Dashboard</p>
+        </header>
+
+        <div class="card">
+            <form id="commandForm" class="form-group">
+                <label for="commandInput">Enter Execution Command</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="commandInput" 
+                        placeholder="e.g., search for shoes on amazon, play music..." 
+                        required
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="btn-primary" id="submitBtn">Execute</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card response-card" id="responseCard">
+            <div class="response-header">
+                <span>Execution Output</span>
+                <span class="badge" id="statusBadge">Success</span>
+            </div>
+            <div class="response-body" id="responseBody"></div>
+            <div class="action-tray" id="actionTray">
+                </div>
+        </div>
+
+        <div class="card control-panel">
+            <span style="font-size: 0.9rem; color: var(--text-muted);">
+                State Engine: <strong>Operational</strong>
+            </span>
+            <button class="btn-danger" id="closeSessionBtn">Kill Session Drivers</button>
+        </div>
+    </div>
+
+    <script>
+        const commandForm = document.getElementById('commandForm');
+        const commandInput = document.getElementById('commandInput');
+        const submitBtn = document.getElementById('submitBtn');
+        const responseCard = document.getElementById('responseCard');
+        const statusBadge = document.getElementById('statusBadge');
+        const responseBody = document.getElementById('responseBody');
+        const actionTray = document.getElementById('actionTray');
+        const closeSessionBtn = document.getElementById('closeSessionBtn');
+
+        commandForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const commandValue = commandInput.value.trim();
+            if(!commandValue) return;
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            try {
+                const response = await fetch('/api/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: commandValue })
+                });
+                const data = await response.json();
+                renderResponse(data);
+            } catch (err) {
+                renderResponse({
+                    status: 'error',
+                    action: 'Failures occurring on pipeline network requests.',
+                    details: err.message
+                });
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Execute';
+            }
+        });
+
+        closeSessionBtn.addEventListener('click', async () => {
+            closeSessionBtn.disabled = true;
+            closeSessionBtn.textContent = 'Terminating...';
+            try {
+                const response = await fetch('/api/close_session', { method: 'POST' });
+                const data = await response.json();
+                renderResponse(data);
+            } catch (err) {
+                renderResponse({
+                    status: 'error',
+                    action: 'Failed to complete session teardown.',
+                    details: err.message
+                });
+            } finally {
+                closeSessionBtn.disabled = false;
+                closeSessionBtn.textContent = 'Kill Session Drivers';
+            }
+        });
+
+        function renderResponse(data) {
+            responseCard.style.display = 'block';
+            
+            // Render Badge Styles
+            statusBadge.className = 'badge';
+            if (data.status === 'success') {
+                statusBadge.classList.add('badge-success');
+                statusBadge.textContent = 'Success';
+            } else if (data.status === 'error') {
+                statusBadge.classList.add('badge-error');
+                statusBadge.textContent = 'Error';
+            } else {
+                statusBadge.classList.add('badge-empty');
+                statusBadge.textContent = data.status || 'System';
+            }
+
+            // Populate text
+            let contentText = `Action Context:\n${data.action || 'None'}`;
+            if (data.details) contentText += `\n\nDebug Details:\n${data.details}`;
+            if (data.url) contentText += `\n\nTarget URL:\n${data.url}`;
+            responseBody.textContent = contentText;
+
+            // Clear and dynamically populate interaction tray
+            actionTray.innerHTML = '';
+            if (data.url) {
+                const linkBtn = document.createElement('button');
+                linkBtn.className = 'btn-secondary';
+                linkBtn.textContent = 'Open Target URL';
+                linkBtn.onclick = () => window.open(data.url, '_blank');
+                actionTray.appendChild(linkBtn);
+            }
+        }
+    </script>
+</body>
+</html>
+"""
+
+# Serve responsive UI from server root
+@app.route("/")
+def index():
+    return render_template_string(HTML_TEMPLATE)
+
+
 if __name__ == "__main__":
     logging.getLogger("werkzeug").setLevel(logging.ERROR)
     print("\n" + "=" * 65)
-    print("   COGNITIVE SPEECH AI (CODESPACE EDITION)")
-    print("   Operational Scope: Registry-Driven Route Processing Engine")
-    print("   Network Target:    http://0.0.0.0:5000")
+    print("    COGNITIVE SPEECH AI ")
+    print("    Operational Scope: Registry-Driven Route Processing Engine")
+    print("    Network Target:    http://0.0.0.0:5000")
     print("=" * 65 + "\n")
     app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
