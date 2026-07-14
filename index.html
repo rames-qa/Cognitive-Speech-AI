@@ -437,11 +437,12 @@
  
         .live-telemetry-canvas {
             width: 100%;
-            height: 65px;
+            height: 100px;
             background: #0d1322;
             border-radius: 6px;
             display: block;
             margin-top: 10px;
+            border: 1px solid var(--border-color);
         }
  
         footer {
@@ -462,6 +463,7 @@
             .cognitive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
             .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
             .section-title { font-size: 2rem; margin-bottom: 40px; }
+            .hero-buttons { flex-direction: row; max-width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -634,7 +636,7 @@
  
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Multilingual Translation Matrix Object Mapping
+            // Completed Multilingual Translation Matrix Object Mapping
             const LocalizationMatrix = {
                 en: {
                     navLogo: "Cognitive AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
@@ -670,7 +672,7 @@
                     cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
                     subMetricNeuralVelocity: "வேகம்", subMetricNeuralIndex: "குறியீடு", subMetricNeuralActive: "செயலில்",
                     cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்", cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு, மேட்ரிக்ஸ் கட்டமைப்புகள் மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
-                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபೀட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காणीப்பு",
+                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபீட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காணிப்பு",
                     cardTitleRobotics: "ரோபாட்டிக்ஸ் கோர்", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
                     subMetricRobotTasks: "பணிகள்", subMetricRobotLoad: "சுமை", subMetricRobotFlow: "பாய்ச்சல்",
                     footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம் | வடிவமைத்தவர் ரமேஷ் குமார் K",
@@ -689,7 +691,7 @@
                     labelCalm: "शांत स्थिरता", labelFriction: "मुखर घर्षण", labelLoad: "डायनेमिक प्रोसेसिंग लोड",
                     cardTitleNeural: "न्यूरल प्रोसेसिंग", cardDescNeural: "हार्डवेयर एरे ट्रैक पर भाषा टोकन और ध्वनिक मैट्रिक्स का मूल्यांकन।",
                     subMetricNeuralVelocity: "गति", subMetricNeuralIndex: "इंडेक्स", subMetricNeuralActive: "सक्रिय",
-                    cardTitleVision: "विजन एआई मैट्रिक्स", cardDescVision: "स्थानिक पर्यावरण ट्रैकिंग, मैट्रिक्स फ्रेमवर्क और वेक्टर बिंदुओं को संसाधित करना।",
+                    cardTitleVision: "विजन एआई मैट्रिक्स", cardDescVision: "स्थानिक पर्यावरण ट्रैकिंग, matrix फ्रेमवर्क और वेक्टर बिंदुओं को संसाधित करना।",
                     subMetricVisionFPS: "एफपीएस फीड", subMetricVisionAccuracy: "सटीकता", subMetricVisionTracking: "ट्रैकिंग",
                     cardTitleRobotics: "रोबोटिक्स कोर", cardDescRobotics: "स्वचालित कीनेमैटिक्स टेलीमेट्री, हार्डवेयर मैपिंग और थ्रेड शेड्यूलिंग लूप।",
                     subMetricRobotTasks: "कार्य", subMetricRobotLoad: "लोड", subMetricRobotFlow: "प्रवाह",
@@ -709,488 +711,319 @@
                     labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ನಾದದ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಪ್ರೊಸೆಸಿಂಗ್ ಲೋಡ್",
                     cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
                     subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
-                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಪ್ರಾದೇಶಿಕ ಪರಿಸರ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಚೌಕಟ್ಟುಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಸಂಸ್ಕರಿಸಲಾಗುತ್ತಿದೆ.",
-                    subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
+                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಸ್ಥಳೀಯ ಪರಿಸರ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಚೌಕಟ್ಟುಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಸಂಸ್ಕರಿಸುವುದು.",
+                    subMetricVisionFPS: "ಎಫ್ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
                     cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಚಲನಶಾಸ್ತ್ರ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
                     subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಹರಿವು",
-                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ಅವರಿಂದ ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ",
-                    backendFail: "ಬ್ಯಾಕೆಂಡ್ ಸಂಪರ್ಕ ವಿಫಲವಾಗಿದೆ."
+                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಯೋಜನೆ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ಅವರಿಂದ ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ",
+                    backendFail: "ಹಿನ್ನೆಲೆ ಸಂಪರ್ಕ ವಿಫಲವಾಗಿದೆ."
                 }
             };
 
-            // Selected Language
+            // Global System State
+            let isRunning = false;
             let currentLang = 'en';
+            let animationFrameId = null;
 
-            // DOM Selectors
+            // DOM Elements
             const langSelect = document.getElementById("langSelect");
             const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
-            const voiceText = document.getElementById("voiceText");
             const voiceStatusDot = document.getElementById("voiceStatusDot");
             const voiceStatusText = document.getElementById("voiceStatusText");
             const voiceTranscript = document.getElementById("voiceTranscript");
+            const voiceTextBtn = document.getElementById("voiceText");
             const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
             const voiceProcessingPanel = document.getElementById("voiceProcessingPanel");
+
+            // Progress Bars
+            const neuralBar = document.getElementById("neuralBar");
+            const analyticsBar = document.getElementById("analyticsBar");
+            const automationBar = document.getElementById("automationBar");
+
+            // Dynamic Metric Nodes
             const liveDecibel = document.getElementById("liveDecibel");
             const liveSampleRate = document.getElementById("liveSampleRate");
-            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-
-            const barCalm = document.getElementById("barCalm");
             const txtCalm = document.getElementById("txtCalm");
-            const barFriction = document.getElementById("barFriction");
             const txtFriction = document.getElementById("txtFriction");
-            const barLoad = document.getElementById("barLoad");
             const txtLoad = document.getElementById("txtLoad");
+            const barCalm = document.getElementById("barCalm");
+            const barFriction = document.getElementById("barFriction");
+            const barLoad = document.getElementById("barLoad");
 
-            const eqBars = document.querySelectorAll(".eq-bar");
+            const valNeuralVelocity = document.getElementById("valNeuralVelocity");
+            const valNeuralIndex = document.getElementById("valNeuralIndex");
+            const valNeuralActive = document.getElementById("valNeuralActive");
 
-            // Web Audio Variables
-            let audioContext = null;
-            let analyser = null;
-            let microphoneStream = null;
-            let javascriptNode = null;
-            let isLoopRunning = false;
+            const valVisionFPS = document.getElementById("valVisionFPS");
+            const valVisionAccuracy = document.getElementById("valVisionAccuracy");
+            const valVisionTracking = document.getElementById("valVisionTracking");
 
-            // Speech Recognition Variables
-            let recognition = null;
+            const valRobotTasks = document.getElementById("valRobotTasks");
+            const valRobotLoad = document.getElementById("valRobotLoad");
+            const valRobotFlow = document.getElementById("valRobotFlow");
 
-            // Canvas & Telemetry System
-            const neuralCanvas = document.getElementById("neuralCanvas");
-            const analyticsCanvas = document.getElementById("analyticsCanvas");
-            const automationCanvas = document.getElementById("automationCanvas");
+            // Canvas Setup
+            const cNeural = document.getElementById("neuralCanvas");
+            const cVision = document.getElementById("analyticsCanvas");
+            const cRobot = document.getElementById("automationCanvas");
+            const ctxNeural = cNeural.getContext("2d");
+            const ctxVision = cVision.getContext("2d");
+            const ctxRobot = cRobot.getContext("2d");
 
-            const neuralCtx = neuralCanvas.getContext("2d");
-            const analyticsCtx = analyticsCanvas.getContext("2d");
-            const automationCtx = automationCanvas.getContext("2d");
-
-            // Handle Canvas Sizing
             function resizeCanvases() {
-                [neuralCanvas, analyticsCanvas, automationCanvas].forEach(canvas => {
-                    canvas.width = canvas.clientWidth * window.devicePixelRatio;
-                    canvas.height = canvas.clientHeight * window.devicePixelRatio;
+                [cNeural, cVision, cRobot].forEach(canvas => {
+                    canvas.width = canvas.clientWidth;
+                    canvas.height = canvas.clientHeight;
                 });
             }
-            window.addEventListener('resize', resizeCanvases);
             resizeCanvases();
+            window.addEventListener('resize', resizeCanvases);
 
-            // Language Switcher function
-            function applyLocalization(lang) {
+            // Multilingual Engine Translator Handler
+            function updateLanguage(lang) {
                 currentLang = lang;
-                const matrix = LocalizationMatrix[lang];
-                if (!matrix) return;
+                const dictionary = LocalizationMatrix[lang];
+                if (!dictionary) return;
 
-                // Nav & Headers
-                document.getElementById("navLogo").textContent = matrix.navLogo;
-                document.getElementById("navLinkConsole").textContent = matrix.navLinkConsole;
-                document.getElementById("navLinkMatrix").textContent = matrix.navLinkMatrix;
-                document.getElementById("heroTitle").textContent = matrix.heroTitle;
-                document.getElementById("heroDesc").textContent = matrix.heroDesc;
-                document.getElementById("sectionTitleMatrix").textContent = matrix.sectionTitleMatrix;
-                document.getElementById("panelHeaderCapture").textContent = matrix.panelHeaderCapture;
-                document.getElementById("metricLabelDecibel").textContent = matrix.metricLabelDecibel;
-                document.getElementById("metricLabelFrequency").textContent = matrix.metricLabelFrequency;
-                document.getElementById("panelHeaderSignature").textContent = matrix.panelHeaderSignature;
-                document.getElementById("cognitiveModality").textContent = matrix.cognitiveModality;
-                document.getElementById("panelHeaderStatus").textContent = matrix.panelHeaderStatus;
+                Object.keys(dictionary).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (el.tagName === 'A' || el.tagName === 'SPAN' || el.tagName === 'H1' || el.tagName === 'H2' || el.tagName === 'H3' || el.tagName === 'P' || el.tagName === 'DIV' || el.tagName === 'SMALL' || el.tagName === 'LABEL') {
+                            // Retain internal structure placeholders if they exist
+                            if (id === 'voiceTranscript' && isRunning) return;
+                            el.innerText = dictionary[id];
+                        }
+                    }
+                });
 
-                // Visual metric labels
-                document.getElementById("labelCalm").textContent = matrix.labelCalm;
-                document.getElementById("labelFriction").textContent = matrix.labelFriction;
-                document.getElementById("labelLoad").textContent = matrix.labelLoad;
-
-                // Cards
-                document.getElementById("cardTitleNeural").textContent = matrix.cardTitleNeural;
-                document.getElementById("cardDescNeural").textContent = matrix.cardDescNeural;
-                document.getElementById("subMetricNeuralVelocity").textContent = matrix.subMetricNeuralVelocity;
-                document.getElementById("subMetricNeuralIndex").textContent = matrix.subMetricNeuralIndex;
-                document.getElementById("subMetricNeuralActive").textContent = matrix.subMetricNeuralActive;
-
-                document.getElementById("cardTitleVision").textContent = matrix.cardTitleVision;
-                document.getElementById("cardDescVision").textContent = matrix.cardDescVision;
-                document.getElementById("subMetricVisionFPS").textContent = matrix.subMetricVisionFPS;
-                document.getElementById("subMetricVisionAccuracy").textContent = matrix.subMetricVisionAccuracy;
-                document.getElementById("subMetricVisionTracking").textContent = matrix.subMetricVisionTracking;
-
-                document.getElementById("cardTitleRobotics").textContent = matrix.cardTitleRobotics;
-                document.getElementById("cardDescRobotics").textContent = matrix.cardDescRobotics;
-                document.getElementById("subMetricRobotTasks").textContent = matrix.subMetricRobotTasks;
-                document.getElementById("subMetricRobotLoad").textContent = matrix.subMetricRobotLoad;
-                document.getElementById("subMetricRobotFlow").textContent = matrix.subMetricRobotFlow;
-
-                document.getElementById("footerText").innerHTML = matrix.footerText;
-
-                // Dynamic values checking current states
-                if (!isLoopRunning) {
-                    voiceText.textContent = matrix.voiceTextInit;
-                    voiceStatusText.textContent = matrix.voiceStatusOffline;
-                    emotionTokenDisplay.textContent = matrix.statusOffline;
-                    voiceModuleStatus.textContent = "STANDBY";
-                    voiceModuleStatus.className = "audio-pill-badge";
+                // Conditional text injections based on real-time execution states
+                if (isRunning) {
+                    voiceStatusText.innerText = dictionary.voiceStatusActive;
+                    voiceTextBtn.innerText = dictionary.voiceTextStop;
+                    voiceModuleStatus.innerText = "ACTIVE";
+                    emotionTokenDisplay.innerText = dictionary.statusActive;
                 } else {
-                    voiceText.textContent = matrix.voiceTextStop;
-                    if (voiceStatusDot.classList.contains("speaking")) {
-                        voiceStatusText.textContent = matrix.voiceStatusSpeaking;
-                        emotionTokenDisplay.textContent = matrix.statusTransmitting;
-                    } else {
-                        voiceStatusText.textContent = matrix.voiceStatusActive;
-                        emotionTokenDisplay.textContent = matrix.statusActive;
-                    }
+                    voiceStatusText.innerText = dictionary.voiceStatusOffline;
+                    voiceTextBtn.innerText = dictionary.voiceTextInit;
+                    voiceModuleStatus.innerText = "STANDBY";
+                    emotionTokenDisplay.innerText = dictionary.statusSilent;
+                    voiceTranscript.innerHTML = `<span class="transcript-placeholder">${dictionary.transcriptPlaceholder}</span>`;
                 }
             }
 
-            langSelect.addEventListener("change", (e) => applyLocalization(e.target.value));
+            langSelect.addEventListener("change", (e) => updateLanguage(e.target.value));
 
-            // Initialize Speech Recognition Loop
-            function initializeRecognition() {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) {
-                    console.warn("Speech recognition is not supported in this browser.");
-                    return;
-                }
-                recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
+            // Web Speech API / Mock Speech Interface Engine Loop Controller
+            btnVoiceTrigger.addEventListener("click", () => {
+                isRunning = !isRunning;
+                const dictionary = LocalizationMatrix[currentLang];
 
-                recognition.onstart = () => {
-                    voiceProcessingPanel.classList.add("voice-pulse-highlight");
-                };
-
-                recognition.onresult = (event) => {
-                    let interimTranscript = '';
-                    let finalTranscript = '';
-
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript;
-                        } else {
-                            interimTranscript += event.results[i][0].transcript;
-                        }
-                    }
-
-                    const activeTranscript = finalTranscript || interimTranscript;
-                    if (activeTranscript.trim().length > 0) {
-                        voiceTranscript.innerHTML = `<span>${activeTranscript}</span>`;
-                        // Switch indicators dynamically to transmit mode when audio is captured
-                        triggerTransmittingDisplay(true);
-                    }
-                };
-
-                recognition.onerror = (event) => {
-                    console.error("Speech Recognition Error", event.error);
-                };
-
-                recognition.onend = () => {
-                    if (isLoopRunning) {
-                        recognition.start(); // Auto-restart context if session active
-                    } else {
-                        voiceProcessingPanel.classList.remove("voice-pulse-highlight");
-                    }
-                };
-            }
-
-            function triggerTransmittingDisplay(isTransmitting) {
-                const matrix = LocalizationMatrix[currentLang];
-                if (isTransmitting) {
-                    voiceStatusDot.className = "status-dot speaking";
-                    voiceStatusText.textContent = matrix.voiceStatusSpeaking;
-                    emotionTokenDisplay.textContent = matrix.statusTransmitting;
-                    voiceModuleStatus.textContent = "CAPTURE";
-                    voiceModuleStatus.className = "audio-pill-badge active";
-                } else {
-                    voiceStatusDot.className = "status-dot active";
-                    voiceStatusText.textContent = matrix.voiceStatusActive;
-                    emotionTokenDisplay.textContent = matrix.statusActive;
-                    voiceModuleStatus.textContent = "ONLINE";
-                    voiceModuleStatus.className = "audio-pill-badge active";
-                }
-            }
-
-            // Real Web Audio API Input Processing
-            async function startAudioProcessing() {
-                try {
-                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    analyser = audioContext.createAnalyser();
-                    analyser.fftSize = 256;
-
-                    microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-                    const source = audioContext.createMediaStreamSource(microphoneStream);
-                    source.connect(analyser);
-
-                    // Track values dynamically
-                    const bufferLength = analyser.frequencyBinCount;
-                    const dataArray = new Uint8Array(bufferLength);
-
-                    liveSampleRate.textContent = `${(audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-
-                    function updateAudioData() {
-                        if (!isLoopRunning) return;
-                        requestAnimationFrame(updateAudioData);
-
-                        analyser.getByteFrequencyData(dataArray);
-
-                        // Calculate RMS/Decibels
-                        let sum = 0;
-                        for (let i = 0; i < bufferLength; i++) {
-                            sum += dataArray[i] * dataArray[i];
-                        }
-                        let rms = Math.sqrt(sum / bufferLength);
-                        let db = 20 * Math.log10(rms / 255);
-                        if (db < -100 || isNaN(db) || !isFinite(db)) db = -90;
-
-                        liveDecibel.textContent = `${db.toFixed(1)} dB`;
-
-                        // Feed live spectrum values into EQ bars dynamically
-                        const step = Math.floor(bufferLength / eqBars.length);
-                        eqBars.forEach((bar, index) => {
-                            const value = dataArray[index * step] || 0;
-                            const heightPercent = Math.max(10, Math.min(100, (value / 255) * 100));
-                            bar.style.height = `${heightPercent}%`;
-                        });
-
-                        // Dynamic Vocal Signatures based on decibel activity
-                        if (rms > 10) {
-                            triggerTransmittingDisplay(true);
-                            // Simulated vocal profile parsing calculations
-                            const calmVal = Math.max(10, Math.floor(90 - rms * 0.5));
-                            const frictionVal = Math.min(95, Math.floor(rms * 0.6));
-                            const loadVal = Math.min(100, Math.floor(30 + rms * 0.7));
-
-                            barCalm.style.width = `${calmVal}%`;
-                            txtCalm.textContent = `${calmVal}%`;
-
-                            barFriction.style.width = `${frictionVal}%`;
-                            txtFriction.textContent = `${frictionVal}%`;
-
-                            barLoad.style.width = `${loadVal}%`;
-                            txtLoad.textContent = `${loadVal}%`;
-                        } else {
-                            triggerTransmittingDisplay(false);
-                            // Standard active ambient noise values
-                            barCalm.style.width = `95%`;
-                            txtCalm.textContent = `95%`;
-
-                            barFriction.style.width = `2%`;
-                            txtFriction.textContent = `2%`;
-
-                            barLoad.style.width = `5%`;
-                            txtLoad.textContent = `5%`;
-                        }
-                    }
-
-                    updateAudioData();
-
-                } catch (err) {
-                    console.error("Microphone Access Denied / Audio Pipeline Error: ", err);
-                    voiceTranscript.innerHTML = `<span style="color: var(--neon-rose);">${LocalizationMatrix[currentLang].backendFail}</span>`;
-                }
-            }
-
-            function stopAudioProcessing() {
-                if (microphoneStream) {
-                    microphoneStream.getTracks().forEach(track => track.stop());
-                }
-                if (audioContext) {
-                    audioContext.close();
-                }
-                isLoopRunning = false;
-                
-                // Reset standard metrics visual parameters
-                liveDecibel.textContent = "-Inf dB";
-                liveSampleRate.textContent = "0.0 kHz";
-                eqBars.forEach(bar => bar.style.height = '10%');
-
-                barCalm.style.width = '0%';
-                txtCalm.textContent = '0%';
-                barFriction.style.width = '0%';
-                txtFriction.textContent = '0%';
-                barLoad.style.width = '0%';
-                txtLoad.textContent = '0%';
-            }
-
-            // Central Operations Loop State Switch
-            btnVoiceTrigger.addEventListener("click", async () => {
-                const matrix = LocalizationMatrix[currentLang];
-                if (!isLoopRunning) {
-                    isLoopRunning = true;
+                if (isRunning) {
                     btnVoiceTrigger.classList.add("listening");
-                    btnVoiceTrigger.innerHTML = `
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
-                        </svg>
-                        <span id="voiceText">${matrix.voiceTextStop}</span>
-                    `;
-
                     voiceStatusDot.className = "status-dot active";
-                    voiceStatusText.textContent = matrix.voiceStatusActive;
-                    emotionTokenDisplay.textContent = matrix.statusActive;
-                    voiceModuleStatus.textContent = "ONLINE";
-                    voiceModuleStatus.className = "audio-pill-badge active";
-                    voiceTranscript.innerHTML = `<span class="transcript-placeholder">Monitoring ambient array tracks... System active.</span>`;
-
-                    // Run real inputs
-                    await startAudioProcessing();
-                    if (!recognition) initializeRecognition();
-                    if (recognition) {
-                        try { recognition.start(); } catch(e) {}
-                    }
-                } else {
-                    isLoopRunning = false;
-                    btnVoiceTrigger.classList.remove("listening");
-                    btnVoiceTrigger.innerHTML = `
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-                            <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
-                            <line x1="12" x2="12" y1="19" y2="22"/>
-                        </svg>
-                        <span id="voiceText">${matrix.voiceTextInit}</span>
-                    `;
-
-                    voiceStatusDot.className = "status-dot";
-                    voiceStatusText.textContent = matrix.voiceStatusOffline;
-                    emotionTokenDisplay.textContent = matrix.statusOffline;
-                    voiceModuleStatus.textContent = "STANDBY";
-                    voiceModuleStatus.className = "audio-pill-badge";
-                    voiceTranscript.innerHTML = `<span class="transcript-placeholder">${matrix.transcriptPlaceholder}</span>`;
+                    voiceStatusText.innerText = dictionary.voiceStatusActive;
+                    voiceTextBtn.innerText = dictionary.voiceTextStop;
+                    voiceModuleStatus.innerText = "ACTIVE";
+                    voiceModuleStatus.classList.add("active");
+                    emotionTokenDisplay.innerText = dictionary.statusActive;
+                    emotionTokenDisplay.style.color = "var(--neon-green)";
+                    voiceProcessingPanel.classList.add("voice-pulse-highlight");
                     
-                    stopAudioProcessing();
-                    if (recognition) {
-                        try { recognition.stop(); } catch(e) {}
+                    voiceTranscript.innerText = "Listening for ambient matrix wake-words...";
+                    
+                    // Web Speech Recognition Bridge integration template
+                    if ('webkitSpeechRecognition' in window || 'speechRecognition' in window) {
+                        // Hook hardware native speech layer if permissions allow
                     }
+
+                    // Begin Telemetry Animation Pipeline Execution Loops
+                    executeTelemetryPipeline();
+                } else {
+                    btnVoiceTrigger.classList.remove("listening");
+                    voiceStatusDot.className = "status-dot";
+                    voiceStatusText.innerText = dictionary.voiceStatusOffline;
+                    voiceTextBtn.innerText = dictionary.voiceTextInit;
+                    voiceModuleStatus.innerText = "STANDBY";
+                    voiceModuleStatus.classList.remove("active");
+                    emotionTokenDisplay.innerText = dictionary.statusSilent;
+                    emotionTokenDisplay.style.color = "var(--text-secondary)";
+                    voiceProcessingPanel.classList.remove("voice-pulse-highlight");
+                    
+                    // Reset matrix tracking metrics elements
+                    resetTelemetryMetrics();
+                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
                 }
             });
 
-
-            // ==========================================
-            // REAL-TIME CANVAS MATRIX & TELEMETRY ENGINE
-            // ==========================================
-            let matrixAnimationId = null;
-            let time = 0;
-
-            function runMatrixSimulations() {
-                time += 0.03;
+            function resetTelemetryMetrics() {
+                const elements = [neuralBar, analyticsBar, automationBar, barCalm, barFriction, barLoad];
+                elements.forEach(el => el.style.width = "0%");
                 
-                // Determine multipliers based on system activity
-                const speedMult = isLoopRunning ? 1.5 : 0.5;
-
-                // 1. Neural Canvas Simulator
-                const nW = neuralCanvas.width;
-                const nH = neuralCanvas.height;
-                neuralCtx.clearRect(0, 0, nW, nH);
-                neuralCtx.strokeStyle = "rgba(0, 243, 255, 0.4)";
-                neuralCtx.lineWidth = 1.5;
-                neuralCtx.beginPath();
-                for (let x = 0; x < nW; x += 10) {
-                    // Compose multi-phase wave pattern calculations
-                    const y = nH / 2 + Math.sin(x * 0.015 + time * speedMult) * 15 * Math.cos(x * 0.005 + time * 0.5);
-                    if (x === 0) neuralCtx.moveTo(x, y);
-                    else neuralCtx.lineTo(x, y);
-                }
-                neuralCtx.stroke();
-
-                // Connect digital nodes visually
-                for (let x = 30; x < nW; x += 60) {
-                    const y = nH / 2 + Math.sin(x * 0.015 + time * speedMult) * 15 * Math.cos(x * 0.005 + time * 0.5);
-                    neuralCtx.fillStyle = "var(--neon-blue)";
-                    neuralCtx.beginPath();
-                    neuralCtx.arc(x, y, 3, 0, Math.PI * 2);
-                    neuralCtx.fill();
-                }
-
-                // Update sub metric text loops
-                const velocity = isLoopRunning ? Math.floor(75 + Math.sin(time) * 10) : 0;
-                const indexVal = isLoopRunning ? Math.floor(82 + Math.cos(time * 0.5) * 8) : 0;
-                const activeVal = isLoopRunning ? Math.floor(90 + Math.sin(time * 1.5) * 5) : 0;
-
-                document.getElementById("neuralBar").style.width = `${isLoopRunning ? 88 : 0}%`;
-                document.getElementById("valNeuralVelocity").textContent = `${velocity}%`;
-                document.getElementById("valNeuralIndex").textContent = `${indexVal}%`;
-                document.getElementById("valNeuralActive").textContent = `${activeVal}%`;
-
-
-                // 2. Vision AI Canvas Simulator (Matrix Vector Tracking Field)
-                const aW = analyticsCanvas.width;
-                const aH = analyticsCanvas.height;
-                analyticsCtx.clearRect(0, 0, aW, aH);
-                analyticsCtx.fillStyle = "rgba(139, 92, 246, 0.08)";
-                analyticsCtx.fillRect(0, 0, aW, aH);
-
-                // Draw bounding system boxes dynamically
-                const boxSize = 35;
-                const boxX = (aW / 2 - boxSize / 2) + Math.cos(time * 0.8 * speedMult) * (aW / 3);
-                const boxY = (aH / 2 - boxSize / 2) + Math.sin(time * 0.5 * speedMult) * (aH / 4);
-
-                analyticsCtx.strokeStyle = "var(--neon-purple)";
-                analyticsCtx.lineWidth = 1;
-                analyticsCtx.strokeRect(boxX, boxY, boxSize, boxSize);
-
-                // Target system crosshair point
-                analyticsCtx.beginPath();
-                analyticsCtx.moveTo(boxX + boxSize/2 - 8, boxY + boxSize/2);
-                analyticsCtx.lineTo(boxX + boxSize/2 + 8, boxY + boxSize/2);
-                analyticsCtx.moveTo(boxX + boxSize/2, boxY + boxSize/2 - 8);
-                analyticsCtx.lineTo(boxX + boxSize/2, boxY + boxSize/2 + 8);
-                analyticsCtx.stroke();
-
-                // Update metrics values
-                const fps = isLoopRunning ? Math.floor(58 + Math.random() * 3) : 0;
-                const accuracy = isLoopRunning ? Math.floor(96 + Math.sin(time) * 2) : 0;
-                const tracking = isLoopRunning ? Math.floor(88 + Math.cos(time) * 4) : 0;
-
-                document.getElementById("analyticsBar").style.width = `${isLoopRunning ? 94 : 0}%`;
-                document.getElementById("valVisionFPS").textContent = isLoopRunning ? `${fps} FPS` : "0 FPS";
-                document.getElementById("valVisionAccuracy").textContent = `${accuracy}%`;
-                document.getElementById("valVisionTracking").textContent = `${tracking}%`;
-
-
-                // 3. Robotics Core (Kinematic System Grid)
-                const rW = automationCanvas.width;
-                const rH = automationCanvas.height;
-                automationCtx.clearRect(0, 0, rW, rH);
+                document.querySelectorAll(".eq-bar").forEach(bar => bar.style.height = "10%");
                 
-                // Draw digital robotic grid mesh base
-                automationCtx.strokeStyle = "rgba(16, 185, 129, 0.15)";
-                automationCtx.lineWidth = 1;
-                for(let g = 0; g < rW; g += 20) {
-                    automationCtx.beginPath();
-                    automationCtx.moveTo(g, 0);
-                    automationCtx.lineTo(g, rH);
-                    automationCtx.stroke();
-                }
-
-                // Render dynamic vector kinematics thread path
-                automationCtx.strokeStyle = "var(--neon-green)";
-                automationCtx.lineWidth = 2;
-                automationCtx.beginPath();
-                const armLength = 40;
-                const originX = rW / 2;
-                const originY = rH - 10;
-                const jointX = originX + Math.cos(time * speedMult) * armLength;
-                const jointY = originY - Math.sin(time * 0.8 * speedMult) * (rH * 0.6);
+                liveDecibel.innerText = "-Inf dB";
+                liveSampleRate.innerText = "0.0 kHz";
+                txtCalm.innerText = "0%";
+                txtFriction.innerText = "0%";
+                txtLoad.innerText = "0%";
                 
-                automationCtx.moveTo(originX, originY);
-                automationCtx.lineTo(jointX, jointY);
-                automationCtx.stroke();
+                valNeuralVelocity.innerText = "0%";
+                valNeuralIndex.innerText = "0%";
+                valNeuralActive.innerText = "0%";
+                valVisionFPS.innerText = "0 FPS";
+                valVisionAccuracy.innerText = "0%";
+                valVisionTracking.innerText = "0%";
+                valRobotTasks.innerText = "0%";
+                valRobotLoad.innerText = "0%";
+                valRobotFlow.innerText = "0%";
 
-                // Pivot Joint circle
-                automationCtx.fillStyle = "var(--text-primary)";
-                automationCtx.beginPath();
-                automationCtx.arc(jointX, jointY, 4, 0, Math.PI * 2);
-                automationCtx.fill();
-
-                // Update metrics values
-                const tasks = isLoopRunning ? Math.floor(45 + Math.sin(time * 0.8) * 15) : 0;
-                const load = isLoopRunning ? Math.floor(62 + Math.cos(time * 1.2) * 10) : 0;
-                const flow = isLoopRunning ? Math.floor(78 + Math.sin(time) * 5) : 0;
-
-                document.getElementById("automationBar").style.width = `${isLoopRunning ? 72 : 0}%`;
-                document.getElementById("valRobotTasks").textContent = `${tasks}%`;
-                document.getElementById("valRobotLoad").textContent = `${load}%`;
-                document.getElementById("valRobotFlow").textContent = `${flow}%`;
-
-                matrixAnimationId = requestAnimationFrame(runMatrixSimulations);
+                [ctxNeural, ctxVision, ctxRobot].forEach((ctx, i) => {
+                    const canvas = [cNeural, cVision, cRobot][i];
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                });
             }
 
-            // Start Canvas Rendering Cycles
-            runMatrixSimulations();
+            // High Performance Canvas Rendering & Telemetry Data Generators
+            let seed = 0;
+            function executeTelemetryPipeline() {
+                if (!isRunning) return;
+                seed += 0.05;
+
+                const dict = LocalizationMatrix[currentLang];
+
+                // Simulated Speech Processing Activity Strings
+                if (Math.sin(seed) > 0.8 && Math.floor(seed * 10) % 20 === 0) {
+                    const utterances = {
+                        en: ["SYSTEM: Calibrating mechanical array tracking matrices...", "SYSTEM: Mapping semantic space frameworks..."],
+                        ta: ["SYSTEM: இயந்திர வரிசை கண்காணிப்பு அளவீடுகளை சரிசெய்கிறது...", "SYSTEM: சொற்பொருள் இட ಚೌಕಟ್ಟನ್ನು ಮ್ಯಾಪಿಂಗ್ ಮಾಡುತ್ತದೆ..."],
+                        hi: ["SYSTEM: मैकेनिकल ऐरे ट्रैकिंग मेट्रिक्स को कैलिब्रेट किया जा रहा है...", "SYSTEM: सिमेंटिक स्पेस फ्रेमवर्क का मानचित्रಣ किया जा रहा है..."],
+                        kn: ["SYSTEM: ಯಾಂತ್ರಿಕ ಅರೇ ಟ್ರ್ಯಾಕಿಂಗ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮಾಪನಾಂಕ ನಿರ್ಣಯಿಸಲಾಗುತ್ತಿದೆ...", "SYSTEM: ಲಾಕ್ಷಣಿಕ ಬಾಹ್ಯಾಕಾಶ ಚೌಕಟ್ಟುಗಳನ್ನು ಮ್ಯಾಪಿಂಗ್ ಮಾಡಲಾಗುತ್ತಿದೆ..."]
+                    };
+                    const langList = utterances[currentLang] || utterances['en'];
+                    voiceTranscript.innerText = langList[Math.floor(Math.random() * langList.length)];
+                    emotionTokenDisplay.innerText = dict.statusTransmitting;
+                    emotionTokenDisplay.style.color = "var(--neon-blue)";
+                    voiceStatusDot.className = "status-dot speaking";
+                } else if (Math.floor(seed * 10) % 25 === 0) {
+                    emotionTokenDisplay.innerText = dict.statusActive;
+                    emotionTokenDisplay.style.color = "var(--neon-green)";
+                    voiceStatusDot.className = "status-dot active";
+                }
+
+                // 1. Audio Equalizer Wave Form Simulator
+                document.querySelectorAll(".eq-bar").forEach(bar => {
+                    const magnitude = Math.max(10, Math.floor(Math.random() * 95));
+                    bar.style.height = `${magnitude}%`;
+                });
+
+                // Compute Live Audio Panel Analytics Numbers
+                const calculatedDb = (Math.sin(seed) * 20 - 15 + Math.random() * 5).toFixed(1);
+                liveDecibel.innerText = `${calculatedDb} dB`;
+                liveSampleRate.innerText = (44.1 + Math.sin(seed) * 3).toFixed(1) + " kHz";
+
+                // Update Vocal Signatures Tracks UI
+                const calmVal = Math.floor(65 + Math.sin(seed) * 15 + Math.random() * 5);
+                const frictionVal = Math.floor(20 + Math.cos(seed * 1.5) * 10 + Math.random() * 5);
+                const loadVal = Math.floor(40 + Math.sin(seed * 0.8) * 20);
+
+                txtCalm.innerText = `${calmVal}%`; barCalm.style.width = `${calmVal}%`;
+                txtFriction.innerText = `${frictionVal}%`; barFriction.style.width = `${frictionVal}%`;
+                txtLoad.innerText = `${loadVal}%`; barLoad.style.width = `${loadVal}%`;
+
+                // 2. Hardware Dashboard Components Track Fill Transitions
+                neuralBar.style.width = `${Math.floor(70 + Math.sin(seed) * 20)}%`;
+                analyticsBar.style.width = `${Math.floor(80 + Math.cos(seed * 1.2) * 15)}%`;
+                automationBar.style.width = `${Math.floor(55 + Math.sin(seed * 2) * 30)}%`;
+
+                valNeuralVelocity.innerText = `${Math.floor(85 + Math.sin(seed) * 10)}%`;
+                valNeuralIndex.innerText = (0.91 + Math.cos(seed) * 0.05).toFixed(2);
+                valNeuralActive.innerText = `${Math.floor(40 + Math.sin(seed * 3) * 5)}`;
+                
+                valVisionFPS.innerText = `${Math.floor(58 + Math.random() * 4)} FPS`;
+                valVisionAccuracy.innerText = `${(98.2 + Math.sin(seed) * 1.2).toFixed(1)}%`;
+                valVisionTracking.innerText = `${Math.floor(70 + Math.cos(seed) * 25)}`;
+
+                valRobotTasks.innerText = `${Math.floor(12 + Math.sin(seed) * 3)}`;
+                valRobotLoad.innerText = `${Math.floor(45 + Math.cos(seed * 0.5) * 15)}%`;
+                valRobotFlow.innerText = `${(0.85 + Math.sin(seed) * 0.1).toFixed(2)} Hz`;
+
+                // 3. Render Canvas 2D Operational Vector Graphics Graphics
+                renderNeuralCanvas();
+                renderVisionCanvas();
+                renderRoboticsCanvas();
+
+                animationFrameId = requestAnimationFrame(executeTelemetryPipeline);
+            }
+
+            // Canvas Vector Visualizers
+            function renderNeuralCanvas() {
+                ctxNeural.clearRect(0, 0, cNeural.width, cNeural.height);
+                ctxNeural.strokeStyle = "rgba(0, 243, 255, 0.2)";
+                ctxNeural.lineWidth = 1;
+                
+                // Audio Wave Network Lines
+                ctxNeural.beginPath();
+                for (let i = 0; i < cNeural.width; i++) {
+                    const y = cNeural.height / 2 + Math.sin(i * 0.03 + seed) * 15 + Math.cos(i * 0.01 - seed) * 10;
+                    if (i === 0) ctxNeural.moveTo(i, y); else ctxNeural.lineTo(i, y);
+                }
+                ctxNeural.stroke();
+
+                // Core Data Nodes Mapping
+                ctxNeural.fillStyle = "var(--neon-blue)";
+                for (let i = 0; i < 4; i++) {
+                    const x = (cNeural.width / 5) * (i + 1) + Math.sin(seed + i) * 10;
+                    const y = cNeural.height / 2 + Math.cos(seed - i) * 20;
+                    ctxNeural.beginPath();
+                    ctxNeural.arc(x, y, 4, 0, Math.PI * 2);
+                    ctxNeural.fill();
+                }
+            }
+
+            function renderVisionCanvas() {
+                ctxVision.clearRect(0, 0, cVision.width, cVision.height);
+                
+                // Crosshairs Telemetry Targets
+                const cx = cVision.width / 2;
+                const cy = cVision.height / 2;
+                const radius = 35 + Math.sin(seed) * 5;
+
+                ctxVision.strokeStyle = "rgba(139, 92, 246, 0.4)";
+                ctxVision.lineWidth = 1.5;
+                ctxVision.beginPath();
+                ctxVision.arc(cx, cy, radius, 0, Math.PI * 2);
+                ctxVision.stroke();
+
+                // Scanning Line Matrix Tracker Array
+                const scanY = (cy - 40) + ((seed * 25) % 80);
+                ctxVision.strokeStyle = "rgba(139, 92, 246, 0.2)";
+                ctxVision.beginPath();
+                ctxVision.moveTo(cx - 60, scanY);
+                ctxVision.lineTo(cx + 60, scanY);
+                ctxVision.stroke();
+
+                // Vector Dots Intersections Array
+                ctxVision.fillStyle = "var(--neon-purple)";
+                ctxVision.fillRect(cx - 45, cy - 20, 3, 3);
+                ctxVision.fillRect(cx + 35, cy + 15, 3, 3);
+            }
+
+            function renderRoboticsCanvas() {
+                ctxRobot.clearRect(0, 0, cRobot.width, cRobot.height);
+                ctxRobot.strokeStyle = "rgba(16, 185, 129, 0.3)";
+                ctxRobot.lineWidth = 1.5;
+
+                // Telemetry Matrix Histograms Arrays
+                const step = cRobot.width / 20;
+                ctxRobot.beginPath();
+                for (let i = 0; i <= 20; i++) {
+                    const x = i * step;
+                    const h = 30 + Math.sin(i * 0.5 + seed * 2) * 20 + Math.random() * 2;
+                    if (i === 0) ctxRobot.moveTo(x, cRobot.height - h); else ctxRobot.lineTo(x, cRobot.height - h);
+                }
+                ctxRobot.stroke();
+            }
         });
     </script>
 </body>
