@@ -1188,7 +1188,30 @@
 
                 matrixAnimationId = requestAnimationFrame(runMatrixSimulations);
             }
+async function sendToBackend(message) {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: message
+            })
+        });
 
+        const data = await response.json();
+
+        voiceTranscript.innerHTML = data.reply;
+
+        speechSynthesis.speak(
+            new SpeechSynthesisUtterance(data.reply)
+        );
+
+    } catch (e) {
+        console.error(e);
+    }
+}
             // Start Canvas Rendering Cycles
             runMatrixSimulations();
         });
