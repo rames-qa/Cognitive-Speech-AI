@@ -5,6 +5,7 @@ import logging
 import threading
 import urllib.parse
 import random
+import time
 import psutil
 import requests
 from flask import Flask, jsonify, request, render_template_string
@@ -68,7 +69,7 @@ PLATFORM_REGISTRY = {
             "breaking news",
             "current affairs",
         ],
-        "has_automation": False,
+        "has_automation": True,
     },
     "reuters": {
         "base_url": "https://www.reuters.com",
@@ -103,7 +104,7 @@ PLATFORM_REGISTRY = {
         "has_automation": False,
     },
     "reddit": {
-        "base_url": "https://www.reddit.com",
+        "base_url": "https://reddit.com",
         "search_path": "/search/?q=",
         "has_automation": False,
     },
@@ -164,51 +165,64 @@ def resolve_intent_and_query(command):
     return matched_platform, extracted_query
 
 
-# --- ASYNC AUTOMATION PIPELINE RUNNER ---
-def execute_amazon_pipeline():
+# --- AUTOMATION DRIVER CONFIGURATION ROUTINE ---
+def get_configured_driver():
+    options = webdriver.ChromeOptions()
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--no-sandbox")
+    options.add_experimental_option("detach", True)
+    
+    chrome_service = Service(ChromeDriverManager().install())
+    return webdriver.Chrome(service=chrome_service, options=options)
+
+
+# --- DYNAMIC SELECTION WORKER DISPATCHER ---
+def run_platform_automation(platform, query):
     global active_driver, current_automation_status
     if not automation_lock.acquire(blocking=False):
         current_automation_status = "Engine locked. Pipeline busy."
-        print("[WORKER BLOCKED] Engine is busy processing an open test pipeline.")
         return
-    
-    current_automation_status = "Initializing Chrome Driver..."
-    print("\n[SELENIUM] Initializing autonomous WebDriver orchestration sequence...")
+
     try:
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless=new")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--window-size=1920,1080")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--no-sandbox")
-        options.add_experimental_option("detach", True)
-
-        chrome_service = Service(ChromeDriverManager().install())
-        active_driver = webdriver.Chrome(service=chrome_service, options=options)
-
-        current_automation_status = "Navigating to Amazon..."
-        active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])
-
-        wait = WebDriverWait(active_driver, 12)
-        current_automation_status = "Waiting for Login element..."
-        signin_node = wait.until(
-            EC.element_to_be_clickable((By.ID, "nav-link-accountList"))
-        )
-        signin_node.click()
-        current_automation_status = "Automation Task Completed."
-        print("[SELENIUM] Routine target reached: Login target node located safely.")
+        current_automation_status = f"Spinning up driver for {platform.title()}..."
+        active_driver = get_configured_driver()
+        
+        if platform == "amazon":
+            current_automation_status = "Running Amazon workflow..."
+            active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])
+            wait = WebDriverWait(active_driver, 12)
+            signin_node = wait.until(EC.element_to_be_clickable((By.ID, "nav-link-accountList")))
+            signin_node.click()
+            current_automation_status = "Amazon workflow complete."
+            
+        elif platform == "news":
+            current_automation_status = "Scraping media nodes..."
+            target_url = PLATFORM_REGISTRY["news"]["base_url"]
+            if query:
+                target_url += f"/search?q={urllib.parse.quote(query)}"
+            active_driver.get(target_url)
+            time.sleep(4)
+            
+            headlines = active_driver.find_elements(By.TAG_NAME, 'h4')
+            top_stories = [h.text for h in headlines[:3] if h.text]
+            if top_stories:
+                current_automation_status = f"News update: {', '.join(top_stories[:2])}"
+            else:
+                current_automation_status = "News page parsed completely."
+                
     except Exception as error:
-        current_automation_status = f"Automation Error: {str(error)[:30]}..."
-        print(f"[SELENIUM ERROR] Automation execution faulted: {error}", file=sys.stderr)
+        current_automation_status = f"Error: {str(error)[:35]}..."
+        print(f"[SELENIUM FAULT] Pipeline exception: {error}", file=sys.stderr)
         if active_driver:
-            try:
+            try: 
                 active_driver.quit()
-            except Exception:
+            except: 
                 pass
             active_driver = None
     finally:
         automation_lock.release()
-
 
 # --- HTML / JAVASCRIPT / CSS HUD FRONTEND ---
 HTML_TEMPLATE = """
@@ -541,7 +555,7 @@ HTML_TEMPLATE = """
             container.className = `chat-msg ${sender === 'USER' ? 'user-msg' : 'ai-msg'}`;
             let baseHTML = `<strong>[${sender}]:</strong> ${text}`;
             if (url) {
-                baseHTML += ` <a href="${url}" target="_blank" style="color:#ff0055; text-decoration: underline;">Open Node Link</a>`;
+                baseHTML += ` <a href="${url}" target="_blank" style="color:#00f3ff; text-decoration: underline;">Open Link</a>`;
             }
             container.innerHTML = baseHTML;
             chatOutput.appendChild(container);
@@ -698,21 +712,21 @@ def process_incoming_command():
         if platform:
             platform_config = PLATFORM_REGISTRY[platform]
             
-            # Check for automation triggering parameters
+            # Catch structural instructions requiring automation workflows
             if platform_config["has_automation"] and any(
-                act in command for act in ["login", "automation", "run", "start"]
+                act in command for act in ["login", "automation", "run", "start", "scrape", "open"]
             ):
                 if automation_lock.locked():
                     return build_api_payload("busy", "Selenium instance pipeline is currently locked.")
                 
-                threading.Thread(target=execute_amazon_pipeline, daemon=True).start()
+                threading.Thread(target=run_platform_automation, args=(platform, query), daemon=True).start()
                 return build_api_payload(
                     "success",
                     f"Triggered active automation workflow on {platform.title()}.",
                     platform_config["base_url"],
                 )
             
-            # Handle URL queries dynamically
+            # Fallback out to dynamic URI links if automation isn't flagged
             if query:
                 if platform == "myntra":
                     target_url = f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
