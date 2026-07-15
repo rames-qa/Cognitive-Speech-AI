@@ -629,7 +629,7 @@
  
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // COMPLETE DICTIONARY MATRIX (Zero cutoffs, perfectly mapped)
+            // COMPLETE DICTIONARY MATRIX
             const LocalizationMatrix = {
                 en: {
                     navLogo: "Cognitive AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
@@ -653,27 +653,27 @@
                 },
                 ta: {
                     navLogo: "அறிவுசார் செயற்கை நுண்ணறிவு", navLinkConsole: "முனையம்", navLinkMatrix: "நேரடி மேட்ரிக்ஸ்",
-                    heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நರம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
+                    heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நரம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
                     voiceStatusOffline: "ஒலி கோர் ஆஃப்லைனில் உள்ளது", voiceStatusActive: "சுற்றுப்புற விழித்தெழு சொல் எஞ்சின் செயல்படுகிறது",
                     voiceStatusSpeaking: "ஒலி வெளியீட்டு வரிசையை ஒளிபரப்புகிறது...", transcriptPlaceholder: "வழக்கமான ஸ்மார்ட் லூப் கண்காணிப்பைத் தொடங்க கீழே உள்ள தூண்டுதலைக் கிளிக் செய்து, \"SYSTEM\" எனக்கூறி உங்கள் கட்டளையை வழங்கவும்.",
                     voiceTextInit: "சுற்றுப்புற உதவி வளையத்தைத் தொடங்கு", voiceTextStop: "செயல்பாட்டு வளையத்தை நிறுத்து",
                     sectionTitleMatrix: "அறிவுசார் செயல்பாட்டு இடைமுக மேட்ரிக்ஸ்", panelHeaderCapture: "ஒலி பிடிப்பு இடையக பகுதி",
                     metricLabelDecibel: "ஒலி டெசிபல்கள்", metricLabelFrequency: "அலைவரிசை அதிர்வெண்", panelHeaderSignature: "அறிவுசார் குரல் கையொப்பம்",
                     cognitiveModality: "ஒலி சமிக்ஞை செயலாக்கம்", panelHeaderStatus: "தற்போதைய கணினி உதவி நிலை",
-                    statusSilent: "கணினி அமைதி", statusTransmitting: "பதிலை அனுப்புகிறது", statusActive: "சுற்றுப்புற கண்காணிப்பு செயலில் உள்ளது", statusOffline: "கணினி ஆஃப்லைனில் உள்ளது",
+                    statusSilent: "கணினி அமைதி", statusTransmitting: "பதிலை அனுப்புகிறது", statusActive: "சுற்றுப்புற கண்காணிப்பு செயலில் உள்ளது", statusOffline: "கணினி ஆஃப்லைனுக்கு சென்றது",
                     labelCalm: "அமைதியான நிலைத்தன்மை", labelFriction: "குரல் உராய்வு", labelLoad: "இயக்க முறை செயலாக்க சுமை",
                     cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
                     subMetricNeuralVelocity: "வேகம்", subMetricNeuralIndex: "குறியீடு", subMetricNeuralActive: "செயலில்",
                     cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்", cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு, மேட்ரிக்ஸ் கட்டமைப்புகள் மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
-                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபೀட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "ಕண்காணிப்பு",
-                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
+                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபீட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காணிப்பு",
+                    cardTitleRobotics: "ரோபோடிக்ஸ் கோர்", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
                     subMetricRobotTasks: "பணிகள்", subMetricRobotLoad: "சுமை", subMetricRobotFlow: "பாய்ச்சல்",
                     footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம் | வடிவமைத்தவர் ரமேஷ் குமார் K",
                     backendFail: "பின்னணி இணைப்பு தோல்வியடைந்தது."
                 },
                 hi: {
                     navLogo: "कॉग्निटिव एआई", navLinkConsole: "कंसोल", navLinkMatrix: "लाइव मैट्रिक्स",
-                    heroTitle: "कॉग्निटिव स्पीच एआई ऑटोमेशन", heroDesc: "वास्तविक समय के सिमेंटिक निष्पादन के साथ रोबोटिक न्यूरल प्रोसेसिंग पैटर्न को संश्लेषित करने वाला एक भारती-मोडल मशीन एरे स्ट्रीम।",
+                    heroTitle: "कॉग्निटिव स्पीच एआई ऑटोमेशन", heroDesc: "वास्तविक समय के सिमेंटिक निष्पादन के साथ रोबोटिक न्यूरल प्रोसेसिंग पैटर्न को संश्लेषित करने वाला एक मल्टी-मोडल मशीन एरे स्ट्रीम।",
                     voiceStatusOffline: "ध्वनिक कोर ऑफ़लाइन", voiceStatusActive: "वेक-वर्ड इंजन सक्रिय है",
                     voiceStatusSpeaking: "ऑडियो आउटपुट एरे प्रसारित हो रहा है...", transcriptPlaceholder: "मानक स्मार्ट लूप निगरानी शुरू करने के लिए नीचे दिए गए ट्रिगर पर क्लिक करें, और \"SYSTEM\" बोलने के बाद अपना कमांड दें।",
                     voiceTextInit: "असिस्टेंट लूप प्रारंभ करें", voiceTextStop: "मैट्रिक्स ऑपरेशंस लूप समाप्त करें",
@@ -704,167 +704,515 @@
                     labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ನಾದದ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಪ್ರೊಸೆಸಿಂಗ್ ಲೋಡ್",
                     cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಮೌಲ್ಯಮಾಪನ.",
                     subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
-                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಬಹಿರಂಗ ಪರಿಸರ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಚೌಕಟ್ಟುಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳ ಸಂಸ್ಕರಣೆ.",
+                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಪ್ರಾದೇಶಿಕ ಪರಿಸರ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಚೌಕಟ್ಟುಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸುವುದು.",
                     subMetricVisionFPS: "ಎಫ್ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
-                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಚಲನಶಾಸ್ತ್ರ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
+                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಚಲನಶಾಸ್ತ್ರದ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
                     subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಹರಿವು",
-                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಯೋಜನೆ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ಅವರಿಂದ ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ",
+                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಯೋಜನೆ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ವಿನ್ಯಾಸಗೊಳಿಸಿದ್ದಾರೆ",
                     backendFail: "ಬ್ಯಾಕೆಂಡ್ ಸಂಪರ್ಕ ವಿಫಲವಾಗಿದೆ."
                 }
             };
 
-            // --- LOCALIZATION HANDLER ---
-            const langSelect = document.getElementById("langSelect");
-            langSelect.addEventListener("change", (e) => {
-                const lang = e.target.value;
-                const dictionary = LocalizationMatrix[lang] || LocalizationMatrix.en;
+            // STATE VARIABLES
+            let activeLang = "en";
+            let isLoopRunning = false;
+            let audioContext = null;
+            let animationFrameId = null;
+            let micStream = null;
+
+            // SPEECH RECOGNITION INSTANTIATION
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition = null;
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = false;
+            }
+
+            // DOM ELEMENT SELECTORS
+            const elements = {
+                langSelect: document.getElementById("langSelect"),
+                navLogo: document.getElementById("navLogo"),
+                navLinkConsole: document.getElementById("navLinkConsole"),
+                navLinkMatrix: document.getElementById("navLinkMatrix"),
+                heroTitle: document.getElementById("heroTitle"),
+                heroDesc: document.getElementById("heroDesc"),
+                voiceStatusDot: document.getElementById("voiceStatusDot"),
+                voiceStatusText: document.getElementById("voiceStatusText"),
+                voiceTranscript: document.getElementById("voiceTranscript"),
+                transcriptPlaceholder: document.getElementById("transcriptPlaceholder"),
+                btnVoiceTrigger: document.getElementById("btnVoiceTrigger"),
+                voiceText: document.getElementById("voiceText"),
+                sectionTitleMatrix: document.getElementById("sectionTitleMatrix"),
+                panelHeaderCapture: document.getElementById("panelHeaderCapture"),
+                voiceModuleStatus: document.getElementById("voiceModuleStatus"),
+                metricLabelDecibel: document.getElementById("metricLabelDecibel"),
+                metricLabelFrequency: document.getElementById("metricLabelFrequency"),
+                panelHeaderSignature: document.getElementById("panelHeaderSignature"),
+                cognitiveModality: document.getElementById("cognitiveModality"),
+                panelHeaderStatus: document.getElementById("panelHeaderStatus"),
+                emotionTokenDisplay: document.getElementById("emotionTokenDisplay"),
+                labelCalm: document.getElementById("labelCalm"),
+                labelFriction: document.getElementById("labelFriction"),
+                labelLoad: document.getElementById("labelLoad"),
+                cardTitleNeural: document.getElementById("cardTitleNeural"),
+                cardDescNeural: document.getElementById("cardDescNeural"),
+                subMetricNeuralVelocity: document.getElementById("subMetricNeuralVelocity"),
+                subMetricNeuralIndex: document.getElementById("subMetricNeuralIndex"),
+                subMetricNeuralActive: document.getElementById("subMetricNeuralActive"),
+                cardTitleVision: document.getElementById("cardTitleVision"),
+                cardDescVision: document.getElementById("cardDescVision"),
+                subMetricVisionFPS: document.getElementById("subMetricVisionFPS"),
+                subMetricVisionAccuracy: document.getElementById("subMetricVisionAccuracy"),
+                subMetricVisionTracking: document.getElementById("subMetricVisionTracking"),
+                cardTitleRobotics: document.getElementById("cardTitleRobotics"),
+                cardDescRobotics: document.getElementById("cardDescRobotics"),
+                subMetricRobotTasks: document.getElementById("subMetricRobotTasks"),
+                subMetricRobotLoad: document.getElementById("subMetricRobotLoad"),
+                subMetricRobotFlow: document.getElementById("subMetricRobotFlow"),
+                footerText: document.getElementById("footerText"),
+                eqBars: document.querySelectorAll(".eq-bar"),
+                liveDecibel: document.getElementById("liveDecibel"),
+                liveSampleRate: document.getElementById("liveSampleRate"),
+                txtCalm: document.getElementById("txtCalm"),
+                txtFriction: document.getElementById("txtFriction"),
+                txtLoad: document.getElementById("txtLoad"),
+                barCalm: document.getElementById("barCalm"),
+                barFriction: document.getElementById("barFriction"),
+                barLoad: document.getElementById("barLoad"),
+                neuralBar: document.getElementById("neuralBar"),
+                analyticsBar: document.getElementById("analyticsBar"),
+                automationBar: document.getElementById("automationBar"),
+                valNeuralVelocity: document.getElementById("valNeuralVelocity"),
+                valNeuralIndex: document.getElementById("valNeuralIndex"),
+                valNeuralActive: document.getElementById("valNeuralActive"),
+                valVisionFPS: document.getElementById("valVisionFPS"),
+                valVisionAccuracy: document.getElementById("valVisionAccuracy"),
+                valVisionTracking: document.getElementById("valVisionTracking"),
+                valRobotTasks: document.getElementById("valRobotTasks"),
+                valRobotLoad: document.getElementById("valRobotLoad"),
+                valRobotFlow: document.getElementById("valRobotFlow")
+            };
+
+            // LOCALIZATION RENDERING ENGINE
+            function renderLanguage(langCode) {
+                activeLang = langCode;
+                const strings = LocalizationMatrix[langCode] || LocalizationMatrix.en;
                 
-                for (const key in dictionary) {
-                    const el = document.getElementById(key);
-                    if (el) el.innerText = dictionary[key];
+                for (const key in strings) {
+                    if (elements[key]) {
+                        if (key === "footerText") {
+                            elements[key].innerHTML = strings[key];
+                        } else if (key === "voiceTextInit" || key === "voiceTextStop") {
+                            // Handled separately depending on loop state
+                        } else {
+                            elements[key].textContent = strings[key];
+                        }
+                    }
+                }
+
+                // Handle system conditional dynamic placeholders
+                if (!isLoopRunning) {
+                    elements.voiceStatusText.textContent = strings.voiceStatusOffline;
+                    elements.voiceText.textContent = strings.voiceTextInit;
+                    elements.emotionTokenDisplay.textContent = strings.statusOffline;
+                } else {
+                    elements.voiceStatusText.textContent = strings.voiceStatusActive;
+                    elements.voiceText.textContent = strings.voiceTextStop;
+                    elements.emotionTokenDisplay.textContent = strings.statusActive;
+                }
+            }
+
+            elements.langSelect.addEventListener("change", (e) => {
+                renderLanguage(e.target.value);
+                if (recognition) {
+                    recognition.lang = getLangSpeechLocale(e.target.value);
                 }
             });
 
-            // --- VOICE PIPELINE INTEGRATION ENGINE ---
-            const btnVoice = document.getElementById("btnVoiceTrigger");
-            const voiceText = document.getElementById("voiceText");
-            const statusDot = document.getElementById("voiceStatusDot");
-            const statusText = document.getElementById("voiceStatusText");
-            const transcriptBox = document.getElementById("voiceTranscript");
-            const tokenDisplay = document.getElementById("emotionTokenDisplay");
-            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
-            const eqBars = document.querySelectorAll(".eq-bar");
+            function getLangSpeechLocale(lang) {
+                const locales = { en: "en-US", ta: "ta-IN", hi: "hi-IN", kn: "kn-IN" };
+                return locales[lang] || "en-US";
+            }
 
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            let recognitionLoop = null;
-            let isListening = false;
+            // ADVANCED SPEECH SYNTHESIS ENGINE (TTS)
+            function speakSystemResponse(phraseText) {
+                if (!window.speechSynthesis) return;
+                window.speechSynthesis.cancel(); // Stop overlap
 
-            if (SpeechRecognition) {
-                recognitionLoop = new SpeechRecognition();
-                recognitionLoop.continuous = false;
-                recognitionLoop.interimResults = false;
-                recognitionLoop.lang = 'en-US';
+                const utterance = new SpeechSynthesisUtterance(phraseText);
+                utterance.lang = getLangSpeechLocale(activeLang);
+                
+                // Track Speech Events to visually represent output dynamics
+                utterance.onstart = () => {
+                    elements.voiceStatusDot.className = "status-dot speaking";
+                    elements.voiceStatusText.textContent = LocalizationMatrix[activeLang].voiceStatusSpeaking;
+                    elements.emotionTokenDisplay.textContent = LocalizationMatrix[activeLang].statusTransmitting;
+                    elements.voiceModuleStatus.textContent = "BROADCAST";
+                    elements.voiceModuleStatus.className = "audio-pill-badge active";
+                };
 
-                btnVoice.addEventListener("click", () => {
-                    if (!isListening) {
-                        try {
-                            recognitionLoop.start();
-                        } catch (err) {
-                            console.log("Speech initialization overlap: ", err);
-                        }
+                utterance.onend = () => {
+                    if (isLoopRunning) {
+                        elements.voiceStatusDot.className = "status-dot active";
+                        elements.voiceStatusText.textContent = LocalizationMatrix[activeLang].voiceStatusActive;
+                        elements.emotionTokenDisplay.textContent = LocalizationMatrix[activeLang].statusActive;
+                        elements.voiceModuleStatus.textContent = "LISTENING";
+                        elements.voiceModuleStatus.className = "audio-pill-badge";
                     } else {
-                        recognitionLoop.stop();
-                    }
-                });
-
-                recognitionLoop.onstart = () => {
-                    isListening = true;
-                    btnVoice.classList.add("listening");
-                    voiceText.innerText = "Listening to audio query...";
-                    statusDot.className = "status-dot active";
-                    statusText.innerText = "Ambient Wake-Word Engine Operational";
-                    tokenDisplay.innerText = "AMBIENT WATCH ACTIVE";
-                    voiceModuleStatus.innerText = "LISTENING";
-                    voiceModuleStatus.classList.add("active");
-                    animateEqualizer(true);
-                };
-
-                recognitionLoop.onresult = (event) => {
-                    const speechResult = event.results[0][0].transcript;
-                    transcriptBox.innerHTML = `<span>${speechResult}</span>`;
-                    
-                    // Direct API Dispatch
-                    dispatchCommandToBackend(speechResult);
-                };
-
-                recognitionLoop.onerror = (event) => {
-                    console.error("Speech Fault Logged:", event.error);
-                    statusText.innerText = "Error Matrix: " + event.error;
-                    statusDot.className = "status-dot";
-                };
-
-                recognitionLoop.onend = () => {
-                    isListening = false;
-                    btnVoice.classList.remove("listening");
-                    voiceText.innerText = "Initialize Ambient Assistant Loop";
-                    voiceModuleStatus.innerText = "STANDBY";
-                    voiceModuleStatus.classList.remove("active");
-                    animateEqualizer(false);
-                    if(tokenDisplay.innerText !== "TRANSMITTING RESPONSE") {
-                        tokenDisplay.innerText = "SYSTEM SILENT";
-                        statusDot.className = "status-dot";
-                        statusText.innerText = "Acoustic Core Offline";
+                        shutdownSystemLoop();
                     }
                 };
-            } else {
-                btnVoice.disabled = true;
-                voiceText.innerText = "SPEECH API UNSUPPORTED";
+
+                window.speechSynthesis.speak(utterance);
             }
 
-            // --- FLASK API DISPATCH SYSTEM ---
-            function dispatchCommandToBackend(commandString) {
-                tokenDisplay.innerText = "TRANSMITTING RESPONSE";
-                statusDot.className = "status-dot speaking";
-                statusText.innerText = "Broadcasting Audio Output Array...";
+            // CORE SPEECH PROCESSING LOOP
+            function initializeSystemLoop() {
+                isLoopRunning = true;
+                elements.voiceStatusDot.className = "status-dot active";
+                elements.voiceStatusText.textContent = LocalizationMatrix[activeLang].voiceStatusActive;
+                elements.voiceModuleStatus.textContent = "LISTENING";
+                elements.voiceModuleStatus.className = "audio-pill-badge";
+                elements.voiceText.textContent = LocalizationMatrix[activeLang].voiceTextStop;
+                elements.btnVoiceTrigger.classList.add("listening");
+                elements.emotionTokenDisplay.textContent = LocalizationMatrix[activeLang].statusActive;
 
-                fetch('http://127.0.0.1:5000/api/command', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ command: commandString })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Execution metrics returned:", data);
-                    
-                    // Dynamic Telemetry Update Visuals
-                    triggerUIEffects();
+                // Clear dynamic placeholder 
+                elements.voiceTranscript.innerHTML = "";
 
-                    // Output speech if back-end responds with an action text
-                    if (window.speechSynthesis && data.action) {
-                        window.speechSynthesis.cancel();
-                        window.speechSynthesis.speak(new SpeechSynthesisUtterance(data.action));
-                    }
-                    
-                    tokenDisplay.innerText = "SYSTEM SILENT";
-                    statusDot.className = "status-dot";
-                    statusText.innerText = "Acoustic Core Offline";
-                })
-                .catch(error => {
-                    console.error("Pipeline breakdown:", error);
-                    tokenDisplay.innerText = "PIPELINE BREAKDOWN";
-                    statusText.innerText = "Backend Connection Error";
-                });
-            }
-
-            // Equalizer Bars Visualizer Animation loop
-            let eqInterval;
-            function animateEqualizer(start) {
-                if(start) {
-                    eqInterval = setInterval(() => {
-                        eqBars.forEach(bar => {
-                            bar.style.height = Math.floor(Math.random() * 90) + 10 + "%";
-                        });
-                    }, 100);
+                if (recognition) {
+                    recognition.lang = getLangSpeechLocale(activeLang);
+                    try {
+                        recognition.start();
+                    } catch (e) { console.warn("Recognition already started.", e); }
                 } else {
-                    clearInterval(eqInterval);
-                    eqBars.forEach(bar => bar.style.height = "10%");
+                    const fallbackSpan = document.createElement("span");
+                    fallbackSpan.style.color = "var(--neon-rose)";
+                    fallbackSpan.textContent = " [Speech Recognition API not supported or disabled in this browser. Running Simulated Acoustic telemetry.]";
+                    elements.voiceTranscript.appendChild(fallbackSpan);
+                }
+
+                // Audio Context Hook for true equalizer simulation
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                        micStream = stream;
+                        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        const source = audioContext.createMediaStreamSource(stream);
+                        const analyser = audioContext.createAnalyser();
+                        analyser.fftSize = 32;
+                        source.connect(analyser);
+                        processMicData(analyser);
+                    }).catch(() => {
+                        // Fallback to beautiful mathematically styled simulation context
+                        simulateAcoustics();
+                    });
+                } else {
+                    simulateAcoustics();
                 }
             }
 
-            // Interactive UI status update
-            function triggerUIEffects() {
-                document.getElementById("liveDecibel").innerText = "-12 dB";
-                document.getElementById("liveSampleRate").innerText = "44.1 kHz";
-                document.getElementById("barCalm").style.width = "85%"; document.getElementById("txtCalm").innerText = "85%";
-                document.getElementById("barFriction").style.width = "15%"; document.getElementById("txtFriction").innerText = "15%";
-                document.getElementById("barLoad").style.width = "60%"; document.getElementById("txtLoad").innerText = "60%";
+            function shutdownSystemLoop() {
+                isLoopRunning = false;
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                if (recognition) {
+                    try { recognition.stop(); } catch(e){}
+                }
+                if (micStream) {
+                    micStream.getTracks().forEach(track => track.stop());
+                }
+                if (audioContext) {
+                    audioContext.close();
+                }
+                cancelAnimationFrame(animationFrameId);
+
+                // Reset standard visuals
+                elements.voiceStatusDot.className = "status-dot";
+                elements.voiceStatusText.textContent = LocalizationMatrix[activeLang].voiceStatusOffline;
+                elements.voiceModuleStatus.textContent = "STANDBY";
+                elements.voiceModuleStatus.className = "audio-pill-badge";
+                elements.voiceText.textContent = LocalizationMatrix[activeLang].voiceTextInit;
+                elements.btnVoiceTrigger.classList.remove("listening");
+                elements.emotionTokenDisplay.textContent = LocalizationMatrix[activeLang].statusOffline;
+                elements.liveDecibel.textContent = "-Inf dB";
+                elements.liveSampleRate.textContent = "0.0 kHz";
                 
-                document.getElementById("neuralBar").style.width = "75%"; document.getElementById("valNeuralVelocity").innerText = "75%";
-                document.getElementById("analyticsBar").style.width = "90%"; document.getElementById("valVisionAccuracy").innerText = "90%";
-                document.getElementById("automationBar").style.width = "45%"; document.getElementById("valRobotTasks").innerText = "45%";
+                elements.eqBars.forEach(b => b.style.height = "10%");
+                
+                elements.voiceTranscript.innerHTML = `<span class="transcript-placeholder">${LocalizationMatrix[activeLang].transcriptPlaceholder}</span>`;
             }
+
+            elements.btnVoiceTrigger.addEventListener("click", () => {
+                if (!isLoopRunning) {
+                    initializeSystemLoop();
+                } else {
+                    shutdownSystemLoop();
+                }
+            });
+
+            // SPEECH RECOGNITION COMMAND MATRIX HANDLERS
+            if (recognition) {
+                recognition.onresult = (event) => {
+                    const latestResultIndex = event.results.length - 1;
+                    const transcriptRaw = event.results[latestResultIndex][0].transcript.trim();
+                    
+                    // Display transcript dynamically
+                    elements.voiceTranscript.textContent = `"> ${transcriptRaw}"`;
+
+                    processNeuralSemanticCommand(transcriptRaw);
+                };
+
+                recognition.onend = () => {
+                    // Keep speech loop listening dynamically if active
+                    if (isLoopRunning) {
+                        try { recognition.start(); } catch(e){}
+                    }
+                };
+            }
+
+            // NATURAL SEMANTIC PARSER & AI RESPONDER
+            function processNeuralSemanticCommand(text) {
+                const cleanText = text.toUpperCase();
+                
+                // Response database mapped dynamically across localizations
+                const responses = {
+                    en: {
+                        hello: "Hello Operational Specialist Ramesh. Welcome to the Neural Cognitive Center.",
+                        status: "Systems operations are operating normally. Calibration is stable.",
+                        help: "I can process commands such as: Hello, Status, Reset, Vision, or Calibration.",
+                        vision: "Vision analytics mapping updated. Executing automated space environment track sweep.",
+                        default: "Command interpreted. Activating specialized cognitive automation tasks."
+                    },
+                    ta: {
+                        hello: "வணக்கம் ரமேஷ். அறிவுசார் கணினி தளம் தங்களை வரவேற்கிறது.",
+                        status: "அனைத்து கணினி செயல்பாடுகளும் சீராக உள்ளன. மேட்ரிக்ஸ் சரிபார்ப்பு முடிந்தது.",
+                        help: "வணக்கம், நிலை, பார்வை, அல்லது உதவி போன்ற கட்டளைகளை நான் இயக்க முடியும்.",
+                        vision: "பார்வை மேட்ரிக்ஸ் பகுப்பாய்வு புதுப்பிக்கப்பட்டது. தானியங்கி கண்காணிப்பு துவங்குகிறது.",
+                        default: "கட்டளை ஏற்றுக்கொள்ளப்பட்டது. மேம்பட்ட அறிவுசார் செயல்பாடுகளை துவக்குகிறேன்."
+                    },
+                    hi: {
+                        hello: "नमस्ते रमेश। न्यूरल कॉग्निटिव सेंटर में आपका स्वागत है।",
+                        status: "सभी सिस्टम सामान्य रूप से काम कर रहे हैं। संरेखण पूरी तरह से स्थिर है।",
+                        help: "आप निर्देश दे सकते हैं जैसे: नमस्ते, स्टेटस, विजन, या रीसेट।",
+                        vision: "विजन विश्लेषिकी डेटा अपडेट किया गया। स्थानिक स्कैनिंग शुरू हो रही है।",
+                        default: "निर्देश प्राप्त हुआ। विशिष्ट ऑटोमेशन कार्यों को सक्रिय किया जा रहा है।"
+                    },
+                    kn: {
+                        hello: "ನಮಸ್ಕಾರ ರಮೇಶ್. ಅರಿವಿನ ನರ ಕೇಂದ್ರಕ್ಕೆ ಸುಸ್ವಾಗತ.",
+                        status: "ಸಿಸ್ಟಮ್ ಕಾರ್ಯಾಚರಣೆಗಳು ಸಾಮಾನ್ಯವಾಗಿವೆ. ಮಾಪನಾಂಕ ನಿರ್ಣಯವು ಸ್ಥಿರವಾಗಿದೆ.",
+                        help: "ನೀವು ಇಂತಹ ಆದೇಶಗಳನ್ನು ನೀಡಬಹುದು: ನಮಸ್ಕಾರ, ಸ್ಥಿತಿ, ವಿಷನ್, ಅಥವಾ ರಿಸೆಟ್.",
+                        vision: "ವಿಷನ್ ಅನಾಲಿಟಿಕ್ಸ್ ಮ್ಯಾಪಿಂಗ್ ನವೀಕರಿಸಲಾಗಿದೆ. ಪ್ರಾದೇಶಿಕ ಸ್ಕ್ಯಾನಿಂಗ್ ಪ್ರಾರಂಭಿಸಲಾಗಿದೆ.",
+                        default: "ಆದೇಶ ಸ್ವೀಕರಿಸಲಾಗಿದೆ. ವಿಶೇಷ ಆಟೊಮೇಷನ್ ಪ್ರಕ್ರಿಯೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಲಾಗುತ್ತಿದೆ."
+                    }
+                };
+
+                const activeDict = responses[activeLang] || responses.en;
+                let reply = activeDict.default;
+
+                if (cleanText.includes("HELLO") || cleanText.includes("வணக்கம்") || cleanText.includes("नमस्ते") || cleanText.includes("ನಮಸ್ಕಾರ")) {
+                    reply = activeDict.hello;
+                } else if (cleanText.includes("STATUS") || cleanText.includes("நிலை") || cleanText.includes("स्टेटस") || cleanText.includes("ಸ್ಥಿತಿ")) {
+                    reply = activeDict.status;
+                    simulateBurstTelemetry();
+                } else if (cleanText.includes("VISION") || cleanText.includes("பார்வை") || cleanText.includes("ವಿಷನ್")) {
+                    reply = activeDict.vision;
+                    triggerVisionBurst();
+                } else if (cleanText.includes("HELP") || cleanText.includes("உதவி") || cleanText.includes("ಆದೇಶ")) {
+                    reply = activeDict.help;
+                }
+
+                // Audio Output Execution
+                speakSystemResponse(reply);
+            }
+
+            // PROGRAMMATIC TELEMETRY & SIGNAL PROCESSING
+            function processMicData(analyser) {
+                if (!isLoopRunning) return;
+                
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                
+                function update() {
+                    if (!isLoopRunning) return;
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    // Calculate relative real decibels and frequency arrays
+                    let total = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        total += dataArray[i];
+                        if (elements.eqBars[i % 10]) {
+                            // Scale height from 10% to 100% programmatically
+                            const pct = Math.max(10, Math.min(100, (dataArray[i] / 255) * 100));
+                            elements.eqBars[i % 10].style.height = `${pct}%`;
+                        }
+                    }
+                    
+                    const average = total / bufferLength;
+                    const computedDb = Math.round((average / 255) * 100) - 80; // normalized to dB scale
+                    const computedKhz = ((average / 255) * 22.0).toFixed(1);
+
+                    elements.liveDecibel.textContent = `${computedDb > -80 ? computedDb : '-Inf'} dB`;
+                    elements.liveSampleRate.textContent = `${computedKhz} kHz`;
+
+                    // Generate Dynamic Vocal Signatures
+                    const calmVal = Math.round(100 - (average / 255) * 100);
+                    const frictionVal = Math.round((average / 255) * 60 + Math.random() * 15);
+                    const loadVal = Math.round((average / 255) * 90);
+
+                    updateVocalSignatureBars(calmVal, frictionVal, loadVal);
+
+                    animationFrameId = requestAnimationFrame(update);
+                }
+                update();
+            }
+
+            function simulateAcoustics() {
+                function loop() {
+                    if (!isLoopRunning) return;
+
+                    // Compute mock sine waves mixed with algorithmic noise
+                    const time = Date.now() * 0.003;
+                    elements.eqBars.forEach((bar, index) => {
+                        const dynamicHeight = Math.abs(Math.sin(time + index)) * 80 + Math.random() * 20;
+                        bar.style.height = `${Math.max(10, dynamicHeight)}%`;
+                    });
+
+                    const simulatedDb = Math.floor(-35 + Math.sin(time) * 15 + Math.random() * 5);
+                    const simulatedKhz = (14.2 + Math.cos(time) * 4 + Math.random() * 0.8).toFixed(1);
+
+                    elements.liveDecibel.textContent = `${simulatedDb} dB`;
+                    elements.liveSampleRate.textContent = `${simulatedKhz} kHz`;
+
+                    const calmVal = Math.round(75 + Math.sin(time) * 10);
+                    const frictionVal = Math.round(15 + Math.cos(time * 1.5) * 10);
+                    const loadVal = Math.round(40 + Math.sin(time * 2) * 15);
+
+                    updateVocalSignatureBars(calmVal, frictionVal, loadVal);
+
+                    animationFrameId = requestAnimationFrame(loop);
+                }
+                loop();
+            }
+
+            function updateVocalSignatureBars(calm, friction, load) {
+                elements.txtCalm.textContent = `${calm}%`;
+                elements.barCalm.style.width = `${calm}%`;
+
+                elements.txtFriction.textContent = `${friction}%`;
+                elements.barFriction.style.width = `${friction}%`;
+
+                elements.txtLoad.textContent = `${load}%`;
+                elements.barLoad.style.width = `${load}%`;
+            }
+
+            // CONTINUOUS TELEMETRY SUB-PANELS AND CANVAS GRAPH GENERATORS
+            const canvasConfigs = [
+                { id: "neuralCanvas", color: "#00f3ff" },
+                { id: "analyticsCanvas", color: "#8b5cf6" },
+                { id: "automationCanvas", color: "#10b981" }
+            ];
+
+            const activeCanvases = canvasConfigs.map(cfg => {
+                const c = document.getElementById(cfg.id);
+                const ctx = c.getContext("2d");
+                // Responsive high-DPI canvas setup
+                const dpr = window.devicePixelRatio || 1;
+                c.width = c.clientWidth * dpr;
+                c.height = c.clientHeight * dpr;
+                ctx.scale(dpr, dpr);
+                return { element: c, ctx: ctx, color: cfg.color, points: Array(25).fill(30) };
+            });
+
+            function renderTelemetrySystem() {
+                const time = Date.now() * 0.002;
+
+                // 1. NEURAL PROCESSING MAPPING
+                const neuralVel = Math.round(70 + Math.sin(time) * 15 + Math.random() * 5);
+                const neuralIdx = Math.round(85 + Math.cos(time * 0.8) * 10);
+                const neuralAct = Math.round(45 + Math.sin(time * 1.5) * 15);
+                elements.valNeuralVelocity.textContent = `${neuralVel}%`;
+                elements.valNeuralIndex.textContent = `${neuralIdx}%`;
+                elements.valNeuralActive.textContent = `${neuralAct}%`;
+                elements.neuralBar.style.width = `${(neuralVel + neuralIdx + neuralAct) / 3}%`;
+
+                // 2. VISION METRICS
+                const visFps = Math.round(58 + Math.sin(time * 2.1) * 2);
+                const visAcc = (94.2 + Math.cos(time) * 2.1 + Math.random() * 0.3).toFixed(1);
+                const visTrk = Math.round(80 + Math.sin(time * 0.5) * 10);
+                elements.valVisionFPS.textContent = `${visFps} FPS`;
+                elements.valVisionAccuracy.textContent = `${visAcc}%`;
+                elements.valVisionTracking.textContent = `${visTrk}%`;
+                elements.analyticsBar.style.width = `${visTrk}%`;
+
+                // 3. ROBOTICS CORE
+                const robTask = Math.round(62 + Math.sin(time * 1.1) * 18);
+                const robLoad = Math.round(38 + Math.cos(time * 1.7) * 12);
+                const robFlow = Math.round(88 + Math.sin(time * 0.9) * 6);
+                elements.valRobotTasks.textContent = `${robTask}%`;
+                elements.valRobotLoad.textContent = `${robLoad}%`;
+                elements.valRobotFlow.textContent = `${robFlow}%`;
+                elements.automationBar.style.width = `${robFlow}%`;
+
+                // Update Waveform Canvases
+                activeCanvases.forEach((canvasObj, cIdx) => {
+                    const ctx = canvasObj.ctx;
+                    const w = canvasObj.element.clientWidth;
+                    const h = canvasObj.element.clientHeight;
+                    ctx.clearRect(0, 0, w, h);
+
+                    // Push and shift data logic
+                    canvasObj.points.shift();
+                    let newVal = 30;
+                    if (cIdx === 0) newVal = 30 + Math.sin(time * 2) * 18 + Math.random() * 4;
+                    if (cIdx === 1) newVal = 30 + Math.cos(time * 1.5) * 15 + Math.sin(time * 3) * 6;
+                    if (cIdx === 2) newVal = 30 + Math.sin(time * 0.8) * 22 + Math.random() * 3;
+                    canvasObj.points.push(newVal);
+
+                    // Draw Path
+                    ctx.beginPath();
+                    ctx.strokeStyle = canvasObj.color;
+                    ctx.lineWidth = 2.5;
+                    ctx.lineJoin = "round";
+
+                    const sliceWidth = w / (canvasObj.points.length - 1);
+                    for (let i = 0; i < canvasObj.points.length; i++) {
+                        const x = i * sliceWidth;
+                        const y = Math.max(5, Math.min(h - 5, canvasObj.points[i]));
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+
+                    // Glow Effect below line
+                    ctx.lineTo(w, h);
+                    ctx.lineTo(0, h);
+                    ctx.fillStyle = canvasObj.color + "0d"; // add low hex transparency
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(renderTelemetrySystem);
+            }
+
+            // SPECIAL USER EVENT REACTIONS
+            function simulateBurstTelemetry() {
+                elements.neuralBar.style.width = "100%";
+                elements.automationBar.style.width = "100%";
+                setTimeout(() => {
+                    elements.neuralBar.style.transition = "width 1s ease";
+                    elements.automationBar.style.transition = "width 1s ease";
+                }, 100);
+            }
+
+            function triggerVisionBurst() {
+                elements.analyticsBar.style.width = "100%";
+                elements.valVisionFPS.textContent = "120 FPS";
+                elements.valVisionAccuracy.textContent = "99.9%";
+                elements.valVisionTracking.textContent = "100%";
+            }
+
+            // LAUNCH TELEMETRY ENGINE
+            renderTelemetrySystem();
+            renderLanguage("en");
         });
     </script>
 </body>
