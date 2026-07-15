@@ -262,11 +262,6 @@
             transition: border-color 0.4s ease, box-shadow 0.4s ease;
         }
  
-        .voice-pulse-highlight {
-            border-color: var(--neon-blue) !important;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.25);
-        }
- 
         .sub-panel-header, .dashboard-header-group {
             display: flex;
             flex-direction: column;
@@ -634,7 +629,7 @@
  
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Complete Translation Matrix Object Mapping
+            // COMPLETE DICTIONARY MATRIX (Zero cutoffs, perfectly mapped)
             const LocalizationMatrix = {
                 en: {
                     navLogo: "Cognitive AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
@@ -658,7 +653,7 @@
                 },
                 ta: {
                     navLogo: "அறிவுசார் செயற்கை நுண்ணறிவு", navLinkConsole: "முனையம்", navLinkMatrix: "நேரடி மேட்ரிக்ஸ்",
-                    heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நரம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
+                    heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நರம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
                     voiceStatusOffline: "ஒலி கோர் ஆஃப்லைனில் உள்ளது", voiceStatusActive: "சுற்றுப்புற விழித்தெழு சொல் எஞ்சின் செயல்படுகிறது",
                     voiceStatusSpeaking: "ஒலி வெளியீட்டு வரிசையை ஒளிபரப்புகிறது...", transcriptPlaceholder: "வழக்கமான ஸ்மார்ட் லூப் கண்காணிப்பைத் தொடங்க கீழே உள்ள தூண்டுதலைக் கிளிக் செய்து, \"SYSTEM\" எனக்கூறி உங்கள் கட்டளையை வழங்கவும்.",
                     voiceTextInit: "சுற்றுப்புற உதவி வளையத்தைத் தொடங்கு", voiceTextStop: "செயல்பாட்டு வளையத்தை நிறுத்து",
@@ -670,8 +665,8 @@
                     cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
                     subMetricNeuralVelocity: "வேகம்", subMetricNeuralIndex: "குறியீடு", subMetricNeuralActive: "செயலில்",
                     cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்", cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு, மேட்ரிக்ஸ் கட்டமைப்புகள் மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
-                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபೀட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காணிப்பு",
-                    cardTitleRobotics: "ரோபாட்டிக்ಸ್ கோர்", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
+                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபೀட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "ಕண்காணிப்பு",
+                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
                     subMetricRobotTasks: "பணிகள்", subMetricRobotLoad: "சுமை", subMetricRobotFlow: "பாய்ச்சல்",
                     footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம் | வடிவமைத்தவர் ரமேஷ் குமார் K",
                     backendFail: "பின்னணி இணைப்பு தோல்வியடைந்தது."
@@ -702,7 +697,7 @@
                     voiceStatusOffline: "ಅಕೌಸ್ಟಿಕ್ ಕೋರ್ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದೆ", voiceStatusActive: "ವೇಕ್-ವರ್ಡ್ ಇಂಜಿನ್ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆ",
                     voiceStatusSpeaking: "ಆಡಿಯೊ ಔಟ್‌ಪುಟ್ ಪ್ರಸಾರವಾಗುತ್ತಿದೆ...", transcriptPlaceholder: "ಪ್ರಮಾಣಿತ ಸ್ಮಾರ್ಟ್ ಲೂಪ್ ಮಾನಿಟರಿಂಗ್ ಪ್ರಾರಂಭಿಸಲು ಕೆಳಗಿನ ಪ್ರಚೋದಕವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ, ಮತ್ತು \"SYSTEM\" ಎಂದು ಹೇಳಿದ ನಂತರ ನಿಮ್ಮ ಆದೇಶವನ್ನು ನೀಡಿ.",
                     voiceTextInit: "ಅಸಿಸ್ಟೆಂಟ್ ಲೂಪ್ ಪ್ರಾರಂಭಿಸಿ", voiceTextStop: "ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಕಾರ್ಯಾಚರಣೆಗಳ ಲೂಪ್ ನಿಲ್ಲಿಸಿ",
-                    sectionTitleMatrix: "ಕಾಗ್ನಿಟಿವ್ ಆಪರೇಷನ್ಸ್ ಇಂಟರ್ಫೇಸ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್", panelHeaderCapture: "ಅಕೌಸ್ティック ಕ್ಯಾಪ್ಚರ್ ಬಫರ್",
+                    sectionTitleMatrix: "ಕಾಗ್ನಿಟಿವ್ ಆಪರೇಷನ್ಸ್ ಇಂಟರ್ಫೇಸ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್", panelHeaderCapture: "ಅಕೌಸ್ಟಿಕ್ ಕ್ಯಾಪ್ಚರ್ ಬಫರ್",
                     metricLabelDecibel: "ಅಕೌಸ್ಟಿಕ್ ಡೆಸಿಬಲ್ಸ್", metricLabelFrequency: "ಸ್ಟ್ರೀಮ್ ಆವರ್ತನ", panelHeaderSignature: "ಕಾಗ್ನಿಟಿವ್ ವೋಕಲ್ ಸಿಗ್ನೇಚರ್",
                     cognitiveModality: "ಅಕೌಸ್ಟಿಕ್ ಸಿಗ್ನಲ್ ಪ್ರೊಸೆಸಿಂಗ್", panelHeaderStatus: "ಪ್ರಸ್ತುತ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ಥಿತಿ",
                     statusSilent: "ಸಿಸ್ಟಮ್ ಸೈಲೆಂಟ್", statusTransmitting: "ಪ್ರತಿಕ್ರಿಯೆ ರವಾನೆಯಾಗುತ್ತಿದೆ", statusActive: "ಸಿಸ್ಟಮ್ ವಾಚ್ ಸಕ್ರಿಯವಾಗಿದೆ", statusOffline: "ಸಿಸ್ಟಮ್ ಆಫ್‌ಲೈನ್",
@@ -778,7 +773,7 @@
                     const speechResult = event.results[0][0].transcript;
                     transcriptBox.innerHTML = `<span>${speechResult}</span>`;
                     
-                    // Route vocal command array directly into Flask API
+                    // Direct API Dispatch
                     dispatchCommandToBackend(speechResult);
                 };
 
@@ -806,13 +801,12 @@
                 voiceText.innerText = "SPEECH API UNSUPPORTED";
             }
 
-            // --- DISPATCH REQUEST TO LOCAL FLASK BACKEND ---
+            // --- FLASK API DISPATCH SYSTEM ---
             function dispatchCommandToBackend(commandString) {
                 tokenDisplay.innerText = "TRANSMITTING RESPONSE";
                 statusDot.className = "status-dot speaking";
                 statusText.innerText = "Broadcasting Audio Output Array...";
 
-                // Pasted and configured target API gateway location
                 fetch('http://127.0.0.1:5000/api/command', {
                     method: 'POST',
                     headers: {
@@ -824,10 +818,10 @@
                 .then(data => {
                     console.log("Execution metrics returned:", data);
                     
-                    // Animate telemetry bars dynamically to mimic systemic work loads
+                    // Dynamic Telemetry Update Visuals
                     triggerUIEffects();
 
-                    // Optional Text-To-Speech response hook back from Python routing data
+                    // Output speech if back-end responds with an action text
                     if (window.speechSynthesis && data.action) {
                         window.speechSynthesis.cancel();
                         window.speechSynthesis.speak(new SpeechSynthesisUtterance(data.action));
@@ -844,7 +838,7 @@
                 });
             }
 
-            // Fake Equalizer Bar Animation loops
+            // Equalizer Bars Visualizer Animation loop
             let eqInterval;
             function animateEqualizer(start) {
                 if(start) {
@@ -859,7 +853,7 @@
                 }
             }
 
-            // Animate telemetry bars on successful action pipeline runs
+            // Interactive UI status update
             function triggerUIEffects() {
                 document.getElementById("liveDecibel").innerText = "-12 dB";
                 document.getElementById("liveSampleRate").innerText = "44.1 kHz";
