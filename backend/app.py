@@ -834,8 +834,11 @@ def terminate_orphaned_drivers():
         current_automation_status = "IDLE"
         return build_api_payload("empty", "No standalone processes found active.")
     except Exception as error:
-        return build_api_payload("error", f"Node teardown exception: {str(error)}")
+        return build_api_payload("error", f"Node tearDown exception: {str(error)}")
 
+# --- SYSTEM STARTUP BOOTSTRAP ---
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5000, debug=False)
 
 if __name__ == "__main__":
     print("\n" + "=" * 65)
@@ -843,4 +846,5 @@ if __name__ == "__main__":
     print("    Scope: Unified HUD & Registry Route Pipeline")
     print("    Endpoint Node: http://127.0.0.1:5000")
     print("=" * 65 + "\n")
+ 
     app.run(host="127.0.0.1", port=5000, debug=False, threaded=True)
