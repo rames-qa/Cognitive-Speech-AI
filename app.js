@@ -7,6 +7,7 @@ import urllib.parse
 import random
 import time
 import psutil
+import socket
 import requests
 from flask import Flask, jsonify, request, render_template_string
 from flask_cors import CORS
@@ -16,6 +17,24 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
+# --- UTILITY: PORT REUSE CLEANER ---
+def kill_process_on_port(port):
+    """Dynamically releases port 5000 if it is locked by an orphaned process."""
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            # Safely try 'net_connections' first to bypass the deprecation warning
+            connections_fn = getattr(proc, "net_connections", getattr(proc, "connections", None))
+            if connections_fn:
+                for conn in connections_fn(kind='inet'):
+                    if conn.laddr.port == port:
+                        print(f"[PORT GUARD] Terminating process {proc.info['name']} (PID: {proc.info['pid']}) holding port {port}...")
+                        proc.terminate()
+                        proc.wait(timeout=2)
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+# Release port 5000 before boot to prevent "Address already in use" errors
+kill_process_on_port(5000)
 
 # --- SYSTEM SETUP & CONFIGURATION ---
 app = Flask(__name__)
@@ -104,7 +123,7 @@ PLATFORM_REGISTRY = {
         "has_automation": False,
     },
     "reddit": {
-        "base_url": "https://reddit.com",
+        "base_url": "https://www.reddit.com",
         "search_path": "/search/?q=",
         "has_automation": False,
     },
@@ -153,7 +172,7 @@ def resolve_intent_and_query(command):
         r"\bplay\b",
         r"\bfind\b",
         r"\bopen\b",
-        r"\bon\b",
+        r"\on\b",
         r"\bfor\b",
         r"\bat\b",
         r"\band\b",
@@ -174,6 +193,10 @@ def get_configured_driver():
     options.add_argument("--no-sandbox")
     options.add_experimental_option("detach", True)
     
+    # Hide automation detection flags
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    
     chrome_service = Service(ChromeDriverManager().install())
     return webdriver.Chrome(service=chrome_service, options=options)
 
@@ -185,27 +208,31 @@ def run_platform_automation(platform, query):
         current_automation_status = "Engine locked. Pipeline busy."
         return
 
+    local_driver = None
     try:
         current_automation_status = f"Spinning up driver for {platform.title()}..."
-        active_driver = get_configured_driver()
+        local_driver = get_configured_driver()
+        active_driver = local_driver
+        
+        platform_config = PLATFORM_REGISTRY[platform]
         
         if platform == "amazon":
             current_automation_status = "Running Amazon workflow..."
-            active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])
-            wait = WebDriverWait(active_driver, 12)
+            local_driver.get(platform_config["base_url"])
+            wait = WebDriverWait(local_driver, 12)
             signin_node = wait.until(EC.element_to_be_clickable((By.ID, "nav-link-accountList")))
             signin_node.click()
             current_automation_status = "Amazon workflow complete."
             
         elif platform == "news":
             current_automation_status = "Scraping media nodes..."
-            target_url = PLATFORM_REGISTRY["news"]["base_url"]
+            target_url = platform_config["base_url"]
             if query:
-                target_url += f"/search?q={urllib.parse.quote(query)}"
-            active_driver.get(target_url)
+                target_url += f"{platform_config['search_path']}{urllib.parse.quote(query)}"
+            local_driver.get(target_url)
             time.sleep(4)
             
-            headlines = active_driver.find_elements(By.TAG_NAME, 'h4')
+            headlines = local_driver.find_elements(By.TAG_NAME, 'h4')
             top_stories = [h.text for h in headlines[:3] if h.text]
             if top_stories:
                 current_automation_status = f"News update: {', '.join(top_stories[:2])}"
@@ -215,14 +242,17 @@ def run_platform_automation(platform, query):
     except Exception as error:
         current_automation_status = f"Error: {str(error)[:35]}..."
         print(f"[SELENIUM FAULT] Pipeline exception: {error}", file=sys.stderr)
-        if active_driver:
-            try: 
-                active_driver.quit()
-            except: 
+        if local_driver:
+            try:
+                local_driver.quit()
+            except:
                 pass
-            active_driver = None
+        active_driver = None
     finally:
-        automation_lock.release()
+        try:
+            automation_lock.release()
+        except RuntimeError:
+            pass
 
 # --- HTML / JAVASCRIPT / CSS HUD FRONTEND ---
 HTML_TEMPLATE = """
@@ -437,6 +467,7 @@ HTML_TEMPLATE = """
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         const velocities = [];
+        let systemSpeedMultiplier = 1.0;
 
         for (let i = 0; i < particleCount * 3; i += 3) {
             positions[i] = (Math.random() - 0.5) * 800;
@@ -461,16 +492,16 @@ HTML_TEMPLATE = """
             
             for (let i = 0; i < particleCount; i++) {
                 const idx = i * 3;
-                positionsArr[idx] += velocities[i].x;
-                positionsArr[idx + 1] += velocities[i].y;
-                positionsArr[idx + 2] += velocities[i].z;
+                positionsArr[idx] += velocities[i].x * systemSpeedMultiplier;
+                positionsArr[idx + 1] += velocities[i].y * systemSpeedMultiplier;
+                positionsArr[idx + 2] += velocities[i].z * systemSpeedMultiplier;
 
                 if (Math.abs(positionsArr[idx]) > 400) velocities[i].x *= -1;
                 if (Math.abs(positionsArr[idx + 1]) > 400) velocities[i].y *= -1;
                 if (Math.abs(positionsArr[idx + 2]) > 400) velocities[i].z *= -1;
             }
             particleSystem.geometry.attributes.position.needsUpdate = true;
-            particleSystem.rotation.y += 0.0008;
+            particleSystem.rotation.y += 0.0008 * systemSpeedMultiplier;
             renderer.render(scene, camera);
         }
         animate3D();
@@ -496,7 +527,8 @@ HTML_TEMPLATE = """
                     document.getElementById('cpu-metric').innerText = `${data.cpu}%`;
                     document.getElementById('ram-metric').innerText = `${data.ram}%`;
                     document.getElementById('auto-metric').innerText = data.automation_status.toUpperCase();
-                });
+                })
+                .catch(err => console.warn("Failed fetching dashboard status metrics: ", err));
         }
         setInterval(updateTelemetry, 1500);
         updateTelemetry();
@@ -516,6 +548,7 @@ HTML_TEMPLATE = """
                 avatarCore.style.background = "radial-gradient(circle, rgba(255,0,85,0.8) 0%, transparent 70%)";
                 avatarCore.style.animation = "pulse 0.4s infinite";
                 micBtn.innerText = "CAPTURING AUDIO DATA...";
+                systemSpeedMultiplier = 0.3; // Breathing dynamic transition on voice active
             });
 
             recognition.onresult = (event) => {
@@ -527,6 +560,7 @@ HTML_TEMPLATE = """
                 avatarCore.style.background = "radial-gradient(circle, rgba(0,243,255,0.6) 0%, transparent 70%)";
                 avatarCore.style.animation = "pulse 2.5s infinite ease-in-out";
                 micBtn.innerText = "INITIALIZE SPEECH COMMS";
+                systemSpeedMultiplier = 1.0;
             };
         } else {
             micBtn.innerText = "SPEECH ENGINE UNSUPPORTED";
@@ -539,13 +573,15 @@ HTML_TEMPLATE = """
             
             const utterance = new SpeechSynthesisUtterance(text);
             avatarCore.style.animation = "pulse 0.3s infinite";
+            systemSpeedMultiplier = 1.8; // System speed up while speaking response
             utterance.onend = () => {
                 avatarCore.style.animation = "pulse 2.5s infinite ease-in-out";
+                systemSpeedMultiplier = 1.0;
             };
             synth.speak(utterance);
         }
 
-        // --- 4. HUD CHAT MANAGEMENT ---
+        // --- 4. HUD CHAT MANAGEMENT & DYNAMIC ACTIONS ---
         const chatOutput = document.getElementById('chat-output');
         const chatInput = document.getElementById('chat-input');
         const killBtn = document.getElementById('kill-btn');
@@ -565,6 +601,7 @@ HTML_TEMPLATE = """
         function processCommand(userText) {
             if (!userText.trim()) return;
             appendMessage("USER", userText);
+            triggerNeuralSpike();
 
             fetch('/api/command', {
                 method: 'POST',
@@ -576,6 +613,14 @@ HTML_TEMPLATE = """
                 appendMessage("JARVIS", data.action, data.url);
                 speak(data.action);
                 triggerNeuralSpike();
+
+                // DYNAMIC REDIRECT ACTION:
+                // If the command returned a dynamic URL route, launch it immediately in a new browser tab!
+                if (data.url) {
+                    setTimeout(() => {
+                        window.open(data.url, '_blank');
+                    }, 800);
+                }
             });
         }
 
@@ -678,6 +723,11 @@ HTML_TEMPLATE = """
 
 # --- DYNAMIC ENDPOINT ROUTING MANAGEMENT ---
 
+def build_api_payload(status, action, url=""):
+    """Helper payload builder; must be defined before referenced by endpoints."""
+    return jsonify({"status": status, "action": action, "url": url})
+
+
 @app.route("/")
 def index():
     return render_template_string(HTML_TEMPLATE)
@@ -712,7 +762,7 @@ def process_incoming_command():
         if platform:
             platform_config = PLATFORM_REGISTRY[platform]
             
-            # Catch structural instructions requiring automation workflows
+            # Catch structural instructions requiring automation
             if platform_config["has_automation"] and any(
                 act in command for act in ["login", "automation", "run", "start", "scrape", "open"]
             ):
@@ -764,9 +814,20 @@ def process_incoming_command():
 def terminate_orphaned_drivers():
     global active_driver, current_automation_status
     try:
+        if automation_lock.locked():
+            try:
+                automation_lock.release()
+            except RuntimeError:
+                pass
+
         if active_driver:
-            active_driver.quit()
-            active_driver = None
+            try:
+                active_driver.quit()
+            except Exception as e:
+                print(f"[TEARDOWN WARN] Active session quit cleanly failed: {e}", file=sys.stderr)
+            finally:
+                active_driver = None
+            
             current_automation_status = "Teardown complete."
             return build_api_payload("success", "Active infrastructure nodes terminated cleanly.")
         
@@ -774,10 +835,6 @@ def terminate_orphaned_drivers():
         return build_api_payload("empty", "No standalone processes found active.")
     except Exception as error:
         return build_api_payload("error", f"Node teardown exception: {str(error)}")
-
-
-def build_api_payload(status, action, url=""):
-    return jsonify({"status": status, "action": action, "url": url})
 
 
 if __name__ == "__main__":
