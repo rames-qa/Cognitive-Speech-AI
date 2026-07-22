@@ -19,13 +19,13 @@
             --text-primary: #f0f4f8;
             --text-secondary: #8a99ad;
         }
- 
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
- 
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-dark-main);
@@ -34,7 +34,7 @@
             line-height: 1.6;
             -webkit-tap-highlight-color: transparent;
         }
- 
+
         nav {
             display: flex;
             flex-direction: column;
@@ -48,7 +48,7 @@
             top: 0;
             z-index: 100;
         }
- 
+
         nav .logo {
             font-size: 1.4rem;
             font-weight: 700;
@@ -63,13 +63,13 @@
             align-items: center;
             gap: 15px;
         }
- 
+
         nav ul {
             display: flex;
             list-style: none;
             gap: 20px;
         }
- 
+
         nav ul li a {
             color: var(--text-secondary);
             text-decoration: none;
@@ -78,7 +78,7 @@
             transition: color 0.3s ease;
             padding: 5px 10px;
         }
- 
+
         nav ul li a:hover {
             color: var(--neon-blue);
         }
@@ -115,27 +115,27 @@
             background: var(--bg-dark-panel);
             color: #fff;
         }
- 
+
         .hero {
             padding: 40px 5% 20px;
             text-align: center;
             max-width: 1000px;
             margin: 0 auto;
         }
- 
+
         .hero h1 {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 12px;
             line-height: 1.3;
         }
- 
+
         .hero p {
             color: var(--text-secondary);
             margin-bottom: 25px;
             font-size: 0.95rem;
         }
- 
+
         .voice-console-card {
             background: var(--bg-dark-panel);
             border: 1px solid var(--border-color);
@@ -144,7 +144,7 @@
             margin-bottom: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
- 
+
         .voice-status-indicator {
             display: flex;
             align-items: center;
@@ -154,7 +154,7 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
- 
+
         .status-dot {
             width: 10px;
             height: 10px;
@@ -162,7 +162,7 @@
             border-radius: 50%;
             transition: all 0.4s ease;
         }
- 
+
         .status-dot.active {
             background-color: var(--neon-green);
             box-shadow: 0 0 12px var(--neon-green);
@@ -174,12 +174,12 @@
             box-shadow: 0 0 12px var(--neon-blue);
             animation: pulseGlow 0.5s infinite alternate;
         }
- 
+
         @keyframes pulseGlow {
             0% { opacity: 0.6; }
             100% { opacity: 1; }
         }
- 
+
         .voice-transcript-box {
             background: #090d16;
             padding: 15px;
@@ -195,12 +195,12 @@
             text-align: left;
             position: relative;
         }
- 
+
         .transcript-placeholder {
             color: var(--text-secondary);
             font-style: italic;
         }
- 
+
         .hero-buttons {
             display: flex;
             flex-direction: column;
@@ -209,7 +209,7 @@
             max-width: 400px;
             margin: 0 auto;
         }
- 
+
         .btn {
             width: 100%;
             padding: 15px 20px;
@@ -224,28 +224,28 @@
             transition: all 0.3s ease;
             font-size: 0.95rem;
         }
- 
+
         .voice-btn {
             background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
             color: #fff;
             box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
         }
- 
+
         .voice-btn.listening {
             background: var(--neon-rose);
             box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
         }
- 
+
         .dashboard {
             padding: 20px 5% 40px;
         }
- 
+
         .section-title {
             font-size: 1.5rem;
             text-align: center;
             margin-bottom: 30px;
         }
- 
+
         .cognitive-grid, .dashboard-container {
             display: flex;
             flex-direction: column;
@@ -253,7 +253,7 @@
             width: 100%;
             margin-bottom: 25px;
         }
- 
+
         .sub-panel, .dashboard-box {
             background: var(--bg-dark-panel);
             border: 1px solid var(--border-color);
@@ -263,7 +263,7 @@
             overflow: hidden;
             transition: border-color 0.4s ease, box-shadow 0.4s ease;
         }
- 
+
         .sub-panel-header, .dashboard-header-group {
             display: flex;
             flex-direction: column;
@@ -272,7 +272,7 @@
             padding-bottom: 12px;
             margin-bottom: 15px;
         }
- 
+
         .sub-panel-header h3, .glow-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -280,7 +280,7 @@
             align-items: center;
             gap: 8px;
         }
- 
+
         .audio-pill-badge {
             align-self: flex-start;
             background: rgba(16, 185, 129, 0.1);
@@ -291,13 +291,13 @@
             font-weight: 600;
             border: 1px solid rgba(16, 185, 129, 0.2);
         }
- 
+
         .audio-pill-badge.active {
             background: rgba(0, 243, 255, 0.1);
             color: var(--neon-blue);
             border: 1px solid rgba(0, 243, 255, 0.2);
         }
- 
+
         .emotion-tracker-container {
             background: #090d16;
             border: 1px dashed var(--border-color);
@@ -311,7 +311,7 @@
             justify-content: center;
             min-height: 90px;
         }
- 
+
         .emotion-tracker-label {
             font-size: 0.75rem;
             color: var(--text-secondary);
@@ -319,7 +319,7 @@
             letter-spacing: 1px;
             margin-bottom: 5px;
         }
- 
+
         .emotion-token-display {
             font-family: 'JetBrains Mono', monospace;
             font-size: 1.2rem;
@@ -327,13 +327,13 @@
             color: var(--text-secondary);
             transition: all 0.3s ease;
         }
- 
+
         .live-description {
             font-size: 0.85rem;
             color: var(--text-secondary);
             min-height: 48px;
         }
- 
+
         .voice-bar-container {
             display: flex;
             align-items: center;
@@ -345,7 +345,7 @@
             border-radius: 8px;
             padding: 0 10px;
         }
- 
+
         .eq-bar {
             width: 8px;
             height: 10%;
@@ -353,13 +353,13 @@
             border-radius: 3px;
             transition: height 0.1s ease;
         }
- 
+
         .matrix-track-wrapper {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
- 
+
         .metric-label-row {
             display: flex;
             justify-content: space-between;
@@ -367,13 +367,13 @@
             color: var(--text-secondary);
             margin-bottom: 5px;
         }
- 
+
         .metric-label-row .metric-value {
             font-family: 'JetBrains Mono', monospace;
             color: #fff;
             font-weight: 600;
         }
- 
+
         .track-bg, .progress-bar {
             background: #090d16;
             height: 8px;
@@ -381,33 +381,33 @@
             overflow: hidden;
             margin-bottom: 12px;
         }
- 
+
         .track-fill, .progress {
             height: 100%;
             width: 0%;
             border-radius: 4px;
             transition: width 0.4s ease;
         }
- 
+
         .progress { background: linear-gradient(to right, var(--neon-blue), var(--neon-purple)); }
         #analyticsBox .progress { background: linear-gradient(to right, var(--neon-purple), var(--neon-green)); }
         #automationBox .progress { background: linear-gradient(to right, var(--neon-green), var(--neon-blue)); }
- 
+
         .track-fill.calm { background: var(--neon-green); }
         .track-fill.friction { background: var(--neon-amber); }
         .track-fill.load { background: var(--neon-purple); }
- 
+
         .dashboard-metrics-grid, .stats-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 10px;
             margin: 15px 0;
         }
- 
+
         .dashboard-metrics-grid {
             grid-template-columns: 1fr 1fr;
         }
- 
+
         .sub-metric-card, .stat-node {
             background: #090d16;
             padding: 10px;
@@ -415,7 +415,7 @@
             border: 1px solid #1a243a;
             text-align: center;
         }
- 
+
         .sub-metric-card p, .stat-node small {
             font-size: 0.65rem;
             color: var(--text-secondary);
@@ -423,7 +423,7 @@
             letter-spacing: 0.5px;
             display: block;
         }
- 
+
         .sub-metric-card h5, .stat-node span {
             font-family: 'JetBrains Mono', monospace;
             font-size: 1rem;
@@ -431,7 +431,7 @@
             color: #fff;
             margin-top: 2px;
         }
- 
+
         .live-telemetry-canvas {
             width: 100%;
             height: 65px;
@@ -440,7 +440,7 @@
             display: block;
             margin-top: 10px;
         }
- 
+
         footer {
             text-align: center;
             padding: 30px 20px;
@@ -449,7 +449,7 @@
             font-size: 0.8rem;
             background: #090d16;
         }
- 
+
         @media (min-width: 768px) {
             nav { flex-direction: row; justify-content: space-between; padding: 18px 8%; }
             .hero { padding: 60px 8% 30px; }
@@ -463,7 +463,7 @@
     </style>
 </head>
 <body>
- 
+
     <nav>
         <div class="logo" id="navLogo">Cognitive AI</div>
         <div class="nav-controls">
@@ -482,22 +482,22 @@
             </div>
         </div>
     </nav>
- 
+
     <section class="hero" id="home">
         <h1 id="heroTitle">Cognitive Speech AI</h1>
         <p id="heroDesc">A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.</p>
- 
+
         <div class="voice-console-card">
             <div class="voice-status-indicator">
                 <span class="status-dot" id="voiceStatusDot"></span>
                 <span id="voiceStatusText">Acoustic Core Offline</span>
             </div>
- 
+
             <div class="voice-transcript-box" id="voiceTranscript">
                 <span class="transcript-placeholder" id="transcriptPlaceholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>
             </div>
         </div>
- 
+
         <div class="hero-buttons">
             <button class="btn voice-btn" id="btnVoiceTrigger">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -509,10 +509,10 @@
             </button>
         </div>
     </section>
- 
+
     <section class="dashboard" id="dashboard">
         <h2 class="section-title" id="sectionTitleMatrix">Cognitive Operations Interface Matrix</h2>
-          
+
         <div class="cognitive-grid">
             <div class="sub-panel" id="voiceProcessingPanel">
                 <div class="sub-panel-header">
@@ -542,18 +542,18 @@
                     </div>
                 </div>
             </div>
- 
+
             <div class="sub-panel">
                 <div class="sub-panel-header">
                     <h3 id="panelHeaderSignature">Cognitive Vocal Signature</h3>
                     <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight:600;" id="cognitiveModality">Acoustic Signal Processing</span>
                 </div>
-                  
+
                 <div class="emotion-tracker-container">
                     <div class="emotion-tracker-label" id="panelHeaderStatus">Current Node Assistant Status</div>
                     <div class="emotion-token-display" id="emotionTokenDisplay">SYSTEM SILENT</div>
                 </div>
- 
+
                 <div class="matrix-track-wrapper">
                     <div class="metric-bar-group">
                         <div class="metric-label-row">
@@ -579,7 +579,7 @@
                 </div>
             </div>
         </div>
- 
+
         <div class="dashboard-container">
             <div class="dashboard-box" id="neuralBox">
                 <div class="dashboard-header-group">
@@ -594,7 +594,7 @@
                 </div>
                 <canvas id="neuralCanvas" class="live-telemetry-canvas"></canvas>
             </div>
- 
+
             <div class="dashboard-box" id="analyticsBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title" style="color: var(--neon-purple);" id="cardTitleVision">Vision AI Matrix</h3>
@@ -608,7 +608,7 @@
                 </div>
                 <canvas id="analyticsCanvas" class="live-telemetry-canvas"></canvas>
             </div>
- 
+
             <div class="dashboard-box" id="automationBox">
                 <div class="dashboard-header-group">
                     <h3 class="glow-title" style="color: var(--neon-green);" id="cardTitleRobotics">Robotics Core</h3>
@@ -626,11 +626,11 @@
             </div>
         </div>
     </section>
- 
+
     <footer id="footerText">
         &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
     </footer>
- 
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // --- 1. LOCALIZATION DICTIONARY MATRIX ---
@@ -663,7 +663,7 @@
                     voiceTextInit: "சுற்றுப்புற உதவி வளையத்தைத் தொடங்கு", voiceTextStop: "செயல்பாட்டு வளையத்தை நிறுத்து",
                     sectionTitleMatrix: "அறிவுசார் செயல்பாட்டு இடைமுக மேட்ரிக்ஸ்", panelHeaderCapture: "ஒலி பிடிப்பு இடையக பகுதி",
                     metricLabelDecibel: "ஒலி டெசிபல்கள்", metricLabelFrequency: "அலைவரிசை அதிர்வெண்", panelHeaderSignature: "அறிவுசார் குரல் கையொப்பம்",
-                    cognitiveModality: "ஒலி சமிக்ஞை செயலாக்கம்", panelHeaderStatus: "தற்போதைய கணினி உதவி நிலை",
+                    cognitiveModality: "ஒலி சமிகஞை செயலாக்கம்", panelHeaderStatus: "தற்போதைய கணினி உதவி நிலை",
                     statusSilent: "கணினி அமைதி", statusTransmitting: "பதிலை அனுப்புகிறது", statusActive: "சுற்றுப்புற கண்காணிப்பு செயலில் உள்ளது", statusOffline: "கணினி ஆஃப்லைனுக்கு சென்றது",
                     labelCalm: "அமையதியான நிலைத்தன்மை", labelFriction: "குரல் உராய்வு", labelLoad: "இயக்க முறை செயலாக்க சுமை",
                     cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
@@ -708,374 +708,158 @@
                     labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ಧ್ವನಿ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಸಂಸ್ಕರಣಾ ಲೋಡ್",
                     cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
                     subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
-                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಪ್ರಾದೇಶಿಕ ಪರಿಸರ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಚೌಕಟ್ಟುಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಸಂಸ್ಕರಿಸುವುದು.",
-                    subMetricVisionFPS: "ಎಫ್ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
-                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಚಲನಶಾಸ್ತ್ರ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
+                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಸ್ಥಳೀಯ ಪರಿಸರ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಫ್ರೇಮ್‌ವರ್ಕ್‌ಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಸಂಸ್ಕರಿಸುವುದು.",
+                    subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
+                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಕೈನೆಮ್ಯಾಟಿಕ್ಸ್ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
                     subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಹರಿವು",
-                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಮುಂಗಡ ವೆಬ್ ಯೋಜನೆ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ಅವರಿಂದ ವಿನ್ಯಾಸಗೊಳಿಸಲಾಗಿದೆ",
+                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಯೋಜನೆ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ವಿನ್ಯಾಸಗೊಳಿಸಿದ್ದಾರೆ",
                     backendFail: "ಬ್ಯಾಕೆಂಡ್ ಸಂಪರ್ಕ ವಿಫಲವಾಗಿದೆ."
                 }
             };
 
             let currentLang = "en";
+            const langSelect = document.getElementById("langSelect");
 
             function updateLocalization(lang) {
                 currentLang = lang;
-                const dictionary = LocalizationMatrix[lang];
-                
-                // Elements updates
-                document.getElementById("navLogo").innerText = dictionary.navLogo;
-                document.getElementById("navLinkConsole").innerText = dictionary.navLinkConsole;
-                document.getElementById("navLinkMatrix").innerText = dictionary.navLinkMatrix;
-                document.getElementById("heroTitle").innerText = dictionary.heroTitle;
-                document.getElementById("heroDesc").innerText = dictionary.heroDesc;
-                document.getElementById("sectionTitleMatrix").innerText = dictionary.sectionTitleMatrix;
-                document.getElementById("panelHeaderCapture").innerText = dictionary.panelHeaderCapture;
-                document.getElementById("metricLabelDecibel").innerText = dictionary.metricLabelDecibel;
-                document.getElementById("metricLabelFrequency").innerText = dictionary.metricLabelFrequency;
-                document.getElementById("panelHeaderSignature").innerText = dictionary.panelHeaderSignature;
-                document.getElementById("cognitiveModality").innerText = dictionary.cognitiveModality;
-                document.getElementById("panelHeaderStatus").innerText = dictionary.panelHeaderStatus;
-                
-                document.getElementById("labelCalm").innerText = dictionary.labelCalm;
-                document.getElementById("labelFriction").innerText = dictionary.labelFriction;
-                document.getElementById("labelLoad").innerText = dictionary.labelLoad;
-                
-                document.getElementById("cardTitleNeural").innerText = dictionary.cardTitleNeural;
-                document.getElementById("cardDescNeural").innerText = dictionary.cardDescNeural;
-                document.getElementById("subMetricNeuralVelocity").innerText = dictionary.subMetricNeuralVelocity;
-                document.getElementById("subMetricNeuralIndex").innerText = dictionary.subMetricNeuralIndex;
-                document.getElementById("subMetricNeuralActive").innerText = dictionary.subMetricNeuralActive;
-                
-                document.getElementById("cardTitleVision").innerText = dictionary.cardTitleVision;
-                document.getElementById("cardDescVision").innerText = dictionary.cardDescVision;
-                document.getElementById("subMetricVisionFPS").innerText = dictionary.subMetricVisionFPS;
-                document.getElementById("subMetricVisionAccuracy").innerText = dictionary.subMetricVisionAccuracy;
-                document.getElementById("subMetricVisionTracking").innerText = dictionary.subMetricVisionTracking;
-                
-                document.getElementById("cardTitleRobotics").innerText = dictionary.cardTitleRobotics;
-                document.getElementById("cardDescRobotics").innerText = dictionary.cardDescRobotics;
-                document.getElementById("subMetricRobotTasks").innerText = dictionary.subMetricRobotTasks;
-                document.getElementById("subMetricRobotLoad").innerText = dictionary.subMetricRobotLoad;
-                document.getElementById("subMetricRobotFlow").innerText = dictionary.subMetricRobotFlow;
-                
-                document.getElementById("footerText").innerHTML = dictionary.footerText;
-
-                // Dynamic updates based on system operational state
-                if (!isListening && !isSpeaking) {
-                    document.getElementById("voiceStatusText").innerText = dictionary.voiceStatusOffline;
-                    document.getElementById("transcriptPlaceholder").innerText = dictionary.transcriptPlaceholder;
-                    document.getElementById("voiceText").innerText = dictionary.voiceTextInit;
-                    document.getElementById("emotionTokenDisplay").innerText = dictionary.statusOffline;
-                } else if (isSpeaking) {
-                    document.getElementById("voiceStatusText").innerText = dictionary.voiceStatusSpeaking;
-                    document.getElementById("emotionTokenDisplay").innerText = dictionary.statusTransmitting;
-                } else {
-                    document.getElementById("voiceStatusText").innerText = dictionary.voiceStatusActive;
-                    document.getElementById("voiceText").innerText = dictionary.voiceTextStop;
-                    document.getElementById("emotionTokenDisplay").innerText = dictionary.statusActive;
-                }
-            }
-
-            document.getElementById("langSelect").addEventListener("change", (e) => {
-                updateLocalization(e.target.value);
-            });
-
-            // --- 2. ADVANCED WEB SPEECH API ENGINE & AUTOMATION MATRIX ---
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const SpeechSynthesis = window.speechSynthesis;
-            
-            let recognition = null;
-            let isListening = false;
-            let isSpeaking = false;
-            let mockTelemetryInterval = null;
-
-            if (SpeechRecognition) {
-                recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = false;
-                
-                // Map select inputs natively to localization triggers
-                recognition.onstart = () => {
-                    isListening = true;
-                    toggleUIState("LISTENING");
-                };
-
-                recognition.onend = () => {
-                    if (isListening) {
-                        recognition.start(); // Auto-restart engine execution loops loop
-                    } else {
-                        toggleUIState("OFFLINE");
+                const dict = LocalizationMatrix[lang] || LocalizationMatrix.en;
+                for (const key in dict) {
+                    const el = document.getElementById(key);
+                    if (el) {
+                        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+                            el.placeholder = dict[key];
+                        } else {
+                            el.innerText = dict[key];
+                        }
                     }
-                };
-
-                recognition.onresult = (event) => {
-                    const latestResultIndex = event.results.length - 1;
-                    const speechTranscript = event.results[latestResultIndex][0].transcript.trim();
-                    
-                    processSemanticTranscript(speechTranscript);
-                };
-
-                recognition.onerror = (e) => {
-                    console.error("Speech Recognition Matrix Exception: ", e.error);
-                };
-            } else {
-                document.getElementById("transcriptPlaceholder").innerText = "Critical Warning: Web Speech Engine not compatible natively with this current client browser layer.";
-            }
-
-            // --- 3. SPEECH PROCESSING ENGINE ---
-            function processSemanticTranscript(rawText) {
-                const text = rawText.toLowerCase();
-                appendLog(`Captured Input: "${rawText}"`);
-
-                // Mandatory Wake-Word filtering validation verification checks
-                const wakeWord = "system";
-                
-                // Track execution dynamics
-                updateDashboardBars(85, 45, 70);
-
-                // Command Logic Array Execution Router logic
-                if (text.includes("open gmail") || text.includes("gmail account")) {
-                    speakResponse("Opening your Gmail account interface matrix.");
-                    setTimeout(() => window.open("https://mail.google.com", "_blank"), 1000);
-                } 
-                else if (text.includes("open amazon") || text.includes("amazon app")) {
-                    speakResponse("Redirecting execution layer to Amazon.");
-                    setTimeout(() => window.open("https://www.amazon.com", "_blank"), 1000);
-                } 
-                else if (text.includes("local news")) {
-                    speakResponse("Fetching latest local regional telemetry update networks.");
-                    setTimeout(() => window.open("https://news.google.com/topics/CAAqIQgKIhtDQkFTRGdvSUwyMHZNRE55YXpBU0dnd0tBQkFDU2hJVkE2Z0M?hl=en-IN&gl=IN&ceid=IN%3Aen", "_blank"), 1000);
-                }
-                else if (text.includes("international news") || text.includes("world news")) {
-                    speakResponse("Processing query down to Global Broadcast Intelligence RSS feed loops.");
-                    setTimeout(() => window.open("https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0dnd0tBQkFDU2hJVkFBU商业U?hl=en-US&gl=US&ceid=US%3Aen", "_blank"), 1000);
-                }
-                else if (text.includes("open youtube")) {
-                    speakResponse("Opening YouTube media stream server paths.");
-                    setTimeout(() => window.open("https://www.youtube.com", "_blank"), 1000);
-                }
-                else {
-                    // Fallback search execution automation route matching
-                    speakResponse(`Executing standard parsing query sequence for: ${rawText}`);
-                    setTimeout(() => window.open(`https://www.google.com/search?q=${encodeURIComponent(rawText)}`, "_blank"), 1500);
                 }
             }
 
-            function speakResponse(replyString) {
-                if (!SpeechSynthesis) return;
-                
-                SpeechSynthesis.cancel(); // Terminate hanging processes
-                const utterance = new SpeechSynthesisUtterance(replyString);
-                
-                // Cross matching matching voice localization arrays
-                if (currentLang === "ta") utterance.lang = "ta-IN";
-                else if (currentLang === "hi") utterance.lang = "hi-IN";
-                else if (currentLang === "kn") utterance.lang = "kn-IN";
-                else utterance.lang = "en-US";
+            langSelect.addEventListener("change", (e) => updateLocalization(e.target.value));
 
-                utterance.onstart = () => {
-                    isSpeaking = true;
-                    toggleUIState("SPEAKING");
-                };
+            // --- 2. AUDIO & VOICE CONTROLS ---
+            let isListening = false;
+            const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
+            const voiceStatusDot = document.getElementById("voiceStatusDot");
+            const voiceStatusText = document.getElementById("voiceStatusText");
+            const voiceTranscript = document.getElementById("voiceTranscript");
+            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
+            const eqBars = document.querySelectorAll(".eq-bar");
 
-                utterance.onend = () => {
-                    isSpeaking = false;
-                    toggleUIState("LISTENING");
-                };
-
-                SpeechSynthesis.speak(utterance);
-                appendLog(`System AI Core: "${replyString}"`);
-            }
-
-            // --- 4. TELEMETRY DISPLAY AND STATE CONTROLLER ENGINE ---
-            function toggleUIState(state) {
-                const dot = document.getElementById("voiceStatusDot");
-                const statusTxt = document.getElementById("voiceStatusText");
-                const moduleBadge = document.getElementById("voiceModuleStatus");
-                const triggerBtn = document.getElementById("btnVoiceTrigger");
-                const btnLabel = document.getElementById("voiceText");
-                const emotionDisplay = document.getElementById("emotionTokenDisplay");
+            btnVoiceTrigger.addEventListener("click", () => {
+                isListening = !isListening;
                 const dict = LocalizationMatrix[currentLang];
 
-                dot.className = "status-dot";
-                moduleBadge.className = "audio-pill-badge";
-                triggerBtn.className = "btn voice-btn";
-
-                if (state === "LISTENING") {
-                    dot.classList.add("active");
-                    statusTxt.innerText = dict.voiceStatusActive;
-                    moduleBadge.innerText = "ACTIVE LOOP";
-                    moduleBadge.classList.add("active");
-                    triggerBtn.classList.add("listening");
-                    btnLabel.innerText = dict.voiceTextStop;
-                    emotionDisplay.innerText = dict.statusActive;
-                    
-                    document.getElementById("liveDecibel").innerText = "-42 dB";
-                    document.getElementById("liveSampleRate").innerText = "48.0 kHz";
-                    startTelemetryLoops();
-                } 
-                else if (state === "SPEAKING") {
-                    dot.classList.add("speaking");
-                    statusTxt.innerText = dict.voiceStatusSpeaking;
-                    moduleBadge.innerText = "BROADCAST";
-                    triggerBtn.classList.add("listening");
-                    btnLabel.innerText = dict.voiceTextStop;
-                    emotionDisplay.innerText = dict.statusTransmitting;
-                }
-                else {
-                    statusTxt.innerText = dict.voiceStatusOffline;
-                    moduleBadge.innerText = "STANDBY";
-                    btnLabel.innerText = dict.voiceTextInit;
-                    emotionDisplay.innerText = dict.statusOffline;
-                    
-                    document.getElementById("liveDecibel").innerText = "-Inf dB";
-                    document.getElementById("liveSampleRate").innerText = "0.0 kHz";
-                    stopTelemetryLoops();
-                }
-            }
-
-            function appendLog(message) {
-                const box = document.getElementById("voiceTranscript");
-                const placeholder = document.getElementById("transcriptPlaceholder");
-                
-                if (placeholder) placeholder.remove();
-
-                const logNode = document.createElement("div");
-                logNode.style.marginBottom = "8px";
-                logNode.style.borderLeft = "2px solid var(--neon-blue)";
-                logNode.style.paddingLeft = "8px";
-                logNode.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
-                
-                box.appendChild(logNode);
-                box.scrollTop = box.scrollHeight;
-            }
-
-            function updateDashboardBars(calm, friction, load) {
-                document.getElementById("txtCalm").innerText = `${calm}%`;
-                document.getElementById("barCalm").style.width = `${calm}%`;
-                
-                document.getElementById("txtFriction").innerText = `${friction}%`;
-                document.getElementById("barFriction").style.width = `${friction}%`;
-                
-                document.getElementById("txtLoad").innerText = `${load}%`;
-                document.getElementById("barLoad").style.width = `${load}%`;
-            }
-
-            document.getElementById("btnVoiceTrigger").addEventListener("click", () => {
-                if (!recognition) {
-                    alert("Speech engine initialization failed structure dependency limits.");
-                    return;
-                }
-
                 if (isListening) {
-                    isListening = false;
-                    recognition.stop();
-                    if (SpeechSynthesis) SpeechSynthesis.cancel();
-                    toggleUIState("OFFLINE");
+                    btnVoiceTrigger.classList.add("listening");
+                    document.getElementById("voiceText").innerText = dict.voiceTextStop;
+                    voiceStatusDot.className = "status-dot active";
+                    voiceStatusText.innerText = dict.voiceStatusActive;
+                    voiceModuleStatus.innerText = "ACTIVE";
+                    voiceModuleStatus.classList.add("active");
+                    emotionTokenDisplay.innerText = dict.statusActive;
+
+                    voiceTranscript.innerHTML = `<span class="transcript-placeholder">${dict.transcriptPlaceholder}</span>`;
+                    startAudioVisualization();
                 } else {
-                    recognition.start();
+                    btnVoiceTrigger.classList.remove("listening");
+                    document.getElementById("voiceText").innerText = dict.voiceTextInit;
+                    voiceStatusDot.className = "status-dot";
+                    voiceStatusText.innerText = dict.voiceStatusOffline;
+                    voiceModuleStatus.innerText = "STANDBY";
+                    voiceModuleStatus.classList.remove("active");
+                    emotionTokenDisplay.innerText = dict.statusSilent;
+
+                    stopAudioVisualization();
                 }
             });
 
-            // --- 5. SYSTEM DATA SIMULATOR ENGINE (REAL-TIME CANVAS GRAPHICS) ---
-            const canvasNeural = document.getElementById("neuralCanvas");
-            const canvasVision = document.getElementById("analyticsCanvas");
-            const canvasRobotics = document.getElementById("automationCanvas");
-
-            function renderTelemetryGraph(canvas, hexColor) {
-                if (!canvas) return;
-                const ctx = canvas.getContext("2d");
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.strokeStyle = hexColor;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(0, canvas.height / 2);
-
-                for (let x = 0; x < canvas.width; x += 5) {
-                    const randomAmplitude = Math.random() * (canvas.height * 0.4);
-                    const y = (canvas.height / 2) + (Math.sin(x * 0.05 + Date.now() * 0.01) * randomAmplitude);
-                    ctx.lineTo(x, y);
-                }
-                ctx.stroke();
-            }
-
-            function startTelemetryLoops() {
-                if (mockTelemetryInterval) clearInterval(mockTelemetryInterval);
-
-                mockTelemetryInterval = setInterval(() => {
-                    // Random metrics calculations
-                    const nv = Math.floor(Math.random() * 30) + 65;
-                    const ni = Math.floor(Math.random() * 20) + 75;
-                    const na = Math.floor(Math.random() * 15) + 80;
-                    
-                    const fps = Math.floor(Math.random() * 4) + 57;
-                    const acc = Math.floor(Math.random() * 5) + 94;
-                    const trk = Math.floor(Math.random() * 10) + 85;
-
-                    const tsk = Math.floor(Math.random() * 25) + 70;
-                    const ld = Math.floor(Math.random() * 30) + 35;
-                    const flw = Math.floor(Math.random() * 12) + 88;
-
-                    // UI DOM mappings
-                    document.getElementById("valNeuralVelocity").innerText = `${nv}%`;
-                    document.getElementById("neuralBar").style.width = `${nv}%`;
-                    document.getElementById("valNeuralIndex").innerText = `${ni}%`;
-                    document.getElementById("valNeuralActive").innerText = `${na}%`;
-
-                    document.getElementById("valVisionFPS").innerText = `${fps} FPS`;
-                    document.getElementById("analyticsBar").style.width = `${acc}%`;
-                    document.getElementById("valVisionAccuracy").innerText = `${acc}%`;
-                    document.getElementById("valVisionTracking").innerText = `${trk}%`;
-
-                    document.getElementById("valRobotTasks").innerText = `${tsk}%`;
-                    document.getElementById("automationBar").style.width = `${flw}%`;
-                    document.getElementById("valRobotLoad").innerText = `${ld}%`;
-                    document.getElementById("valRobotFlow").innerText = `${flw}%`;
-
-                    // Sync dashboard metrics framework bars
-                    updateDashboardBars(
-                        Math.floor(Math.random() * 40) + 55,
-                        Math.floor(Math.random() * 20) + 10,
-                        Math.floor(Math.random() * 30) + 40
-                    );
-
-                    // Render dynamic lines
-                    renderTelemetryGraph(canvasNeural, "#00f3ff");
-                    renderTelemetryGraph(canvasVision, "#8b5cf6");
-                    renderTelemetryGraph(canvasRobotics, "#10b981");
-
-                    // Audio visualizer emulation manipulation loops
-                    const audioBars = document.querySelectorAll(".eq-bar");
-                    audioBars.forEach(bar => {
-                        const heightPercent = Math.floor(Math.random() * 85) + 15;
-                        bar.style.height = `${heightPercent}%`;
+            // Equalizer Animation Loop
+            let eqInterval;
+            function startAudioVisualization() {
+                eqInterval = setInterval(() => {
+                    eqBars.forEach((bar) => {
+                        const height = Math.floor(Math.random() * 85) + 15;
+                        bar.style.height = `${height}%`;
                     });
 
-                }, 250);
+                    // Random Decibel and Frequency Simulation
+                    document.getElementById("liveDecibel").innerText = `${(Math.random() * -30 - 10).toFixed(1)} dB`;
+                    document.getElementById("liveSampleRate").innerText = `${(Math.random() * 2 + 43).toFixed(1)} kHz`;
+                }, 120);
             }
 
-            function stopTelemetryLoops() {
-                if (mockTelemetryInterval) {
-                    clearInterval(mockTelemetryInterval);
+            function stopAudioVisualization() {
+                clearInterval(eqInterval);
+                eqBars.forEach((bar) => (bar.style.height = "10%"));
+                document.getElementById("liveDecibel").innerText = "-Inf dB";
+                document.getElementById("liveSampleRate").innerText = "0.0 kHz";
+            }
+
+            // --- 3. LIVE MATRIX & TELEMETRY CANVAS SIMULATOR ---
+            function setupCanvas(id, strokeStyle) {
+                const canvas = document.getElementById(id);
+                if (!canvas) return;
+                const ctx = canvas.getContext("2d");
+                let step = 0;
+
+                function render() {
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = 65;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.beginPath();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = strokeStyle;
+
+                    for (let x = 0; x < canvas.width; x++) {
+                        const y = Math.sin((x + step) * 0.05) * 15 + canvas.height / 2;
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                    step += 2;
+                    requestAnimationFrame(render);
                 }
-                
-                // Clear tracking grids completely
-                const audioBars = document.querySelectorAll(".eq-bar");
-                audioBars.forEach(bar => bar.style.height = "10%");
-                updateDashboardBars(0, 0, 0);
-
-                [canvasNeural, canvasVision, canvasRobotics].forEach(c => {
-                    if (c) c.getContext("2d").clearRect(0, 0, c.width, c.height);
-                });
-
-                document.getElementById("neuralBar").style.width = `0%`;
-                document.getElementById("analyticsBar").style.width = `0%`;
-                document.getElementById("automationBar").style.width = `0%`;
+                render();
             }
 
-            // Initialization execution call
-            updateLocalization("en");
+            setupCanvas("neuralCanvas", "#00f3ff");
+            setupCanvas("analyticsCanvas", "#8b5cf6");
+            setupCanvas("automationCanvas", "#10b981");
+
+            // --- 4. DYNAMIC PROGRESS BARS SIMULATION ---
+            setInterval(() => {
+                const calm = Math.floor(Math.random() * 40) + 50;
+                const friction = Math.floor(Math.random() * 20) + 10;
+                const load = Math.floor(Math.random() * 50) + 30;
+
+                document.getElementById("barCalm").style.width = `${calm}%`;
+                document.getElementById("txtCalm").innerText = `${calm}%`;
+
+                document.getElementById("barFriction").style.width = `${friction}%`;
+                document.getElementById("txtFriction").innerText = `${friction}%`;
+
+                document.getElementById("barLoad").style.width = `${load}%`;
+                document.getElementById("txtLoad").innerText = `${load}%`;
+
+                // Sub-metrics updates
+                document.getElementById("neuralBar").style.width = `${load}%`;
+                document.getElementById("valNeuralVelocity").innerText = `${Math.floor(load * 1.2)}%`;
+                document.getElementById("valNeuralIndex").innerText = `${Math.floor(calm * 0.9)}%`;
+                document.getElementById("valNeuralActive").innerText = `${Math.floor(load * 0.8)}%`;
+
+                document.getElementById("analyticsBar").style.width = `${calm}%`;
+                document.getElementById("valVisionFPS").innerText = `${Math.floor(calm * 0.6)} FPS`;
+                document.getElementById("valVisionAccuracy").innerText = `${calm}%`;
+                document.getElementById("valVisionTracking").innerText = `${100 - friction}%`;
+
+                document.getElementById("automationBar").style.width = `${100 - friction}%`;
+                document.getElementById("valRobotTasks").innerText = `${100 - friction}%`;
+                document.getElementById("valRobotLoad").innerText = `${friction}%`;
+                document.getElementById("valRobotFlow").innerText = `${calm}%`;
+            }, 2500);
         });
     </script>
 </body>
