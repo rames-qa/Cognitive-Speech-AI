@@ -632,404 +632,319 @@
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const LocalizationMatrix = {
-                en: {
-                    navLogo: "Cognitive AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
-                    heroTitle: "Cognitive Speech AI", heroDesc: "A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.",
-                    voiceStatusOffline: "Acoustic Core Offline", voiceStatusActive: "Ambient Wake-Word Engine Operational",
-                    voiceStatusSpeaking: "Broadcasting Audio Output Array...", transcriptPlaceholder: 'Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.',
-                    voiceTextInit: "Initialize Ambient Assistant Loop", voiceTextStop: "Terminate Matrix Operations Loop",
-                    sectionTitleMatrix: "Cognitive Operations Interface Matrix", panelHeaderCapture: "Acoustic Capture Buffer",
-                    metricLabelDecibel: "Acoustic Decibels", metricLabelFrequency: "Stream Frequency", panelHeaderSignature: "Cognitive Vocal Signature",
-                    cognitiveModality: "Acoustic Signal Processing", panelHeaderStatus: "Current Node Assistant Status",
-                    statusSilent: "SYSTEM SILENT", statusTransmitting: "TRANSMITTING RESPONSE", statusActive: "AMBIENT WATCH ACTIVE", statusOffline: "SYSTEM OFFLINE",
-                    labelCalm: "Calm Stability", labelFriction: "Vocal Friction", labelLoad: "Dynamic Processing Load",
-                    cardTitleNeural: "Neural Processing", cardDescNeural: "Evaluating language tokens and acoustic matrices across hardware array tracks.",
-                    subMetricNeuralVelocity: "Velocity", subMetricNeuralIndex: "Index", subMetricNeuralActive: "Active",
-                    cardTitleVision: "Vision AI Matrix", cardDescVision: "Processing spatial environment tracking, matrix frameworks, and vector points.",
-                    subMetricVisionFPS: "FPS Feed", subMetricVisionAccuracy: "Accuracy", subMetricVisionTracking: "Tracking",
-                    cardTitleRobotics: "Robotics Core", cardDescRobotics: "Automated kinematics telemetry, hardware mapping, and thread scheduling loops.",
-                    subMetricRobotTasks: "Tasks", subMetricRobotLoad: "Load", subMetricRobotFlow: "Flow",
-                    footerText: "© 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K"
-                },
-                ta: {
-                    navLogo: "அறிவுசார் செயற்கை நுண்ணறிவு", navLinkConsole: "முனையம்", navLinkMatrix: "நேரடி மேட்ரிக்ஸ்",
-                    heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நரம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
-                    voiceStatusOffline: "ஒலி கோர் ஆஃப்லைனில் உள்ளது", voiceStatusActive: "சுற்றுப்புற விழித்தெழு சொல் எஞ்சின் செயல்படுகிறது",
-                    voiceStatusSpeaking: "ஒலி வெளியீட்டு வரிசையை ஒளிபரப்புகிறது...", transcriptPlaceholder: 'வழக்கமான ஸ்மார்ட் லூப் கண்காணிப்பைத் தொடங்க கீழே உள்ள தூண்டுதலைக் கிளிக் செய்து, "SYSTEM" எனக்கூறி உங்கள் கட்டளையை வழங்கவும்.',
-                    voiceTextInit: "சுற்றுப்புற உதவி வளையத்தைத் தொடங்கு", voiceTextStop: "செயல்பாட்டு வளையத்தை நிறுத்து",
-                    sectionTitleMatrix: "அறிவுசார் செயல்பாட்டு இடைமுக மேட்ரிக்ஸ்", panelHeaderCapture: "ஒலி பிடிப்பு இடையக பகுதி",
-                    metricLabelDecibel: "ஒலி டெசிபல்கள்", metricLabelFrequency: "அலைவரிசை அதிர்வெண்", panelHeaderSignature: "அறிவுசார் குரல் கையொப்பம்",
-                    cognitiveModality: "ஒலி சமிகஞை செயலாக்கம்", panelHeaderStatus: "தற்போதைய கணினி உதவி நிலை",
-                    statusSilent: "கணினி அமைதி", statusTransmitting: "பதிலை அனுப்புகிறது", statusActive: "சுற்றுப்புற கண்காணிப்பு செயலில் உள்ளது", statusOffline: "கணினி ஆஃப்லைனுக்கு சென்றது",
-                    labelCalm: "அமையதியான நிலைத்தன்மை", labelFriction: "குரல் உராய்வு", labelLoad: "இயக்க முறை செயலாக்க சுமை",
-                    cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
-                    subMetricNeuralVelocity: "வேகம்", subMetricNeuralIndex: "குறியீடு", subMetricNeuralActive: "செயலில்",
-                    cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்", cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு, மேட்ரிக்ஸ் கட்டமைப்புகள் மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
-                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபீட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காணிப்பு",
-                    cardTitleRobotics: "ரோபோடிக்ஸ் கோர்", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
-                    subMetricRobotTasks: "பணிகள்", subMetricRobotLoad: "சுமை", subMetricRobotFlow: "பாய்ச்சல்",
-                    footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம் | வடிவமைத்தவர் ரமேஷ் குமார் K"
-                },
-                hi: {
-                    navLogo: "कॉग्निटिव एआई", navLinkConsole: "कंसोल", navLinkMatrix: "लाइव मैट्रिक्स",
-                    heroTitle: "कॉग्निटिव स्पीच एआई ऑटोमेशन", heroDesc: "वास्तविक समय के सिमेंटिक निष्पादन के साथ रोबोटिक न्यूरल प्रोसेसिंग पैटर्न को संश्लेषित करने वाला एक मल्टी-मोडल मशीन एरे स्ट्रीम।",
-                    voiceStatusOffline: "ध्वनिक कोर ऑफ़लाइन", voiceStatusActive: "वेक-वर्ड इंजन सक्रिय है",
-                    voiceStatusSpeaking: "ऑडियो आउटपुट एरे प्रसारित हो रहा है...", transcriptPlaceholder: 'मानक स्मार्ट लूप निगरानी शुरू करने के लिए नीचे दिए गए ट्रिगर पर क्लिक करें, और "SYSTEM" बोलने के बाद अपना कमांड दें।',
-                    voiceTextInit: "असिस्टेंट लूप प्रारंभ करें", voiceTextStop: "मैट्रिक्स ऑपरेशंस लूप समाप्त करें",
-                    sectionTitleMatrix: "कॉग्निटिव ऑपरेशंस इंटरफेस मैट्रिक्स", panelHeaderCapture: "ध्वनिक कैप्चर बफर",
-                    metricLabelDecibel: "ध्वनिक डेसिबल", metricLabelFrequency: "स्ट्रीम फ्रीक्वेंसी", panelHeaderSignature: "कॉग्निटिव वोकल सिग्नेचर",
-                    cognitiveModality: "ध्वनिक सिग्नल प्रोसेसिंग", panelHeaderStatus: "वर्तमान नोड असिस्टेंट स्थिति",
-                    statusSilent: "सिस्टम मौन", statusTransmitting: "प्रतिक्रिया प्रसारित हो रही है", statusActive: "असिस्टेंट वॉच सक्रिय", statusOffline: "सिस्टम ऑफ़लाइन",
-                    labelCalm: "शांत स्थिरता", labelFriction: "मुखर घर्षण", labelLoad: "डायनेमिक प्रोसेसिंग लोड",
-                    cardTitleNeural: "न्यूरल प्रोसेसिंग", cardDescNeural: "हार्डवेयर एरे ट्रैक पर भाषा टोकन और ध्वनिक मैट्रिक्स का मूल्यांकन।",
-                    subMetricNeuralVelocity: "गति", subMetricNeuralIndex: "इंडेक्स", subMetricNeuralActive: "सक्रिय",
-                    cardTitleVision: "विजन एआई मैट्रिक्स", cardDescVision: "स्थानिक पर्यावरण ट्रैकिंग, मैट्रिक्स फ्रेमवर्क और वेक्टर बिंदुओं को संसाधित करना।",
-                    subMetricVisionFPS: "एफपीएस फीड", subMetricVisionAccuracy: "सटीकता", subMetricVisionTracking: "ट्रैकिंग",
-                    cardTitleRobotics: "रोबोटिक्स कोर", cardDescRobotics: "स्वचालित कीनेमैटिक्स टेलीमेट्री, हार्डवेयर मैपिंग और थ्रेड शेड्यूलिंग लूप।",
-                    subMetricRobotTasks: "कार्य", subMetricRobotLoad: "लोड", subMetricRobotFlow: "प्रवाह",
-                    footerText: "© 2026 कॉग्निटिव एआई एडवांस्ड वेब प्रोजेक्ट | रमेश कुमार के द्वारा डिज़ाइन किया गया"
-                },
-                kn: {
-                    navLogo: "ಕಾಗ್ನಿಟಿವ್ ಎಐ", navLinkConsole: "ಕನ್ಸೋಲ್", navLinkMatrix: "ಲೈವ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್",
-                    heroTitle: "ಕಾಗ್ನಿಟಿವ್ ಸ್ಪೀಚ್ ಎಐ ಆಟೊಮೇಷನ್", heroDesc: "ನೈಜ-ಸಮಯದ ಲಾಕ್ಷಣಿಕ ಮರಣದಂಡನೆಯೊಂದಿಗೆ ರೋಬೋಟಿಕ್ ನರ ಸಂಸ್ಕರಣಾ ಮಾದರಿಗಳನ್ನು ಸಂಯೋಜಿಸುವ ಮಲ್ಟಿ-ಮೋಡಲ್ ಯಂತ್ರ ಅರೇ ಸ್ಟ್ರೀಮ್.",
-                    voiceStatusOffline: "ಅಕೌಸ್ಟಿಕ್ ಕೋರ್ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದೆ", voiceStatusActive: "ವೇಕ್-ವರ್ಡ್ ಇಂಜಿನ್ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆ",
-                    voiceStatusSpeaking: "ಆಡಿಯೊ ಔಟ್‌ಪುಟ್ ಪ್ರಸಾರವಾಗುತ್ತಿದೆ...", transcriptPlaceholder: 'ಪ್ರಮಾಣಿತ ಸ್ಮಾರ್ಟ್ ಲೂಪ್ ಮಾನಿಟರಿಂಗ್ ಪ್ರಾರಂಭಿಸಲು ಕೆಳಗಿನ ಪ್ರಚೋದಕವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ, ಮತ್ತು "SYSTEM" ಎಂದು ಹೇಳಿದ ನಂತರ ನಿಮ್ಮ ಆದೇಶವನ್ನು ನೀಡಿ.',
-                    voiceTextInit: "ಅಸಿಸ್ಟೆಂಟ್ ಲೂಪ್ ಪ್ರಾರಂಭಿಸಿ", voiceTextStop: "ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಕಾರ್ಯಾಚರಣೆಗಳ ಲೂಪ್ ನಿಲ್ಲಿಸಿ",
-                    sectionTitleMatrix: "ಕಾಗ್ನಿಟಿವ್ ಆಪರೇಷನ್ಸ್ ಇಂಟರ್ಫೇಸ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್", panelHeaderCapture: "ಅಕೌಸ್ಟಿಕ್ ಕ್ಯಾಪ್ಚರ್ ಬಫರ್",
-                    metricLabelDecibel: "ಅಕೌಸ್ಟಿಕ್ ಡೆಸಿಬಲ್ಸ್", metricLabelFrequency: "ಸ್ಟ್ರೀಮ್ ಆವರ್ತನ", panelHeaderSignature: "ಕಾಗ್ನಿಟಿವ್ ವೋಕಲ್ ಸಿಗ್ನೇಚರ್",
-                    cognitiveModality: "ಅಕೌಸ್ಟಿಕ್ ಸಿಗ್ನಲ್ ಪ್ರೊಸೆಸಿಂಗ್", panelHeaderStatus: "ಪ್ರಸ್ತುತ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ಥಿತಿ",
-                    statusSilent: "ಸಿಸ್ಟಮ್ ಸೈಲೆಂಟ್", statusTransmitting: "ಪ್ರತಿಕ್ರಿಯೆ ರವಾನಿಸಲಾಗುತ್ತಿದೆ", statusActive: "ಸುತ್ತಮುತ್ತಲಿನ ಜಾಗರೂಕತೆ ಸಕ್ರಿಯವಾಗಿದೆ", statusOffline: "ಸಿಸ್ಟಮ್ ಆಫ್‌ಲೈನ್",
-                    labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ಧ್ವನಿ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಸಂಸ್ಕರಣಾ ಲೋಡ್",
-                    cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
-                    subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
-                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಸ್ಪೇಷಿಯಲ್ ಎನ್ವಿರಾನ್ಮೆಂಟ್ ಟ್ರ್ಯಾಕಿಂಗ್ ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ.",
-                    subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
-                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಕೈನೆಮ್ಯಾಟಿಕ್ಸ್ ಟೆಲಿಮೆಟ್ರಿ ಮತ್ತು ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್.",
-                    subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಹರಿವು",
-                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ವಿನ್ಯಾಸಗೊಳಿಸಿದ್ದಾರೆ"
-                }
-            };
-
-            let currentLang = 'en';
-            let isListening = false;
-            let recognition = null;
-            let synth = window.speechSynthesis;
-
-            const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
-            const voiceStatusDot = document.getElementById("voiceStatusDot");
-            const voiceStatusText = document.getElementById("voiceStatusText");
-            const voiceTranscript = document.getElementById("voiceTranscript");
-            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
-            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-            const langSelect = document.getElementById("langSelect");
-
-            // Language Selector Update Function
-            function setLanguage(lang) {
-                currentLang = lang;
-                const dict = LocalizationMatrix[lang] || LocalizationMatrix['en'];
-
-                for (const key in dict) {
-                    const el = document.getElementById(key);
-                    if (el) el.innerText = dict[key];
-                }
-
-                if (!isListening) {
-                    voiceStatusText.innerText = dict.voiceStatusOffline;
-                    document.getElementById("voiceText").innerText = dict.voiceTextInit;
-                    emotionTokenDisplay.innerText = dict.statusOffline;
-                } else {
-                    voiceStatusText.innerText = dict.voiceStatusActive;
-                    document.getElementById("voiceText").innerText = dict.voiceTextStop;
-                    emotionTokenDisplay.innerText = dict.statusActive;
-                }
-            }
-
-            langSelect.addEventListener("change", (e) => {
-                setLanguage(e.target.value);
-                if (isListening) {
-                    stopListening();
-                    startListening();
-                }
-            });
-
-            // Automated Voiceover (Text-to-Speech)
-            function speakText(text) {
-                if (!synth) return;
-                synth.cancel(); // Stop ongoing audio
-
-                const utterance = new SpeechSynthesisUtterance(text);
-                const langMap = { en: 'en-US', ta: 'ta-IN', hi: 'hi-IN', kn: 'kn-IN' };
-                utterance.lang = langMap[currentLang] || 'en-US';
-                utterance.rate = 1.0;
-
-                utterance.onstart = () => {
-                    voiceStatusDot.className = "status-dot speaking";
-                    voiceStatusText.innerText = LocalizationMatrix[currentLang].voiceStatusSpeaking;
-                    emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusTransmitting;
-                };
-
-                utterance.onend = () => {
-                    if (isListening) {
-                        voiceStatusDot.className = "status-dot active";
-                        voiceStatusText.innerText = LocalizationMatrix[currentLang].voiceStatusActive;
-                        emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusActive;
-                    } else {
-                        voiceStatusDot.className = "status-dot";
-                        voiceStatusText.innerText = LocalizationMatrix[currentLang].voiceStatusOffline;
-                        emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusOffline;
-                    }
-                };
-
-                synth.speak(utterance);
-            }
-
-            // Web Speech API Initialization
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-            if (SpeechRecognition) {
-                recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-
-                recognition.onresult = (event) => {
-    let transcript = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-        transcript += event.results[i][0].transcript;
-    }
-    
-    // Display what the mic hears in real time
-    voiceTranscript.innerHTML = `<strong>Speech Stream:</strong> ${transcript}`;
-
-    // Process when speech is finalized
-    if (event.results[event.results.length - 1].isFinal) {
-        // Clean speech text (lowercase, remove trailing periods/commas)
-        const cmd = transcript.toLowerCase().trim().replace(/[.,?!]/g, "");
-        console.log("Final Command Recognized:", cmd);
-
-        // Utility helper to safely open pages
-        const openSite = (url, siteName) => {
-            speakText(`Opening ${siteName}`);
-            const newTab = window.open(url, "_blank");
-            if (!newTab) {
-                alert(`Browser blocked opening ${siteName}. Please allow popups for this site in your address bar!`);
+    document.addEventListener("DOMContentLoaded", () => {
+        // --- Translations Dictionary ---
+        const LocalizationMatrix = {
+            en: {
+                navLogo: "Cognitive AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
+                heroTitle: "Cognitive Speech AI", heroDesc: "A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.",
+                voiceStatusOffline: "Acoustic Core Offline", voiceStatusActive: "Ambient Wake-Word Engine Operational",
+                voiceStatusSpeaking: "Broadcasting Audio Output Array...", transcriptPlaceholder: 'Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.',
+                voiceTextInit: "Initialize Ambient Assistant Loop", voiceTextStop: "Terminate Matrix Operations Loop",
+                sectionTitleMatrix: "Cognitive Operations Interface Matrix", panelHeaderCapture: "Acoustic Capture Buffer",
+                metricLabelDecibel: "Acoustic Decibels", metricLabelFrequency: "Stream Frequency", panelHeaderSignature: "Cognitive Vocal Signature",
+                cognitiveModality: "Acoustic Signal Processing", panelHeaderStatus: "Current Node Assistant Status",
+                statusSilent: "SYSTEM SILENT", statusTransmitting: "TRANSMITTING RESPONSE", statusActive: "AMBIENT WATCH ACTIVE", statusOffline: "SYSTEM OFFLINE",
+                labelCalm: "Calm Stability", labelFriction: "Vocal Friction", labelLoad: "Dynamic Processing Load",
+                cardTitleNeural: "Neural Processing", cardDescNeural: "Evaluating language tokens and acoustic matrices across hardware array tracks.",
+                subMetricNeuralVelocity: "Velocity", subMetricNeuralIndex: "Index", subMetricNeuralActive: "Active",
+                cardTitleVision: "Vision AI Matrix", cardDescVision: "Processing spatial environment tracking, matrix frameworks, and vector points.",
+                subMetricVisionFPS: "FPS Feed", subMetricVisionAccuracy: "Accuracy", subMetricVisionTracking: "Tracking",
+                cardTitleRobotics: "Robotics Core", cardDescRobotics: "Automated kinematics telemetry, hardware mapping, and thread scheduling loops.",
+                subMetricRobotTasks: "Tasks", subMetricRobotLoad: "Load", subMetricRobotFlow: "Flow",
+                footerText: "© 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K"
+            },
+            ta: {
+                navLogo: "அறிவுசார் செயற்கை நுண்ணறிவு", navLinkConsole: "முனையம்", navLinkMatrix: "நேரடி மேட்ரிக்ஸ்",
+                heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நரம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
+                voiceStatusOffline: "ஒலி கோர் ஆஃப்லைனில் உள்ளது", voiceStatusActive: "சுற்றுப்புற விழித்தெழு சொல் எஞ்சின் செயல்படுகிறது",
+                voiceStatusSpeaking: "ஒலி வெளியீட்டு வரிசையை ஒளிபரப்புகிறது...", transcriptPlaceholder: 'வழக்கமான ஸ்மார்ட் லூப் கண்காணிப்பைத் தொடங்க கீழே உள்ள தூண்டுதலைக் கிளிக் செய்து, "SYSTEM" எனக்கூறி உங்கள் கட்டளையை வழங்கவும்.',
+                voiceTextInit: "சுற்றுப்புற உதவி வளையத்தைத் தொடங்கு", voiceTextStop: "செயல்பாட்டு வளையத்தை நிறுத்து",
+                sectionTitleMatrix: "அறிவுசார் செயல்பாட்டு இடைமுக மேட்ரிக்ஸ்", panelHeaderCapture: "ஒலி பிடிப்பு இடையக பகுதி",
+                metricLabelDecibel: "ஒலி டெசிபல்கள்", metricLabelFrequency: "அலைவரிசை அதிர்வெண்", panelHeaderSignature: "அறிவுசார் குரல் கையொப்பம்",
+                cognitiveModality: "ஒலி சமிகஞை செயலாக்கம்", panelHeaderStatus: "தற்போதைய கணினி உதவி நிலை",
+                statusSilent: "கணினி அமைதி", statusTransmitting: "பதிலை அனுப்புகிறது", statusActive: "சுற்றுப்புற கண்காணிப்பு செயலில் உள்ளது", statusOffline: "கணினி ஆஃப்லைனுக்கு சென்றது",
+                labelCalm: "அமையதியான நிலைத்தன்மை", labelFriction: "குரல் உராய்வு", labelLoad: "இயக்க முறை செயலாக்க சுமை",
+                cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
+                subMetricNeuralVelocity: "வேகம்", subMetricNeuralIndex: "குறியீடு", subMetricNeuralActive: "செயலில்",
+                cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்", cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு, மேட்ரிக்ஸ் கட்டமைப்புகள் மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
+                subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபீட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காணிப்பு",
+                cardTitleRobotics: "ரோபோடிக்ஸ் கோர்", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
+                subMetricRobotTasks: "பணிகள்", subMetricRobotLoad: "சுமை", subMetricRobotFlow: "பாய்ச்சல்",
+                footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம் | வடிவமைத்தவர் ரமேஷ் குமார் K"
+            },
+            hi: {
+                navLogo: "कॉग्निटिव एआई", navLinkConsole: "कंसोल", navLinkMatrix: "लाइव मैट्रिक्स",
+                heroTitle: "कॉग्निटिव स्पीच एआई ऑटोमेशन", heroDesc: "वास्तविक समय के सिमेंटिक निष्पादन के साथ रोबोटिक न्यूरल प्रोसेसिंग पैटर्न को संश्लेषित करने वाला एक मल्टी-मोडल मशीन एरे स्ट्रीम।",
+                voiceStatusOffline: "ध्वनिक कोर ऑफ़लाइन", voiceStatusActive: "वेक-वर्ड इंजन सक्रिय है",
+                voiceStatusSpeaking: "ऑडियो आउटपुट एरे प्रसारित हो रहा है...", transcriptPlaceholder: 'मानक स्मार्ट लूप निगरानी शुरू करने के लिए नीचे दिए गए ट्रिगर पर क्लिक करें, और "SYSTEM" बोलने के बाद अपना कमांड दें।',
+                voiceTextInit: "असिस्टेंट लूप प्रारंभ करें", voiceTextStop: "मैट्रिक्स ऑपरेशंस लूप समाप्त करें",
+                sectionTitleMatrix: "कॉग्निटिव ऑपरेशंस इंटरफेस मैट्रिक्स", panelHeaderCapture: "ध्वनिक कैप्चर बफर",
+                metricLabelDecibel: "ध्वनिक डेसिबल", metricLabelFrequency: "स्ट्रीम फ्रीक्वेंसी", panelHeaderSignature: "कॉग्निटिव वोकल सिग्नेचर",
+                cognitiveModality: "ध्वनिक सिग्नल प्रोसेसिंग", panelHeaderStatus: "वर्तमान नोड असिस्टेंट स्थिति",
+                statusSilent: "सिस्टम मौन", statusTransmitting: "प्रतिक्रिया प्रसारित हो रही है", statusActive: "असिस्टेंट वॉच सक्रिय", statusOffline: "सिस्टम ऑफ़लाइन",
+                labelCalm: "शांत स्थिरता", labelFriction: "मुखर घर्षण", labelLoad: "डायनेमिक प्रोसेसिंग लोड",
+                cardTitleNeural: "न्यूरल प्रोसेसिंग", cardDescNeural: "हार्डवेयर एरे ट्रैक पर भाषा टोकन और ध्वनिक मैट्रिक्स का मूल्यांकन।",
+                subMetricNeuralVelocity: "गति", subMetricNeuralIndex: "इंडेक्स", subMetricNeuralActive: "सक्रिय",
+                cardTitleVision: "विजन एआई मैट्रिक्स", cardDescVision: "स्थानिक पर्यावरण ट्रैकिंग, मैट्रिक्स फ्रेमवर्क और वेक्टर बिंदुओं को संसाधित करना।",
+                subMetricVisionFPS: "एफपीएस फीड", subMetricVisionAccuracy: "सटीकता", subMetricVisionTracking: "ट्रैकिंग",
+                cardTitleRobotics: "रोबोटिक्स कोर", cardDescRobotics: "स्वचालित कीनेमैटिक्स टेलीमेट्री, हार्डवेयर मैपिंग और थ्रेड शेड्यूलिंग लूप।",
+                subMetricRobotTasks: "कार्य", subMetricRobotLoad: "लोड", subMetricRobotFlow: "प्रवाह",
+                footerText: "© 2026 कॉग्निटिव एआई एडवांस्ड वेब प्रोजेक्ट | रमेश कुमार के द्वारा डिज़ाइन किया गया"
+            },
+            kn: {
+                navLogo: "ಕಾಗ್ನಿಟಿವ್ ಎಐ", navLinkConsole: "ಕನ್ಸೋಲ್", navLinkMatrix: "ಲೈವ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್",
+                heroTitle: "ಕಾಗ್ನಿಟಿವ್ ಸ್ಪೀಚ್ ಎಐ ಆಟೊಮೇಷನ್", heroDesc: "ನೈಜ-ಸಮಯದ ಲಾಕ್ಷಣಿಕ ಮರಣದಂಡನೆಯೊಂದಿಗೆ ರೋಬೋಟಿಕ್ ನರ ಸಂಸ್ಕರಣಾ ಮಾದರಿಗಳನ್ನು ಸಂಯೋಜಿಸುವ ಮಲ್ಟಿ-ಮೋಡಲ್ ಯಂತ್ರ ಅರೇ ಸ್ಟ್ರೀಮ್.",
+                voiceStatusOffline: "ಅಕೌಸ್ಟಿಕ್ ಕೋರ್ ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದೆ", voiceStatusActive: "ವೇಕ್-ವರ್ಡ್ ಇಂಜಿನ್ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆ",
+                voiceStatusSpeaking: "ಆಡಿಯೊ ಔಟ್‌ಪುಟ್ ಪ್ರಸಾರವಾಗುತ್ತಿದೆ...", transcriptPlaceholder: 'ಪ್ರಮಾಣಿತ ಸ್ಮಾರ್ಟ್ ಲೂಪ್ ಮಾನಿಟರಿಂಗ್ ಪ್ರಾರಂಭಿಸಲು ಕೆಳಗಿನ ಪ್ರಚೋದಕವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ, ಮತ್ತು "SYSTEM" ಎಂದು ಹೇಳಿದ ನಂತರ ನಿಮ್ಮ ಆದೇಶವನ್ನು ನೀಡಿ.',
+                voiceTextInit: "ಅಸಿಸ್ಟೆಂಟ್ ಲೂಪ್ ಪ್ರಾರಂಭಿಸಿ", voiceTextStop: "ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಕಾರ್ಯಾಚರಣೆಗಳ ಲೂಪ್ ನಿಲ್ಲಿಸಿ",
+                sectionTitleMatrix: "ಕಾಗ್ನಿಟಿವ್ ಆಪರೇಷನ್ಸ್ ಇಂಟರ್ಫೇಸ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್", panelHeaderCapture: "ಅಕೌಸ್ಟಿಕ್ ಕ್ಯಾಪ್ಚರ್ ಬಫರ್",
+                metricLabelDecibel: "ಅಕೌಸ್ಟಿಕ್ ಡೆಸಿಬಲ್ಸ್", metricLabelFrequency: "ಸ್ಟ್ರೀಮ್ ಆವರ್ತನ", panelHeaderSignature: "ಕಾಗ್ನಿಟಿವ್ ವೋಕಲ್ ಸಿಗ್ನೇಚರ್",
+                cognitiveModality: "ಅಕೌಸ್ಟಿಕ್ ಸಿಗ್ನಲ್ ಪ್ರೊಸೆಸಿಂಗ್", panelHeaderStatus: "ಪ್ರಸ್ತುತ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ಥಿತಿ",
+                statusSilent: "ಸಿಸ್ಟಮ್ ಸೈಲೆಂಟ್", statusTransmitting: "ಪ್ರತಿಕ್ರಿಯೆ ರವಾನಿಸಲಾಗುತ್ತಿದೆ", statusActive: "ಸುತ್ತಮುತ್ತಲಿನ ಜಾಗರೂಕತೆ ಸಕ್ರಿಯವಾಗಿದೆ", statusOffline: "ಸಿಸ್ಟಮ್ ಆಫ್‌ಲೈನ್",
+                labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ಧ್ವನಿ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಸಂಸ್ಕರಣಾ ಲೋಡ್",
+                cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
+                subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
+                cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಸ್ಪೇಷಿಯಲ್ ಎನ್ವಿರಾನ್ಮೆಂಟ್ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಫ್ರೇಮ್‌ವರ್ಕ್‌ಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ.",
+                subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
+                cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಕಿನೆಮ್ಯಾಟಿಕ್ಸ್ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
+                subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಹರಿವು",
+                footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ವಿನ್ಯಾಸಗೊಳಿಸಿದ್ದಾರೆ"
             }
         };
 
-        // --- 1. POPULAR WEBSITES & SERVICES ---
-        if (cmd.includes("youtube")) {
-            openSite("https://www.youtube.com", "YouTube");
-        } 
-        else if (cmd.includes("gmail") || cmd.includes("email") || cmd.includes("mail")) {
-            openSite("https://mail.google.com", "Gmail");
-        }
-        else if (cmd.includes("flipkart")) {
-            openSite("https://www.flipkart.com", "Flipkart");
-        }
-        else if (cmd.includes("amazon")) {
-            openSite("https://www.amazon.in", "Amazon");
-        }
-        else if (cmd.includes("ticket") || cmd.includes("booking") || cmd.includes("train") || cmd.includes("flight")) {
-            speakText("Opening ticket booking platform");
-            openSite("https://www.irctc.co.in", "Ticket Booking");
-        }
-        else if (cmd.includes("google")) {
-            openSite("https://www.google.com", "Google");
-        }
+        // --- DOM Elements ---
+        const langSelect = document.getElementById("langSelect");
+        const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
+        const voiceStatusDot = document.getElementById("voiceStatusDot");
+        const voiceStatusText = document.getElementById("voiceStatusText");
+        const voiceTranscript = document.getElementById("voiceTranscript");
+        const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+        const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
 
-        // --- 2. NEWS COMMANDS ---
-        else if (cmd.includes("tamil nadu news") || cmd.includes("tn news") || cmd.includes("tamil news")) {
-            speakText("Opening Tamil Nadu News");
-            openSite("https://www.google.com/search?q=Tamil+Nadu+latest+news", "Tamil Nadu News");
-        }
-        else if (cmd.includes("international news") || cmd.includes("world news") || cmd.includes("global news")) {
-            speakText("Opening International News");
-            openSite("https://news.google.com", "International News");
-        }
+        let currentLang = "en";
+        let isListening = false;
+        let recognition = null;
+        let audioCtx = null;
+        let analyser = null;
+        let microphoneStream = null;
 
-        // --- 3. SYSTEM & HELPER COMMANDS ---
-        else if (cmd.includes("time") || cmd.includes("clock")) {
-            const currentTime = new Date().toLocaleTimeString();
-            speakText(`The current time is ${currentTime}`);
-        }
-        else if (cmd.includes("system") || cmd.includes("status")) {
-            speakText("System matrix operational. Speech processing engine running.");
-        }
-        else if (cmd.includes("hello") || cmd.includes("hi")) {
-            speakText("Hello! I am online. How can I assist you?");
-        }
-
-        // --- 4. FALLBACK: GOOGLE ANYTHING ELSE ---
-        // If the user says "search [anything]" or asks something unrecognized
-        else if (cmd.includes("search") || cmd.includes("find") || cmd.includes("look up")) {
-            const query = cmd.replace(/search|find|look up|for|on google/g, "").trim();
-            if (query) {
-                speakText(`Searching Google for ${query}`);
-                openSite(`https://www.google.com/search?q=${encodeURIComponent(query)}`, query);
+        // --- Language Switching ---
+        function updateLanguage(lang) {
+            currentLang = lang;
+            const dict = LocalizationMatrix[lang] || LocalizationMatrix.en;
+            for (const key in dict) {
+                const el = document.getElementById(key);
+                if (el) el.innerText = dict[key];
             }
-        }
-        else {
-            // General query fallback to Google
-            speakText(`Searching Google for ${cmd}`);
-            openSite(`https://www.google.com/search?q=${encodeURIComponent(cmd)}`, cmd);
-        }
-    }
-};
-    // 3. SYSTEM & TIME COMMANDS
-    else if (finalCmd.includes("time") || finalCmd.includes("what time is it")) {
-        const currentTime = new Date().toLocaleTimeString();
-        speakText(`The current time is ${currentTime}`);
-    }
-    else if (finalCmd.includes("system") || finalCmd.includes("status")) {
-        const response = currentLang === 'ta' ? "கணினி மேட்ரிக்ஸ் செயலில் உள்ளது." :
-                         currentLang === 'hi' ? "सिस्टम मैट्रिक्स सक्रिय है।" :
-                         currentLang === 'kn' ? "ಸಿಸ್ಟಮ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಸಕ್ರಿಯವಾಗಿದೆ." :
-                         "System matrix operational. Dynamic telemetry streaming.";
-        speakText(response);
-    }
-    else if (finalCmd.includes("hello") || finalCmd.includes("hi")) {
-        const response = currentLang === 'ta' ? "வணக்கம், உங்களுக்கு எப்படி உதவ வேண்டும்?" :
-                         currentLang === 'hi' ? "नमस्ते, मैं आपकी क्या सहायता कर सकता हूँ?" :
-                         currentLang === 'kn' ? "ನಮಸ್ಕಾರ, ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?" :
-                         "Greetings. Cognitive Speech AI online and listening.";
-        speakText(response);
-    }
-}
-                };
-
-                recognition.onerror = (err) => {
-                    console.error("Speech Recognition Error: ", err);
-                };
-
-                recognition.onend = () => {
-                    if (isListening) recognition.start(); // Keep continuous loop active
-                };
-            } else {
-                voiceTranscript.innerText = "Speech Recognition API not supported on this browser. Use Chrome/Edge.";
-            }
-
-            function startListening() {
-                if (!recognition) return;
-                isListening = true;
+            if (recognition) {
                 const langMap = { en: 'en-US', ta: 'ta-IN', hi: 'hi-IN', kn: 'kn-IN' };
-                recognition.lang = langMap[currentLang] || 'en-US';
-                
-                try {
-                    recognition.start();
-                } catch(e) {}
-
-                btnVoiceTrigger.classList.add("listening");
-                document.getElementById("voiceText").innerText = LocalizationMatrix[currentLang].voiceTextStop;
-                voiceStatusDot.className = "status-dot active";
-                voiceStatusText.innerText = LocalizationMatrix[currentLang].voiceStatusActive;
-                voiceModuleStatus.innerText = "CAPTURING";
-                voiceModuleStatus.classList.add("active");
-                emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusActive;
-
-                speakText(currentLang === 'ta' ? "ஒலி கண்காணிப்பு தொடங்‌கப்பட்டது." :
-                          currentLang === 'hi' ? "ऑडियो निगरानी शुरू हो गई है।" :
-                          currentLang === 'kn' ? "ಆಡಿಯೊ ಮಾನಿಟರಿಂಗ್ ಪ್ರಾರಂಭವಾಗಿದೆ." :
-                          "Acoustic monitoring loop initialized.");
+                recognition.lang = langMap[lang] || 'en-US';
             }
+        }
 
-            function stopListening() {
-                isListening = false;
-                if (recognition) recognition.stop();
-                if (synth) synth.cancel();
+        langSelect.addEventListener("change", (e) => updateLanguage(e.target.value));
 
-                btnVoiceTrigger.classList.remove("listening");
-                document.getElementById("voiceText").innerText = LocalizationMatrix[currentLang].voiceTextInit;
-                voiceStatusDot.className = "status-dot";
-                voiceStatusText.innerText = LocalizationMatrix[currentLang].voiceStatusOffline;
-                voiceModuleStatus.innerText = "STANDBY";
-                voiceModuleStatus.classList.remove("active");
-                emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusOffline;
-            }
+        // --- Web Speech API Setup ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-            btnVoiceTrigger.addEventListener("click", () => {
-                if (!isListening) {
-                    startListening();
-                } else {
-                    stopListening();
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event) => {
+                let transcriptStr = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcriptStr += event.results[i][0].transcript;
                 }
+                voiceTranscript.innerText = transcriptStr;
+
+                // Send speech to backend endpoint if final result
+                if (event.results[event.results.length - 1].isFinal) {
+                    sendToBackendAI(transcriptStr);
+                }
+            };
+
+            recognition.onerror = (e) => {
+                console.error("Speech Recognition Error:", e.error);
+                stopListening();
+            };
+        } else {
+            voiceTranscript.innerText = "Web Speech API is not supported in this browser.";
+        }
+
+        // --- Audio Context for Real Decibels & EQ Bars ---
+        async function initAudioProcessing() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const source = audioCtx.createMediaStreamSource(microphoneStream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64;
+                source.connect(analyser);
+
+                document.getElementById("liveSampleRate").innerText = `${(audioCtx.sampleRate / 1000).toFixed(1)} kHz`;
+                updateAudioMetrics();
+            } catch (err) {
+                console.warn("Microphone access denied or audio context failed:", err);
+            }
+        }
+
+        function updateAudioMetrics() {
+            if (!isListening || !analyser) return;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Compute RMS Decibels
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i] * dataArray[i];
+            }
+            const rms = Math.sqrt(sum / dataArray.length);
+            const db = rms > 0 ? Math.round(20 * Math.log10(rms / 255)) : -100;
+            document.getElementById("liveDecibel").innerText = `${db} dB`;
+
+            // Update Equalizer UI Bars
+            const eqBars = document.querySelectorAll(".eq-bar");
+            eqBars.forEach((bar, idx) => {
+                const value = dataArray[idx] || 0;
+                const heightPercent = Math.max(10, Math.min(100, (value / 255) * 100));
+                bar.style.height = `${heightPercent}%`;
             });
 
-            // Simulated Dynamic Equalizer & Dashboard Telemetry Updates
-            const eqBars = document.querySelectorAll(".eq-bar");
-            setInterval(() => {
-                eqBars.forEach(bar => {
-                    const height = isListening ? Math.floor(Math.random() * 85) + 15 : 10;
-                    bar.style.height = `${height}%`;
+            requestAnimationFrame(updateAudioMetrics);
+        }
+
+        // --- Start/Stop Controls ---
+        async function startListening() {
+            isListening = true;
+            btnVoiceTrigger.classList.add("listening");
+            voiceStatusDot.className = "status-dot active";
+            
+            const dict = LocalizationMatrix[currentLang];
+            voiceStatusText.innerText = dict.voiceStatusActive;
+            document.getElementById("voiceText").innerText = dict.voiceTextStop;
+            voiceModuleStatus.innerText = "ACTIVE";
+            voiceModuleStatus.classList.add("active");
+            emotionTokenDisplay.innerText = dict.statusActive;
+
+            if (recognition) recognition.start();
+            await initAudioProcessing();
+            animateTelemetry();
+        }
+
+        function stopListening() {
+            isListening = false;
+            btnVoiceTrigger.classList.remove("listening");
+            voiceStatusDot.className = "status-dot";
+
+            const dict = LocalizationMatrix[currentLang];
+            voiceStatusText.innerText = dict.voiceStatusOffline;
+            document.getElementById("voiceText").innerText = dict.voiceTextInit;
+            voiceModuleStatus.innerText = "STANDBY";
+            voiceModuleStatus.classList.remove("active");
+            emotionTokenDisplay.innerText = dict.statusSilent;
+
+            if (recognition) recognition.stop();
+            if (microphoneStream) microphoneStream.getTracks().forEach(t => t.stop());
+            if (audioCtx) audioCtx.close();
+        }
+
+        btnVoiceTrigger.addEventListener("click", () => {
+            if (isListening) stopListening();
+            else startListening();
+        });
+
+        // --- API Backend Connector ---
+        async function sendToBackendAI(userPrompt) {
+            emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusTransmitting;
+            try {
+                const response = await fetch("/api/process-cognitive", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: userPrompt, language: currentLang })
                 });
 
-                if (isListening) {
-                    document.getElementById("liveDecibel").innerText = `-${Math.floor(Math.random() * 20 + 10)} dB`;
-                    document.getElementById("liveSampleRate").innerText = `${(Math.random() * 4 + 44).toFixed(1)} kHz`;
-                    
-                    const calmVal = Math.floor(Math.random() * 30 + 70);
-                    const frictionVal = Math.floor(Math.random() * 20 + 5);
-                    const loadVal = Math.floor(Math.random() * 40 + 40);
-
-                    document.getElementById("barCalm").style.width = `${calmVal}%`;
-                    document.getElementById("txtCalm").innerText = `${calmVal}%`;
-
-                    document.getElementById("barFriction").style.width = `${frictionVal}%`;
-                    document.getElementById("txtFriction").innerText = `${frictionVal}%`;
-
-                    document.getElementById("barLoad").style.width = `${loadVal}%`;
-                    document.getElementById("txtLoad").innerText = `${loadVal}%`;
-
-                    // Live Matrix Metrics
-                    document.getElementById("neuralBar").style.width = `${Math.floor(Math.random() * 40 + 60)}%`;
-                    document.getElementById("valNeuralVelocity").innerText = `${Math.floor(Math.random() * 20 + 80)}%`;
-                    document.getElementById("valNeuralIndex").innerText = `${(Math.random() * 0.5 + 0.9).toFixed(2)}`;
-                    document.getElementById("valNeuralActive").innerText = `${Math.floor(Math.random() * 15 + 85)}%`;
-
-                    document.getElementById("analyticsBar").style.width = `${Math.floor(Math.random() * 30 + 70)}%`;
-                    document.getElementById("valVisionFPS").innerText = `${Math.floor(Math.random() * 10 + 55)} FPS`;
-                    document.getElementById("valVisionAccuracy").innerText = `${(Math.random() * 2 + 97).toFixed(1)}%`;
-                    document.getElementById("valVisionTracking").innerText = `${Math.floor(Math.random() * 10 + 90)}%`;
-
-                    document.getElementById("automationBar").style.width = `${Math.floor(Math.random() * 50 + 50)}%`;
-                    document.getElementById("valRobotTasks").innerText = `${Math.floor(Math.random() * 10 + 90)}%`;
-                    document.getElementById("valRobotLoad").innerText = `${Math.floor(Math.random() * 30 + 20)}%`;
-                    document.getElementById("valRobotFlow").innerText = `${(Math.random() * 0.2 + 0.98).toFixed(2)}`;
+                const data = await response.json();
+                
+                // Update interface with backend intelligence payload
+                if (data.reply) {
+                    voiceTranscript.innerText = data.reply;
+                    speakText(data.reply);
                 }
-            }, 300);
-
-            // Canvas Waveform Animations
-            function renderCanvasWave(canvasId, color) {
-                const canvas = document.getElementById(canvasId);
-                if (!canvas) return;
-                const ctx = canvas.getContext("2d");
-                let step = 0;
-
-                function draw() {
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.beginPath();
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = color;
-
-                    for (let x = 0; x < canvas.width; x++) {
-                        const y = canvas.height / 2 + Math.sin((x + step) * 0.05) * (isListening ? 12 : 3);
-                        if (x === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
-                    }
-                    ctx.stroke();
-                    step += 2;
-                    requestAnimationFrame(draw);
+                if (data.metrics) {
+                    updateDashboardMetrics(data.metrics);
                 }
-                draw();
+            } catch (err) {
+                console.error("Backend AI request failed:", err);
+            } finally {
+                emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusActive;
             }
+        }
 
-            renderCanvasWave("neuralCanvas", "#00f3ff");
-            renderCanvasWave("analyticsCanvas", "#8b5cf6");
-            renderCanvasWave("automationCanvas", "#10b981");
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                voiceStatusDot.className = "status-dot speaking";
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.onend = () => {
+                    if (isListening) voiceStatusDot.className = "status-dot active";
+                };
+                window.speechSynthesis.speak(utterance);
+            }
+        }
 
-            // Initialize default language
-            setLanguage('en');
-        });
-    </script>
-</body>
-</html>
+        // --- Dynamic Telemetry Canvas Rendering ---
+        function renderCanvasWave(canvasId, strokeColor) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let step = 0;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = strokeColor;
+
+                for (let x = 0; x < canvas.width; x++) {
+                    const y = (canvas.height / 2) + Math.sin((x + step) * 0.05) * 15 * (isListening ? 1 : 0.2);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                step += 2;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        renderCanvasWave("neuralCanvas", "#00f3ff");
+        renderCanvasWave("analyticsCanvas", "#8b5cf6");
+        renderCanvasWave("automationCanvas", "#10b981");
+
+        function animateTelemetry() {
+            if (!isListening) return;
+
+            // Generate live random metrics for dashboard visual updates
+            const calm = Math.floor(60 + Math.random() * 35);
+            const friction = Math.floor(10 + Math.random() * 20);
+            const load = Math.floor(30 + Math.random() * 50);
+
+            document.getElementById("txtCalm").innerText = `${calm}%`;
+            document.getElementById("barCalm").style.width = `${calm}%`;
+
+            document.getElementById("txtFriction").innerText = `${friction}%`;
+            document.getElementById("barFriction").style.width = `${friction}%`;
+
+            document.getElementById("txtLoad").innerText = `${load}%`;
+            document.getElementById("barLoad").style.width = `${load}%`;
+
+            setTimeout(animateTelemetry, 1500);
+        }
+    });
+</script>
