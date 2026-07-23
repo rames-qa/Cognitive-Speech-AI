@@ -858,32 +858,54 @@
             else startListening();
         });
 
-        // --- API Backend Connector ---
-        async function sendToBackendAI(userPrompt) {
-            emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusTransmitting;
-            try {
-                const response = await fetch("/api/process-cognitive", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: userPrompt, language: currentLang })
-                });
+        // --- API Backend Connector & Dashboard Updater ---
+async function sendToBackendAI(userPrompt) {
+    emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusTransmitting;
+    try {
+        const response = await fetch("/api/process-cognitive", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userPrompt, language: currentLang })
+        });
 
-                const data = await response.json();
-                
-                // Update interface with backend intelligence payload
-                if (data.reply) {
-                    voiceTranscript.innerText = data.reply;
-                    speakText(data.reply);
-                }
-                if (data.metrics) {
-                    updateDashboardMetrics(data.metrics);
-                }
-            } catch (err) {
-                console.error("Backend AI request failed:", err);
-            } finally {
-                emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusActive;
-            }
+        const data = await response.json();
+        
+        // Update interface with backend intelligence payload
+        if (data.reply) {
+            voiceTranscript.innerText = data.reply;
+            speakText(data.reply);
         }
+
+        // Redirect/Open link if provided by Flask/Selenium routing
+        if (data.url) {
+            window.open(data.url, '_blank');
+        }
+
+        // Update metric panels dynamically
+        if (data.metrics) {
+            updateDashboardMetrics(data.metrics);
+        }
+    } catch (err) {
+        console.error("Backend AI request failed:", err);
+    } finally {
+        emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusActive;
+    }
+}
+
+function updateDashboardMetrics(metrics) {
+    if (metrics.neuralVelocity) {
+        document.getElementById("valNeuralVelocity").innerText = metrics.neuralVelocity;
+        document.getElementById("neuralBar").style.width = metrics.neuralVelocity;
+    }
+    if (metrics.visionFps) {
+        document.getElementById("valVisionFPS").innerText = metrics.visionFps;
+        document.getElementById("analyticsBar").style.width = metrics.visionFps;
+    }
+    if (metrics.roboticsLoad) {
+        document.getElementById("valRobotLoad").innerText = metrics.roboticsLoad;
+        document.getElementById("automationBar").style.width = metrics.roboticsLoad;
+    }
+}
 
         function speakText(text) {
             if ('speechSynthesis' in window) {
