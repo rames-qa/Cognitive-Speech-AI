@@ -802,23 +802,53 @@
                     voiceTranscript.innerHTML = `<strong>Speech Stream:</strong> ${transcript}`;
 
                     // Command Processing & Automated Voiceover Response
-                    if (event.results[event.results.length - 1].isFinal) {
-                        const finalCmd = transcript.trim().toLowerCase();
-                        
-                        if (finalCmd.includes("system") || finalCmd.includes("status")) {
-                            const response = currentLang === 'ta' ? "கணினி மேட்ரிக்ஸ் செயலில் உள்ளது." :
-                                             currentLang === 'hi' ? "सिस्टम मैट्रिक्स सक्रिय है।" :
-                                             currentLang === 'kn' ? "ಸಿಸ್ಟಮ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಸಕ್ರಿಯವಾಗಿದೆ." :
-                                             "System matrix operational. Dynamic telemetry streaming.";
-                            speakText(response);
-                        } else if (finalCmd.includes("hello") || finalCmd.includes("hi")) {
-                            const response = currentLang === 'ta' ? "வணக்கம், உங்களுக்கு எப்படி உதவ வேண்டும்?" :
-                                             currentLang === 'hi' ? "नमस्ते, मैं आपकी क्या सहायता कर सकता हूँ?" :
-                                             currentLang === 'kn' ? "ನಮಸ್ಕಾರ, ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?" :
-                                             "Greetings. Cognitive Speech AI online and listening.";
-                            speakText(response);
-                        }
-                    }
+                   // --- REPLACE WITH THIS UPDATED BLOCK ---
+if (event.results[event.results.length - 1].isFinal) {
+    const finalCmd = transcript.trim().toLowerCase();
+    
+    // 1. NAVIGATION & WEB COMMANDS
+    if (finalCmd.includes("open youtube")) {
+        speakText("Opening YouTube now.");
+        window.open("https://www.youtube.com", "_blank");
+    } 
+    else if (finalCmd.includes("open google")) {
+        speakText("Opening Google.");
+        window.open("https://www.google.com", "_blank");
+    }
+    else if (finalCmd.includes("open github")) {
+        speakText("Opening GitHub.");
+        window.open("https://www.github.com", "_blank");
+    }
+
+    // 2. DYNAMIC SEARCH (Say "search for [query]")
+    else if (finalCmd.startsWith("search for") || finalCmd.startsWith("google")) {
+        const query = finalCmd.replace("search for", "").replace("google", "").trim();
+        if (query) {
+            speakText(`Searching Google for ${query}`);
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+        }
+    }
+
+    // 3. SYSTEM & TIME COMMANDS
+    else if (finalCmd.includes("time") || finalCmd.includes("what time is it")) {
+        const currentTime = new Date().toLocaleTimeString();
+        speakText(`The current time is ${currentTime}`);
+    }
+    else if (finalCmd.includes("system") || finalCmd.includes("status")) {
+        const response = currentLang === 'ta' ? "கணினி மேட்ரிக்ஸ் செயலில் உள்ளது." :
+                         currentLang === 'hi' ? "सिस्टम मैट्रिक्स सक्रिय है।" :
+                         currentLang === 'kn' ? "ಸಿಸ್ಟಮ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಸಕ್ರಿಯವಾಗಿದೆ." :
+                         "System matrix operational. Dynamic telemetry streaming.";
+        speakText(response);
+    }
+    else if (finalCmd.includes("hello") || finalCmd.includes("hi")) {
+        const response = currentLang === 'ta' ? "வணக்கம், உங்களுக்கு எப்படி உதவ வேண்டும்?" :
+                         currentLang === 'hi' ? "नमस्ते, मैं आपकी क्या सहायता कर सकता हूँ?" :
+                         currentLang === 'kn' ? "ನಮಸ್ಕಾರ, ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?" :
+                         "Greetings. Cognitive Speech AI online and listening.";
+        speakText(response);
+    }
+}
                 };
 
                 recognition.onerror = (err) => {
