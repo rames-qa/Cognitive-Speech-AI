@@ -721,210 +721,252 @@
         const voiceTranscript = document.getElementById("voiceTranscript");
         const voiceModuleStatus = document.getElementById("voiceModuleStatus");
         const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-        const voiceText = document.getElementById("voiceText");
 
-        let activeLanguage = "en";
+        let currentLang = "en";
         let isListening = false;
+        let recognition = null;
+        let audioCtx = null;
+        let analyser = null;
+        let microphoneStream = null;
 
-        // --- Language Translation Engine ---
-        function applyTranslation(langKey) {
-            activeLanguage = langKey;
-            const dictionary = LocalizationMatrix[langKey] || LocalizationMatrix.en;
-
-            Object.keys(dictionary).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.textContent = dictionary[id];
-                }
-            });
-
-            // Dynamic updates based on system state
-            if (!isListening) {
-                if (voiceStatusText) voiceStatusText.textContent = dictionary.voiceStatusOffline;
-                if (voiceText) voiceText.textContent = dictionary.voiceTextInit;
-                if (emotionTokenDisplay) emotionTokenDisplay.textContent = dictionary.statusSilent;
-            } else {
-                if (voiceStatusText) voiceStatusText.textContent = dictionary.voiceStatusActive;
-                if (voiceText) voiceText.textContent = dictionary.voiceTextStop;
-                if (emotionTokenDisplay) emotionTokenDisplay.textContent = dictionary.statusActive;
+        // --- Language Switching ---
+        function updateLanguage(lang) {
+            currentLang = lang;
+            const dict = LocalizationMatrix[lang] || LocalizationMatrix.en;
+            for (const key in dict) {
+                const el = document.getElementById(key);
+                if (el) el.innerText = dict[key];
+            }
+            if (recognition) {
+                const langMap = { en: 'en-US', ta: 'ta-IN', hi: 'hi-IN', kn: 'kn-IN' };
+                recognition.lang = langMap[lang] || 'en-US';
             }
         }
 
-        // Language Switcher Handler
-        if (langSelect) {
-            langSelect.addEventListener("change", (e) => {
-                applyTranslation(e.target.value);
-            });
-        }
+        langSelect.addEventListener("change", (e) => updateLanguage(e.target.value));
 
-        // --- Voice Assistant Toggle System ---
-        if (btnVoiceTrigger) {
-            btnVoiceTrigger.addEventListener("click", () => {
-                isListening = !isListening;
-                const dictionary = LocalizationMatrix[activeLanguage] || LocalizationMatrix.en;
+        // --- Web Speech API Setup ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-                if (isListening) {
-                    btnVoiceTrigger.classList.add("listening");
-                    if (voiceStatusDot) {
-                        voiceStatusDot.classList.add("active");
-                        voiceStatusDot.classList.remove("speaking");
-                    }
-                    if (voiceStatusText) voiceStatusText.textContent = dictionary.voiceStatusActive;
-                    if (voiceModuleStatus) {
-                        voiceModuleStatus.textContent = "ONLINE";
-                        voiceModuleStatus.classList.add("active");
-                    }
-                    if (voiceText) voiceText.textContent = dictionary.voiceTextStop;
-                    if (emotionTokenDisplay) emotionTokenDisplay.textContent = dictionary.statusActive;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
-                    if (voiceTranscript) {
-                        voiceTranscript.innerHTML = `<span style="color: var(--neon-blue);">[SYSTEM ACTIVE]</span> Listening for acoustic commands...`;
-                    }
-                    
-                    startSimulatedTelemetry();
-                } else {
-                    btnVoiceTrigger.classList.remove("listening");
-                    if (voiceStatusDot) {
-                        voiceStatusDot.classList.remove("active", "speaking");
-                    }
-                    if (voiceStatusText) voiceStatusText.textContent = dictionary.voiceStatusOffline;
-                    if (voiceModuleStatus) {
-                        voiceModuleStatus.textContent = "STANDBY";
-                        voiceModuleStatus.classList.remove("active");
-                    }
-                    if (voiceText) voiceText.textContent = dictionary.voiceTextInit;
-                    if (emotionTokenDisplay) emotionTokenDisplay.textContent = dictionary.statusSilent;
-
-                    if (voiceTranscript) {
-                        voiceTranscript.innerHTML = `<span class="transcript-placeholder">${dictionary.transcriptPlaceholder}</span>`;
-                    }
-                    
-                    stopSimulatedTelemetry();
+            recognition.onresult = (event) => {
+                let transcriptStr = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcriptStr += event.results[i][0].transcript;
                 }
-            });
-        }
+                voiceTranscript.innerText = transcriptStr;
 
-        // --- Telemetry & Visualizer Simulations ---
-        let animationInterval = null;
-        const eqBars = document.querySelectorAll(".eq-bar");
-
-        function startSimulatedTelemetry() {
-            if (animationInterval) clearInterval(animationInterval);
-
-            animationInterval = setInterval(() => {
-                // Animate Equalizer Bars
-                eqBars.forEach(bar => {
-                    const randomHeight = Math.floor(Math.random() * 85) + 15;
-                    bar.style.height = `${randomHeight}%`;
-                });
-
-                // Animate Telemetry Metrics
-                document.getElementById("liveDecibel").textContent = `${(Math.random() * -30 - 12).toFixed(1)} dB`;
-                document.getElementById("liveSampleRate").textContent = `${(Math.random() * 4 + 44).toFixed(1)} kHz`;
-
-                // Progress Indicators
-                const calmVal = Math.floor(Math.random() * 30 + 65);
-                const frictionVal = Math.floor(Math.random() * 20 + 5);
-                const loadVal = Math.floor(Math.random() * 40 + 30);
-
-                setMetricBar("barCalm", "txtCalm", calmVal);
-                setMetricBar("barFriction", "txtFriction", frictionVal);
-                setMetricBar("barLoad", "txtLoad", loadVal);
-
-                // Matrix Progress Bars
-                setDashboardMetrics();
-
-            }, 300);
-        }
-
-        function stopSimulatedTelemetry() {
-            if (animationInterval) clearInterval(animationInterval);
-            
-            eqBars.forEach(bar => bar.style.height = "10%");
-            document.getElementById("liveDecibel").textContent = "-Inf dB";
-            document.getElementById("liveSampleRate").textContent = "0.0 kHz";
-
-            setMetricBar("barCalm", "txtCalm", 0);
-            setMetricBar("barFriction", "txtFriction", 0);
-            setMetricBar("barLoad", "txtLoad", 0);
-            
-            resetDashboardMetrics();
-        }
-
-        function setMetricBar(barId, textId, val) {
-            const bar = document.getElementById(barId);
-            const txt = document.getElementById(textId);
-            if (bar) bar.style.width = `${val}%`;
-            if (txt) txt.textContent = `${val}%`;
-        }
-
-        function setDashboardMetrics() {
-            document.getElementById("neuralBar").style.width = `${Math.floor(Math.random() * 40 + 55)}%`;
-            document.getElementById("analyticsBar").style.width = `${Math.floor(Math.random() * 30 + 65)}%`;
-            document.getElementById("automationBar").style.width = `${Math.floor(Math.random() * 25 + 70)}%`;
-
-            document.getElementById("valNeuralVelocity").textContent = `${Math.floor(Math.random() * 30 + 70)}%`;
-            document.getElementById("valNeuralIndex").textContent = `${Math.floor(Math.random() * 20 + 80)}%`;
-            document.getElementById("valNeuralActive").textContent = `${Math.floor(Math.random() * 50 + 50)}%`;
-
-            document.getElementById("valVisionFPS").textContent = `${Math.floor(Math.random() * 15 + 45)} FPS`;
-            document.getElementById("valVisionAccuracy").textContent = `${(Math.random() * 3 + 96).toFixed(1)}%`;
-            document.getElementById("valVisionTracking").textContent = `${Math.floor(Math.random() * 20 + 80)}%`;
-
-            document.getElementById("valRobotTasks").textContent = `${Math.floor(Math.random() * 10 + 90)}%`;
-            document.getElementById("valRobotLoad").textContent = `${Math.floor(Math.random() * 30 + 40)}%`;
-            document.getElementById("valRobotFlow").textContent = `${Math.floor(Math.random() * 15 + 85)}%`;
-        }
-
-        function resetDashboardMetrics() {
-            ["neuralBar", "analyticsBar", "automationBar"].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.width = "0%";
-            });
-
-            const zeroValues = {
-                valNeuralVelocity: "0%", valNeuralIndex: "0%", valNeuralActive: "0%",
-                valVisionFPS: "0 FPS", valVisionAccuracy: "0%", valVisionTracking: "0%",
-                valRobotTasks: "0%", valRobotLoad: "0%", valRobotFlow: "0%"
+                // Send speech to backend endpoint if final result
+                if (event.results[event.results.length - 1].isFinal) {
+                    sendToBackendAI(transcriptStr);
+                }
             };
 
-            Object.keys(zeroValues).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = zeroValues[id];
-            });
+            recognition.onerror = (e) => {
+                console.error("Speech Recognition Error:", e.error);
+                stopListening();
+            };
+        } else {
+            voiceTranscript.innerText = "Web Speech API is not supported in this browser.";
         }
 
-        // --- Canvas Pulse Oscilloscopes ---
-        function renderCanvasWaveforms() {
-            const canvases = ['neuralCanvas', 'analyticsCanvas', 'automationCanvas'];
-            canvases.forEach(id => {
-                const canvas = document.getElementById(id);
-                if (!canvas) return;
-                const ctx = canvas.getContext('2d');
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
+        // --- Audio Context for Real Decibels & EQ Bars ---
+        async function initAudioProcessing() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const source = audioCtx.createMediaStreamSource(microphoneStream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64;
+                source.connect(analyser);
 
+                document.getElementById("liveSampleRate").innerText = `${(audioCtx.sampleRate / 1000).toFixed(1)} kHz`;
+                updateAudioMetrics();
+            } catch (err) {
+                console.warn("Microphone access denied or audio context failed:", err);
+            }
+        }
+
+        function updateAudioMetrics() {
+            if (!isListening || !analyser) return;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Compute RMS Decibels
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i] * dataArray[i];
+            }
+            const rms = Math.sqrt(sum / dataArray.length);
+            const db = rms > 0 ? Math.round(20 * Math.log10(rms / 255)) : -100;
+            document.getElementById("liveDecibel").innerText = `${db} dB`;
+
+            // Update Equalizer UI Bars
+            const eqBars = document.querySelectorAll(".eq-bar");
+            eqBars.forEach((bar, idx) => {
+                const value = dataArray[idx] || 0;
+                const heightPercent = Math.max(10, Math.min(100, (value / 255) * 100));
+                bar.style.height = `${heightPercent}%`;
+            });
+
+            requestAnimationFrame(updateAudioMetrics);
+        }
+
+        // --- Start/Stop Controls ---
+        async function startListening() {
+            isListening = true;
+            btnVoiceTrigger.classList.add("listening");
+            voiceStatusDot.className = "status-dot active";
+            
+            const dict = LocalizationMatrix[currentLang];
+            voiceStatusText.innerText = dict.voiceStatusActive;
+            document.getElementById("voiceText").innerText = dict.voiceTextStop;
+            voiceModuleStatus.innerText = "ACTIVE";
+            voiceModuleStatus.classList.add("active");
+            emotionTokenDisplay.innerText = dict.statusActive;
+
+            if (recognition) recognition.start();
+            await initAudioProcessing();
+            animateTelemetry();
+        }
+
+        function stopListening() {
+            isListening = false;
+            btnVoiceTrigger.classList.remove("listening");
+            voiceStatusDot.className = "status-dot";
+
+            const dict = LocalizationMatrix[currentLang];
+            voiceStatusText.innerText = dict.voiceStatusOffline;
+            document.getElementById("voiceText").innerText = dict.voiceTextInit;
+            voiceModuleStatus.innerText = "STANDBY";
+            voiceModuleStatus.classList.remove("active");
+            emotionTokenDisplay.innerText = dict.statusSilent;
+
+            if (recognition) recognition.stop();
+            if (microphoneStream) microphoneStream.getTracks().forEach(t => t.stop());
+            if (audioCtx) audioCtx.close();
+        }
+
+        btnVoiceTrigger.addEventListener("click", () => {
+            if (isListening) stopListening();
+            else startListening();
+        });
+
+        // --- API Backend Connector & Dashboard Updater ---
+async function sendToBackendAI(userPrompt) {
+    emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusTransmitting;
+    try {
+        const response = await fetch("/api/process-cognitive", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userPrompt, language: currentLang })
+        });
+
+        const data = await response.json();
+        
+        // Update interface with backend intelligence payload
+        if (data.reply) {
+            voiceTranscript.innerText = data.reply;
+            speakText(data.reply);
+        }
+
+        // Redirect/Open link if provided by Flask/Selenium routing
+        if (data.url) {
+            window.open(data.url, '_blank');
+        }
+
+        // Update metric panels dynamically
+        if (data.metrics) {
+            updateDashboardMetrics(data.metrics);
+        }
+    } catch (err) {
+        console.error("Backend AI request failed:", err);
+    } finally {
+        emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusActive;
+    }
+}
+
+function updateDashboardMetrics(metrics) {
+    if (metrics.neuralVelocity) {
+        document.getElementById("valNeuralVelocity").innerText = metrics.neuralVelocity;
+        document.getElementById("neuralBar").style.width = metrics.neuralVelocity;
+    }
+    if (metrics.visionFps) {
+        document.getElementById("valVisionFPS").innerText = metrics.visionFps;
+        document.getElementById("analyticsBar").style.width = metrics.visionFps;
+    }
+    if (metrics.roboticsLoad) {
+        document.getElementById("valRobotLoad").innerText = metrics.roboticsLoad;
+        document.getElementById("automationBar").style.width = metrics.roboticsLoad;
+    }
+}
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                voiceStatusDot.className = "status-dot speaking";
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.onend = () => {
+                    if (isListening) voiceStatusDot.className = "status-dot active";
+                };
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- Dynamic Telemetry Canvas Rendering ---
+        function renderCanvasWave(canvasId, strokeColor) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            let step = 0;
+            function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.beginPath();
-                ctx.moveTo(0, canvas.height / 2);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = strokeColor;
 
                 for (let x = 0; x < canvas.width; x++) {
-                    const y = isListening 
-                        ? (canvas.height / 2) + Math.sin(x * 0.05 + Date.now() * 0.005) * (Math.random() * 12 + 2)
-                        : (canvas.height / 2);
-                    ctx.lineTo(x, y);
+                    const y = (canvas.height / 2) + Math.sin((x + step) * 0.05) * 15 * (isListening ? 1 : 0.2);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
                 }
-
-                ctx.strokeStyle = id === 'neuralCanvas' ? '#00f3ff' : id === 'analyticsCanvas' ? '#8b5cf6' : '#10b981';
-                ctx.lineWidth = 1.5;
                 ctx.stroke();
-            });
-
-            requestAnimationFrame(renderCanvasWaveforms);
+                step += 2;
+                requestAnimationFrame(draw);
+            }
+            draw();
         }
 
-        renderCanvasWaveforms();
+        renderCanvasWave("neuralCanvas", "#00f3ff");
+        renderCanvasWave("analyticsCanvas", "#8b5cf6");
+        renderCanvasWave("automationCanvas", "#10b981");
+
+        function animateTelemetry() {
+            if (!isListening) return;
+
+            // Generate live random metrics for dashboard visual updates
+            const calm = Math.floor(60 + Math.random() * 35);
+            const friction = Math.floor(10 + Math.random() * 20);
+            const load = Math.floor(30 + Math.random() * 50);
+
+            document.getElementById("txtCalm").innerText = `${calm}%`;
+            document.getElementById("barCalm").style.width = `${calm}%`;
+
+            document.getElementById("txtFriction").innerText = `${friction}%`;
+            document.getElementById("barFriction").style.width = `${friction}%`;
+
+            document.getElementById("txtLoad").innerText = `${load}%`;
+            document.getElementById("barLoad").style.width = `${load}%`;
+
+            setTimeout(animateTelemetry, 1500);
+        }
     });
-    </script>
-</body>
-</html>
+</script>
