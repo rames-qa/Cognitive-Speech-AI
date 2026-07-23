@@ -21,26 +21,23 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # --- UTILITY: PORT REUSE CLEANER ---
 def kill_process_on_port(port):
-    """Dynamically releases port 5000 if locked by an orphaned process."""
-    for proc in psutil.process_iter(['pid', 'name']):
-        try:
-            connections_fn = getattr(
-                proc, "net_connections", getattr(proc, "connections", None)
+  """Dynamically releases port 5000 if locked by an orphaned process."""
+  for proc in psutil.process_iter(['pid', 'name']):
+    try:
+      connections_fn = getattr(
+          proc, "net_connections", getattr(proc, "connections", None)
+      )
+      if connections_fn:
+        for conn in connections_fn(kind='inet'):
+          if conn.laddr.port == port:
+            print(
+                f"[PORT GUARD] Terminating {proc.info['name']} (PID:"
+                f" {proc.info['pid']}) holding port {port}..."
             )
-            if connections_fn:
-                for conn in connections_fn(kind='inet'):
-                    if conn.laddr.port == port:
-                        print(
-                            f"[PORT GUARD] Terminating {proc.info['name']} (PID: {proc.info['pid']}) holding port {port}..."
-                        )
-                        proc.terminate()
-                        proc.wait(timeout=2)
-        except (
-            psutil.NoSuchProcess,
-            psutil.AccessDenied,
-            psutil.ZombieProcess,
-        ):
-            pass
+            proc.terminate()
+            proc.wait(timeout=2)
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+      pass
 
 
 kill_process_on_port(5000)
@@ -179,7 +176,7 @@ def resolve_intent_and_query(command):
       r"\bplay\b",
       r"\bfind\b",
       r"\bopen\b",
-      r"\bon\b",  # Fixed missing \b
+      r"\bon\b",  # Fixed \b regex pattern
       r"\bfor\b",
       r"\bat\b",
       r"\band\b",
@@ -263,8 +260,111 @@ def run_platform_automation(platform, query):
       pass
 
 
-# HTML Template remains as defined in your prompt...
-HTML_TEMPLATE = """..."""  # (Your HTML string stays here)
+# --- BUILT-IN FRONTEND DASHBOARD ---
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Speech AI</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 90%; max-width: 500px; text-align: center; }
+        h2 { margin-bottom: 1.5rem; color: #38bdf8; }
+        .btn { background: #0284c7; color: white; border: none; padding: 0.8rem 1.5rem; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 10px; }
+        .btn:hover { background: #0369a1; }
+        .btn-speak { background: #10b981; margin-bottom: 15px; }
+        .btn-speak:hover { background: #059669; }
+        input[type="text"] { width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; margin-bottom: 10px; }
+        .status-box { margin-top: 20px; padding: 10px; background: #0f172a; border-radius: 6px; font-size: 0.9rem; color: #94a3b8; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Cognitive Speech AI</h2>
+        
+        <button id="mic-btn" class="btn btn-speak">🎤 Speak Command</button>
+        
+        <form id="cmd-form">
+            <input type="text" id="cmd-input" placeholder="Or type e.g., 'Open Amazon' or 'Search news Python'">
+            <button type="submit" class="btn">Execute Command</button>
+        </form>
+
+        <div class="status-box">
+            <strong>Status:</strong> <span id="status-text">Ready</span><br>
+            <strong>Action:</strong> <span id="action-text">None</span>
+        </div>
+    </div>
+
+    <script>
+        const statusText = document.getElementById('status-text');
+        const actionText = document.getElementById('action-text');
+        const cmdInput = document.getElementById('cmd-input');
+
+        // FUNCTION TO SEND COMMAND TO FLASK BACKEND
+        async function sendCommand(commandStr) {
+            statusText.innerText = "Processing...";
+            actionText.innerText = "Sending payload to /api/command";
+
+            try {
+                const res = await fetch('/api/command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: commandStr })
+                });
+                const data = await res.json();
+                
+                statusText.innerText = data.status.toUpperCase();
+                actionText.innerText = data.action;
+
+                // Open link automatically if returned
+                if (data.url) {
+                    window.open(data.url, '_blank');
+                }
+            } catch (err) {
+                statusText.innerText = "Error";
+                actionText.innerText = "Failed to connect to backend.";
+                console.error(err);
+            }
+        }
+
+        // HANDLE MANUAL FORM SUBMISSION
+        document.getElementById('cmd-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const val = cmdInput.value.trim();
+            if (val) sendCommand(val);
+        });
+
+        // HANDLE SPEECH RECOGNITION (WEB SPEECH API)
+        const micBtn = document.getElementById('mic-btn');
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            micBtn.addEventListener('click', () => {
+                recognition.start();
+                statusText.innerText = "Listening...";
+            });
+
+            recognition.onresult = (event) => {
+                const speechResult = event.results[0][0].transcript;
+                cmdInput.value = speechResult;
+                sendCommand(speechResult);
+            };
+
+            recognition.onerror = () => {
+                statusText.innerText = "Mic Error";
+            };
+        } else {
+            micBtn.disabled = true;
+            micBtn.innerText = "Speech API Not Supported";
+        }
+    </script>
+</body>
+</html>
+"""
 
 
 def build_api_payload(status, action, url=""):
