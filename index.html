@@ -709,16 +709,16 @@
                 subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
                 cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಕಿನೆಮ್ಯಾಟಿಕ್ಸ್ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
                 subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಹರಿವು",
-                footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ವಿನ್ಯಾಸಗೊಳಿಸಿದ್ದಾರೆ"
+                footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಸುಧಾರಿತ ವೆಬ್ ಯೋಜನೆ | ರಮೇಶ್ ಕುಮಾರ್ ಕೆ ವಿನ್ಯಾಸಗೊಳಿಸಿದ್ದಾರೆ"
             }
         };
 
-        let currentLang = "en";
+        // --- Language Selector Switcher ---
         const langSelect = document.getElementById("langSelect");
+        langSelect.addEventListener("change", (e) => {
+            const selectedLang = e.target.value;
+            const dict = LocalizationMatrix[selectedLang] || LocalizationMatrix.en;
 
-        function applyLanguage(lang) {
-            currentLang = lang;
-            const dict = LocalizationMatrix[lang] || LocalizationMatrix.en;
             for (const key in dict) {
                 const el = document.getElementById(key);
                 if (el) {
@@ -729,262 +729,76 @@
                     }
                 }
             }
-        }
-
-        langSelect.addEventListener("change", (e) => {
-            applyLanguage(e.target.value);
         });
 
-        // --- System State & DOM References ---
-        let isLoopActive = false;
-        let recognition = null;
-        let audioCtx = null;
-        let analyser = null;
-        let microphoneStream = null;
+        // --- Mock Telemetry Metrics Loop ---
+        function updateMetrics() {
+            const calm = Math.floor(Math.random() * 30) + 70;
+            const friction = Math.floor(Math.random() * 20);
+            const load = Math.floor(Math.random() * 45) + 40;
 
-        const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
-        const voiceText = document.getElementById("voiceText");
-        const voiceStatusDot = document.getElementById("voiceStatusDot");
-        const voiceStatusText = document.getElementById("voiceStatusText");
-        const voiceTranscript = document.getElementById("voiceTranscript");
-        const voiceModuleStatus = document.getElementById("voiceModuleStatus");
-        const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-        const liveDecibel = document.getElementById("liveDecibel");
-        const liveSampleRate = document.getElementById("liveSampleRate");
-        const eqBars = document.querySelectorAll(".eq-bar");
+            document.getElementById("barCalm").style.width = calm + "%";
+            document.getElementById("txtCalm").textContent = calm + "%";
 
-        // Dynamic metrics
-        const barCalm = document.getElementById("barCalm");
-        const barFriction = document.getElementById("barFriction");
-        const barLoad = document.getElementById("barLoad");
-        const txtCalm = document.getElementById("txtCalm");
-        const txtFriction = document.getElementById("txtFriction");
-        const txtLoad = document.getElementById("txtLoad");
+            document.getElementById("barFriction").style.width = friction + "%";
+            document.getElementById("txtFriction").textContent = friction + "%";
 
-        // Speech Recognition Setup
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            document.getElementById("barLoad").style.width = load + "%";
+            document.getElementById("txtLoad").textContent = load + "%";
 
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = true;
+            // Dashboard Metrics Randomization
+            document.getElementById("valNeuralVelocity").textContent = (Math.random() * 20 + 80).toFixed(1) + "%";
+            document.getElementById("valNeuralIndex").textContent = (Math.random() * 10 + 90).toFixed(1) + "%";
+            document.getElementById("valNeuralActive").textContent = Math.floor(Math.random() * 50 + 150);
 
-            recognition.onresult = (event) => {
-                let interimTranscript = '';
-                let finalTranscript = '';
+            document.getElementById("valVisionFPS").textContent = Math.floor(Math.random() * 10 + 55) + " FPS";
+            document.getElementById("valVisionAccuracy").textContent = (Math.random() * 5 + 94).toFixed(1) + "%";
+            document.getElementById("valVisionTracking").textContent = Math.floor(Math.random() * 20 + 80) + "%";
 
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                    if (event.results[i].isFinal) {
-                        finalTranscript += event.results[i][0].transcript;
-                    } else {
-                        interimTranscript += event.results[i][0].transcript;
-                    }
-                }
-
-                const currentText = finalTranscript || interimTranscript;
-                if (currentText) {
-                    voiceTranscript.innerHTML = `<span>${currentText}</span>`;
-                    processVoiceMetrics(currentText);
-                }
-            };
-
-            recognition.onend = () => {
-                if (isLoopActive) {
-                    recognition.start(); // Auto restart for ambient loop
-                }
-            };
-
-            recognition.onerror = (err) => {
-                console.warn("Speech engine event:", err.error);
-            };
+            document.getElementById("valRobotTasks").textContent = Math.floor(Math.random() * 10 + 20);
+            document.getElementById("valRobotLoad").textContent = Math.floor(Math.random() * 30 + 40) + "%";
+            document.getElementById("valRobotFlow").textContent = (Math.random() * 15 + 80).toFixed(1) + "%";
         }
 
-        // Toggle Audio Loop
-        btnVoiceTrigger.addEventListener("click", async () => {
-            if (!isLoopActive) {
-                startSystemLoop();
-            } else {
-                stopSystemLoop();
-            }
-        });
+        setInterval(updateMetrics, 2000);
+        updateMetrics();
 
-        async function startSystemLoop() {
-            isLoopActive = true;
-            btnVoiceTrigger.classList.add("listening");
-            const dict = LocalizationMatrix[currentLang];
-            voiceText.textContent = dict.voiceTextStop;
-            voiceStatusDot.className = "status-dot active";
-            voiceStatusText.textContent = dict.voiceStatusActive;
-            voiceModuleStatus.textContent = "LISTENING";
-            voiceModuleStatus.classList.add("active");
-            emotionTokenDisplay.textContent = dict.statusActive;
-
-            // Start Audio Context for real mic visualizer
-            try {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                const source = audioCtx.createMediaStreamSource(microphoneStream);
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 64;
-                source.connect(analyser);
-                liveSampleRate.textContent = `${(audioCtx.sampleRate / 1000).toFixed(1)} kHz`;
-                visualizeAudio();
-            } catch (e) {
-                console.warn("Microphone hardware access restricted or unavailable.", e);
-            }
-
-            if (recognition) {
-                try { recognition.start(); } catch(e){}
-            }
-        }
-
-        function stopSystemLoop() {
-            isLoopActive = false;
-            btnVoiceTrigger.classList.remove("listening");
-            const dict = LocalizationMatrix[currentLang];
-            voiceText.textContent = dict.voiceTextInit;
-            voiceStatusDot.className = "status-dot";
-            voiceStatusText.textContent = dict.voiceStatusOffline;
-            voiceModuleStatus.textContent = "STANDBY";
-            voiceModuleStatus.classList.remove("active");
-            emotionTokenDisplay.textContent = dict.statusOffline;
-            liveDecibel.textContent = "-Inf dB";
-
-            if (recognition) {
-                try { recognition.stop(); } catch(e){}
-            }
-
-            if (microphoneStream) {
-                microphoneStream.getTracks().forEach(track => track.stop());
-            }
-            if (audioCtx) {
-                audioCtx.close();
-            }
-
-            eqBars.forEach(bar => bar.style.height = "10%");
-        }
-
-        function visualizeAudio() {
-            if (!isLoopActive || !analyser) return;
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
-            analyser.getByteFrequencyData(dataArray);
-
-            let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) {
-                sum += dataArray[i];
-                if (eqBars[i]) {
-                    const heightPercent = Math.max(10, Math.min(100, (dataArray[i] / 255) * 100));
-                    eqBars[i].style.height = `${heightPercent}%`;
-                }
-            }
-
-            const average = sum / dataArray.length;
-            const db = average > 0 ? Math.round(20 * Math.log10(average / 255)) : -100;
-            liveDecibel.textContent = `${db} dB`;
-
-            requestAnimationFrame(visualizeAudio);
-        }
-
-        function processVoiceMetrics(text) {
-            const length = text.length;
-            const calmVal = Math.min(100, Math.max(20, 100 - length * 2));
-            const frictionVal = Math.min(100, length * 1.5);
-            const loadVal = Math.min(100, length * 2.2);
-
-            barCalm.style.width = `${calmVal}%`;
-            txtCalm.textContent = `${Math.round(calmVal)}%`;
-
-            barFriction.style.width = `${frictionVal}%`;
-            txtFriction.textContent = `${Math.round(frictionVal)}%`;
-
-            barLoad.style.width = `${loadVal}%`;
-            txtLoad.textContent = `${Math.round(loadVal)}%`;
-        }
-
-        // --- Live Canvas Visualizers Engine ---
-        function initCanvasVisualizer(canvasId, strokeColor) {
+        // --- Telemetry Canvas Rendering ---
+        function initCanvas(canvasId, strokeColor) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const ctx = canvas.getContext("2d");
             let step = 0;
 
-            function render() {
-                canvas.width = canvas.clientWidth;
-                canvas.height = canvas.clientHeight;
+            function draw() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+
                 ctx.beginPath();
                 ctx.lineWidth = 2;
                 ctx.strokeStyle = strokeColor;
 
                 const height = canvas.height;
                 const width = canvas.width;
-                ctx.moveTo(0, height / 2);
 
-                for (let x = 0; x < width; x++) {
-                    const y = Math.sin((x + step) * 0.05) * (height / 4) + (height / 2);
-                    ctx.lineTo(x, y);
+                for (let x = 0; x < width; x += 5) {
+                    const y = height / 2 + Math.sin((x + step) * 0.05) * 15 * Math.cos(x * 0.01);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
                 }
 
                 ctx.stroke();
                 step += 2;
-                requestAnimationFrame(render);
+                requestAnimationFrame(draw);
             }
-            render();
+            draw();
         }
-async function sendCommandToBackend(userTranscript, selectedLanguage) {
-  try {
-    const response = await fetch('http://localhost:5000/api/cognitive/command', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        transcript: userTranscript,
-        language: selectedLanguage
-      })
+
+        initCanvas("neuralCanvas", "#00f3ff");
+        initCanvas("analyticsCanvas", "#8b5cf6");
+        initCanvas("automationCanvas", "#10b981");
     });
-
-    if (!response.ok) {
-      throw new Error(`Server returned HTTP status ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log('Cognitive Server Response:', result);
-
-    // 1. Update Assistant Status Display with AI response
-    if (result.assistantResponse) {
-      const statusBox = document.getElementById("emotionTokenDisplay");
-      if (statusBox) {
-        statusBox.textContent = result.assistantResponse;
-      }
-    }
-
-    // 2. Dynamic UI Update for Vocal Metrics
-    if (result.vocalMetrics) {
-      const calmBar = document.getElementById("barCalm");
-      const calmTxt = document.getElementById("txtCalm");
-      if (calmBar && calmTxt) {
-        calmBar.style.width = `${result.vocalMetrics.calmStability}%`;
-        calmTxt.textContent = `${result.vocalMetrics.calmStability}%`;
-      }
-
-      const frictionBar = document.getElementById("barFriction");
-      const frictionTxt = document.getElementById("txtFriction");
-      if (frictionBar && frictionTxt) {
-        frictionBar.style.width = `${result.vocalMetrics.vocalFriction}%`;
-        frictionTxt.textContent = `${result.vocalMetrics.vocalFriction}%`;
-      }
-
-      const loadBar = document.getElementById("barLoad");
-      const loadTxt = document.getElementById("txtLoad");
-      if (loadBar && loadTxt) {
-        loadBar.style.width = `${result.vocalMetrics.processingLoad}%`;
-        loadTxt.textContent = `${result.vocalMetrics.processingLoad}%`;
-      }
-    }
-
-  } catch (error) {
-    console.error('Failed to communicate with Cognitive Backend:', error);
-  }
-}
     </script>
 </body>
 </html>
