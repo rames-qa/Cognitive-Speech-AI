@@ -794,41 +794,88 @@
                 recognition.interimResults = true;
 
                 recognition.onresult = (event) => {
-                    let transcript = '';
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                        transcript += event.results[i][0].transcript;
-                    }
-                    
-                    voiceTranscript.innerHTML = `<strong>Speech Stream:</strong> ${transcript}`;
-
-                    // Command Processing & Automated Voiceover Response
-                   // --- REPLACE WITH THIS UPDATED BLOCK ---
-if (event.results[event.results.length - 1].isFinal) {
-    const finalCmd = transcript.trim().toLowerCase();
+    let transcript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+    }
     
-    // 1. NAVIGATION & WEB COMMANDS
-    if (finalCmd.includes("open youtube")) {
-        speakText("Opening YouTube now.");
-        window.open("https://www.youtube.com", "_blank");
-    } 
-    else if (finalCmd.includes("open google")) {
-        speakText("Opening Google.");
-        window.open("https://www.google.com", "_blank");
-    }
-    else if (finalCmd.includes("open github")) {
-        speakText("Opening GitHub.");
-        window.open("https://www.github.com", "_blank");
-    }
+    // Display what the mic hears in real time
+    voiceTranscript.innerHTML = `<strong>Speech Stream:</strong> ${transcript}`;
 
-    // 2. DYNAMIC SEARCH (Say "search for [query]")
-    else if (finalCmd.startsWith("search for") || finalCmd.startsWith("google")) {
-        const query = finalCmd.replace("search for", "").replace("google", "").trim();
-        if (query) {
-            speakText(`Searching Google for ${query}`);
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+    // Process when speech is finalized
+    if (event.results[event.results.length - 1].isFinal) {
+        // Clean speech text (lowercase, remove trailing periods/commas)
+        const cmd = transcript.toLowerCase().trim().replace(/[.,?!]/g, "");
+        console.log("Final Command Recognized:", cmd);
+
+        // Utility helper to safely open pages
+        const openSite = (url, siteName) => {
+            speakText(`Opening ${siteName}`);
+            const newTab = window.open(url, "_blank");
+            if (!newTab) {
+                alert(`Browser blocked opening ${siteName}. Please allow popups for this site in your address bar!`);
+            }
+        };
+
+        // --- 1. POPULAR WEBSITES & SERVICES ---
+        if (cmd.includes("youtube")) {
+            openSite("https://www.youtube.com", "YouTube");
+        } 
+        else if (cmd.includes("gmail") || cmd.includes("email") || cmd.includes("mail")) {
+            openSite("https://mail.google.com", "Gmail");
+        }
+        else if (cmd.includes("flipkart")) {
+            openSite("https://www.flipkart.com", "Flipkart");
+        }
+        else if (cmd.includes("amazon")) {
+            openSite("https://www.amazon.in", "Amazon");
+        }
+        else if (cmd.includes("ticket") || cmd.includes("booking") || cmd.includes("train") || cmd.includes("flight")) {
+            speakText("Opening ticket booking platform");
+            openSite("https://www.irctc.co.in", "Ticket Booking");
+        }
+        else if (cmd.includes("google")) {
+            openSite("https://www.google.com", "Google");
+        }
+
+        // --- 2. NEWS COMMANDS ---
+        else if (cmd.includes("tamil nadu news") || cmd.includes("tn news") || cmd.includes("tamil news")) {
+            speakText("Opening Tamil Nadu News");
+            openSite("https://www.google.com/search?q=Tamil+Nadu+latest+news", "Tamil Nadu News");
+        }
+        else if (cmd.includes("international news") || cmd.includes("world news") || cmd.includes("global news")) {
+            speakText("Opening International News");
+            openSite("https://news.google.com", "International News");
+        }
+
+        // --- 3. SYSTEM & HELPER COMMANDS ---
+        else if (cmd.includes("time") || cmd.includes("clock")) {
+            const currentTime = new Date().toLocaleTimeString();
+            speakText(`The current time is ${currentTime}`);
+        }
+        else if (cmd.includes("system") || cmd.includes("status")) {
+            speakText("System matrix operational. Speech processing engine running.");
+        }
+        else if (cmd.includes("hello") || cmd.includes("hi")) {
+            speakText("Hello! I am online. How can I assist you?");
+        }
+
+        // --- 4. FALLBACK: GOOGLE ANYTHING ELSE ---
+        // If the user says "search [anything]" or asks something unrecognized
+        else if (cmd.includes("search") || cmd.includes("find") || cmd.includes("look up")) {
+            const query = cmd.replace(/search|find|look up|for|on google/g, "").trim();
+            if (query) {
+                speakText(`Searching Google for ${query}`);
+                openSite(`https://www.google.com/search?q=${encodeURIComponent(query)}`, query);
+            }
+        }
+        else {
+            // General query fallback to Google
+            speakText(`Searching Google for ${cmd}`);
+            openSite(`https://www.google.com/search?q=${encodeURIComponent(cmd)}`, cmd);
         }
     }
-
+};
     // 3. SYSTEM & TIME COMMANDS
     else if (finalCmd.includes("time") || finalCmd.includes("what time is it")) {
         const currentTime = new Date().toLocaleTimeString();
