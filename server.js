@@ -1,115 +1,133 @@
-const express = require('express');
-const cors = require('cors');
-const { exec } = require('child_process');
-const os = require('os');
-const si = require('systeminformation');
-const http = require('http');
+import express, { Request, Response } from 'express';
+import { createServer } from 'http';
+import { WebSocketServer, WebSocket } from 'ws';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { GoogleGenAI } from '@google/genai';
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const FLASK_PORT = 5000;
+const server = createServer(app);
+const wss = new WebSocketServer({ server });
 
+const PORT = process.env.PORT || 5000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
 
-const platform = os.platform();
-
-function runOSCommand(cmd) {
-    return new Promise((resolve) => {
-        exec(cmd, (error, stdout, stderr) => {
-            if (error) {
-                resolve({ success: false, output: stderr || error.message });
-            } else {
-                resolve({ success: true, output: stdout.trim() });
-            }
-        });
-    });
-}
-
-// Route handling for both local OS actions and Python automation bridge
-app.post('/api/process-cognitive', async (req, res) => {
-    const { prompt } = req.body;
-    if (!prompt) {
-        return res.json({ reply: "No command received." });
-    }
-
-    const lower = prompt.toLowerCase().trim();
-    console.log(`[COGNITIVE PROCESSING]: "${prompt}"`);
-
-    // --- 1. LOCAL OS AUTOMATIONS ---
-    if (lower.includes("open notepad") || lower.includes("launch notepad")) {
-        let cmd = platform === 'win32' ? 'notepad.exe' : (platform === 'darwin' ? 'open -a TextEdit' : 'gedit');
-        await runOSCommand(cmd);
-        return res.json({ reply: "Launching Notepad application." });
-    }
-
-    if (lower.includes("open calculator") || lower.includes("calc")) {
-        let cmd = platform === 'win32' ? 'calc.exe' : (platform === 'darwin' ? 'open -a Calculator' : 'gnome-calculator');
-        await runOSCommand(cmd);
-        return res.json({ reply: "Opening local Calculator." });
-    }
-
-    if (lower.includes("open terminal") || lower.includes("open cmd")) {
-        let cmd = platform === 'win32' ? 'start cmd.exe' : (platform === 'darwin' ? 'open -a Terminal' : 'x-terminal-emulator');
-        await runOSCommand(cmd);
-        return res.json({ reply: "Opening command terminal." });
-    }
-
-    if (lower.includes("system status") || lower.includes("cpu status")) {
-        const cpuData = await si.currentLoad();
-        const memData = await si.mem();
-        const cpuLoad = Math.round(cpuData.currentLoad);
-        const freeRam = (memData.free / 1024 / 1024 / 1024).toFixed(2);
-        const totalRam = (memData.total / 1024 / 1024 / 1024).toFixed(2);
-
-        return res.json({
-            reply: `System CPU load is at ${cpuLoad}%. Free RAM is ${freeRam} GB out of ${totalRam} GB.`,
-            metrics: {
-                neuralVelocity: `${cpuLoad}% Load`,
-                visionFps: `${freeRam} GB Free`,
-                roboticsLoad: `${totalRam} GB Total`
-            }
-        });
-    }
-
-    // --- 2. FALLBACK TO PYTHON FLASK AUTOMATION ENGINE (app.py) ---
-    const postData = JSON.stringify({ command: prompt });
-    const options = {
-        hostname: "127.0.0.1",
-        port: FLASK_PORT,
-        path: "/api/command",
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Content-Length": Buffer.byteLength(postData)
-        }
-    };
-
-    const flaskReq = http.request(options, (flaskRes) => {
-        let body = "";
-        flaskRes.on("data", (chunk) => { body += chunk; });
-        flaskRes.on("end", () => {
-            try {
-                const parsed = JSON.parse(body);
-                res.json({
-                    reply: parsed.action || "Command processed.",
-                    url: parsed.url || null
-                });
-            } catch (err) {
-                res.json({ reply: "Received invalid response from Flask backend." });
-            }
-        });
-    });
-
-    flaskReq.on("error", () => {
-        res.json({ reply: `Processed request locally or Flask backend offline.` });
-    });
-
-    flaskReq.write(postData);
-    flaskReq.end();
+// Initialize Gemini API Client
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY || '',
 });
 
-app.listen(PORT, () => {
-    console.log(`Unified Voice & OS Hub active on http://localhost:${PORT}`);
+// ==========================================
+// 1. REST API Endpoint: Voice & AI Processing
+// ==========================================
+interface CommandRequest {
+  transcript: string;
+  language?: string;
+}
+
+app.post('/api/cognitive/command', async (req: Request<{}, {}, CommandRequest>, res: Response) => {
+  try {
+    const { transcript, language = 'en' } = req.body;
+
+    if (!transcript) {
+      return res.status(400).json({ error: 'Transcript payload is required.' });
+    }
+
+    console.log(`[Acoustic Processing] Received transcript (${language}): "${transcript}"`);
+
+    // Prompt engineered to act as the Cognitive Operating System
+    const prompt = `
+      You are the Cognitive Operations Core for a Robotics and Computer Vision System.
+      Analyze this user command: "${transcript}"
+      Language requested: ${language}
+
+      Respond strictly in JSON with this structure:
+      {
+        "status": "SUCCESS",
+        "assistantResponse": "Short executive response to the user in requested language",
+        "vocalMetrics": {
+          "calmStability": 85,
+          "vocalFriction": 12,
+          "processingLoad": 45
+        },
+        "systemAction": "ROBOTICS_NAVIGATION | VISION_SCAN | SYSTEM_IDLE | EMERGENCY_STOP",
+        "telemetryImpact": {
+          "cpuLoad": 65,
+          "visionFps": 60,
+          "taskCompletion": 92
+        }
+      }
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+      },
+    });
+
+    const parsedData = JSON.parse(response.text || '{}');
+    return res.json(parsedData);
+
+  } catch (error) {
+    console.error('[API Error]', error);
+    return res.status(500).json({
+      error: 'Failed to process cognitive request.',
+      details: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
+// ==========================================
+// 2. WebSockets: Live Telemetry Streaming
+// ==========================================
+wss.on('connection', (ws: WebSocket) => {
+  console.log('[WebSocket] Client matrix interface connected.');
+
+  // Push telemetry metrics every 2 seconds to connected clients
+  const telemetryInterval = setInterval(() => {
+    if (ws.readyState === WebSocket.OPEN) {
+      const liveMetrics = {
+        type: 'TELEMETRY_UPDATE',
+        timestamp: new Date().toISOString(),
+        neural: {
+          velocity: Math.floor(Math.random() * 20) + 80,
+          index: (Math.random() * 2 + 8).toFixed(1),
+          active: Math.floor(Math.random() * 10) + 90
+        },
+        vision: {
+          fps: Math.floor(Math.random() * 15) + 45,
+          accuracy: (Math.random() * 2 + 97).toFixed(1),
+          tracking: Math.floor(Math.random() * 10) + 90
+        },
+        robotics: {
+          tasks: Math.floor(Math.random() * 20) + 75,
+          load: Math.floor(Math.random() * 30) + 40,
+          flow: Math.floor(Math.random() * 15) + 85
+        }
+      };
+
+      ws.send(JSON.stringify(liveMetrics));
+    }
+  }, 2000);
+
+  ws.on('close', () => {
+    console.log('[WebSocket] Client disconnected.');
+    clearInterval(telemetryInterval);
+  });
+});
+
+// Start Server
+server.listen(PORT, () => {
+  console.log(`\n==================================================`);
+  console.log(`🚀 Cognitive AI Backend running on port: ${PORT}`);
+  console.log(`📡 REST API Endpoint: http://localhost:${PORT}/api/cognitive/command`);
+  console.log(`🔌 WebSocket Server: ws://localhost:${PORT}`);
+  console.log(`==================================================\n`);
 });
