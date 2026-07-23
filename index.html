@@ -713,176 +713,260 @@
             }
         };
 
-        let currentLang = "en";
-        let isSystemActive = false;
-
-        // UI Binding Elements
+        // --- DOM Elements ---
         const langSelect = document.getElementById("langSelect");
         const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
         const voiceStatusDot = document.getElementById("voiceStatusDot");
         const voiceStatusText = document.getElementById("voiceStatusText");
+        const voiceTranscript = document.getElementById("voiceTranscript");
         const voiceModuleStatus = document.getElementById("voiceModuleStatus");
         const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
-        const voiceTranscript = document.getElementById("voiceTranscript");
 
-        // Language Switcher Function
-        function updateLocalization(lang) {
+        let currentLang = "en";
+        let isListening = false;
+        let recognition = null;
+        let audioCtx = null;
+        let analyser = null;
+        let microphoneStream = null;
+
+        // --- Language Switching ---
+        function updateLanguage(lang) {
             currentLang = lang;
-            const t = LocalizationMatrix[lang] || LocalizationMatrix.en;
-
-            for (const key in t) {
+            const dict = LocalizationMatrix[lang] || LocalizationMatrix.en;
+            for (const key in dict) {
                 const el = document.getElementById(key);
-                if (el) el.textContent = t[key];
+                if (el) el.innerText = dict[key];
             }
-
-            // Update Dynamic Control States
-            const voiceText = document.getElementById("voiceText");
-            if (voiceText) {
-                voiceText.textContent = isSystemActive ? t.voiceTextStop : t.voiceTextInit;
-            }
-
-            if (!isSystemActive) {
-                voiceStatusText.textContent = t.voiceStatusOffline;
-            } else {
-                voiceStatusText.textContent = t.voiceStatusActive;
+            if (recognition) {
+                const langMap = { en: 'en-US', ta: 'ta-IN', hi: 'hi-IN', kn: 'kn-IN' };
+                recognition.lang = langMap[lang] || 'en-US';
             }
         }
 
-        langSelect.addEventListener("change", (e) => {
-            updateLocalization(e.target.value);
-        });
+        langSelect.addEventListener("change", (e) => updateLanguage(e.target.value));
 
-        // Toggle Assistant Activation State
-        btnVoiceTrigger.addEventListener("click", () => {
-            isSystemActive = !isSystemActive;
-            const t = LocalizationMatrix[currentLang];
+        // --- Web Speech API Setup ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-            if (isSystemActive) {
-                btnVoiceTrigger.classList.add("listening");
-                voiceStatusDot.classList.add("active");
-                voiceStatusText.textContent = t.voiceStatusActive;
-                voiceModuleStatus.textContent = "ONLINE";
-                voiceModuleStatus.classList.add("active");
-                emotionTokenDisplay.textContent = t.statusActive;
-                emotionTokenDisplay.style.color = "var(--neon-blue)";
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
-                voiceTranscript.innerHTML = `<span style="color: var(--neon-green)">[SYSTEM READY]</span> Listening for audio streaming inputs...`;
-            } else {
-                btnVoiceTrigger.classList.remove("listening");
-                voiceStatusDot.classList.remove("active", "speaking");
-                voiceStatusText.textContent = t.voiceStatusOffline;
-                voiceModuleStatus.textContent = "STANDBY";
-                voiceModuleStatus.classList.remove("active");
-                emotionTokenDisplay.textContent = t.statusOffline;
-                emotionTokenDisplay.style.color = "var(--text-secondary)";
+            recognition.onresult = (event) => {
+                let transcriptStr = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcriptStr += event.results[i][0].transcript;
+                }
+                voiceTranscript.innerText = transcriptStr;
 
-                voiceTranscript.innerHTML = `<span class="transcript-placeholder">${t.transcriptPlaceholder}</span>`;
-                resetMetrics();
-            }
+                // Send speech to backend endpoint if final result
+                if (event.results[event.results.length - 1].isFinal) {
+                    sendToBackendAI(transcriptStr);
+                }
+            };
 
-            document.getElementById("voiceText").textContent = isSystemActive ? t.voiceTextStop : t.voiceTextInit;
-        });
-
-        function resetMetrics() {
-            document.getElementById("liveDecibel").textContent = "-Inf dB";
-            document.getElementById("liveSampleRate").textContent = "0.0 kHz";
-            document.getElementById("barCalm").style.width = "0%";
-            document.getElementById("barFriction").style.width = "0%";
-            document.getElementById("barLoad").style.width = "0%";
-            document.getElementById("txtCalm").textContent = "0%";
-            document.getElementById("txtFriction").textContent = "0%";
-            document.getElementById("txtLoad").textContent = "0%";
-
-            const eqBars = document.querySelectorAll(".eq-bar");
-            eqBars.forEach(bar => bar.style.height = "10%");
+            recognition.onerror = (e) => {
+                console.error("Speech Recognition Error:", e.error);
+                stopListening();
+            };
+        } else {
+            voiceTranscript.innerText = "Web Speech API is not supported in this browser.";
         }
 
-        // --- Live Matrix Telemetry Simulation Loop ---
-        setInterval(() => {
-            if (!isSystemActive) return;
+        // --- Audio Context for Real Decibels & EQ Bars ---
+        async function initAudioProcessing() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const source = audioCtx.createMediaStreamSource(microphoneStream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 64;
+                source.connect(analyser);
 
-            // Audio Equalizer Waves
+                document.getElementById("liveSampleRate").innerText = `${(audioCtx.sampleRate / 1000).toFixed(1)} kHz`;
+                updateAudioMetrics();
+            } catch (err) {
+                console.warn("Microphone access denied or audio context failed:", err);
+            }
+        }
+
+        function updateAudioMetrics() {
+            if (!isListening || !analyser) return;
+
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Compute RMS Decibels
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i] * dataArray[i];
+            }
+            const rms = Math.sqrt(sum / dataArray.length);
+            const db = rms > 0 ? Math.round(20 * Math.log10(rms / 255)) : -100;
+            document.getElementById("liveDecibel").innerText = `${db} dB`;
+
+            // Update Equalizer UI Bars
             const eqBars = document.querySelectorAll(".eq-bar");
-            eqBars.forEach(bar => {
-                const randHeight = Math.floor(Math.random() * 85) + 15;
-                bar.style.height = randHeight + "%";
+            eqBars.forEach((bar, idx) => {
+                const value = dataArray[idx] || 0;
+                const heightPercent = Math.max(10, Math.min(100, (value / 255) * 100));
+                bar.style.height = `${heightPercent}%`;
             });
 
-            // Acoustic Measurements
-            const decibel = (Math.random() * 30 - 45).toFixed(1);
-            const sampleRate = (Math.random() * 4 + 44.1).toFixed(1);
-            document.getElementById("liveDecibel").textContent = `${decibel} dB`;
-            document.getElementById("liveSampleRate").textContent = `${sampleRate} kHz`;
+            requestAnimationFrame(updateAudioMetrics);
+        }
 
-            // Dynamic Bars
-            const calmVal = Math.floor(Math.random() * 25) + 70;
-            const frictionVal = Math.floor(Math.random() * 15) + 5;
-            const loadVal = Math.floor(Math.random() * 30) + 40;
+        // --- Start/Stop Controls ---
+        async function startListening() {
+            isListening = true;
+            btnVoiceTrigger.classList.add("listening");
+            voiceStatusDot.className = "status-dot active";
+            
+            const dict = LocalizationMatrix[currentLang];
+            voiceStatusText.innerText = dict.voiceStatusActive;
+            document.getElementById("voiceText").innerText = dict.voiceTextStop;
+            voiceModuleStatus.innerText = "ACTIVE";
+            voiceModuleStatus.classList.add("active");
+            emotionTokenDisplay.innerText = dict.statusActive;
 
-            document.getElementById("barCalm").style.width = calmVal + "%";
-            document.getElementById("txtCalm").textContent = calmVal + "%";
-            document.getElementById("barFriction").style.width = frictionVal + "%";
-            document.getElementById("txtFriction").textContent = frictionVal + "%";
-            document.getElementById("barLoad").style.width = loadVal + "%";
-            document.getElementById("txtLoad").textContent = loadVal + "%";
+            if (recognition) recognition.start();
+            await initAudioProcessing();
+            animateTelemetry();
+        }
 
-            // Dashboard Operations Gauges
-            document.getElementById("neuralBar").style.width = (Math.random() * 20 + 75) + "%";
-            document.getElementById("analyticsBar").style.width = (Math.random() * 15 + 80) + "%";
-            document.getElementById("automationBar").style.width = (Math.random() * 25 + 65) + "%";
+        function stopListening() {
+            isListening = false;
+            btnVoiceTrigger.classList.remove("listening");
+            voiceStatusDot.className = "status-dot";
 
-            document.getElementById("valNeuralVelocity").textContent = Math.floor(Math.random() * 15 + 80) + "%";
-            document.getElementById("valNeuralIndex").textContent = Math.floor(Math.random() * 10 + 88) + "%";
-            document.getElementById("valNeuralActive").textContent = Math.floor(Math.random() * 20 + 70) + "%";
+            const dict = LocalizationMatrix[currentLang];
+            voiceStatusText.innerText = dict.voiceStatusOffline;
+            document.getElementById("voiceText").innerText = dict.voiceTextInit;
+            voiceModuleStatus.innerText = "STANDBY";
+            voiceModuleStatus.classList.remove("active");
+            emotionTokenDisplay.innerText = dict.statusSilent;
 
-            document.getElementById("valVisionFPS").textContent = Math.floor(Math.random() * 10 + 55) + " FPS";
-            document.getElementById("valVisionAccuracy").textContent = (Math.random() * 2 + 97.5).toFixed(1) + "%";
-            document.getElementById("valVisionTracking").textContent = Math.floor(Math.random() * 8 + 91) + "%";
+            if (recognition) recognition.stop();
+            if (microphoneStream) microphoneStream.getTracks().forEach(t => t.stop());
+            if (audioCtx) audioCtx.close();
+        }
 
-            document.getElementById("valRobotTasks").textContent = Math.floor(Math.random() * 30 + 60) + "%";
-            document.getElementById("valRobotLoad").textContent = Math.floor(Math.random() * 20 + 35) + "%";
-            document.getElementById("valRobotFlow").textContent = Math.floor(Math.random() * 12 + 85) + "%";
-        }, 300);
+        btnVoiceTrigger.addEventListener("click", () => {
+            if (isListening) stopListening();
+            else startListening();
+        });
 
-        // --- Oscilloscope Telemetry Canvas Rendering ---
-        function drawCanvasGraph(canvasId, color) {
+        // --- API Backend Connector & Dashboard Updater ---
+async function sendToBackendAI(userPrompt) {
+    emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusTransmitting;
+    try {
+        const response = await fetch("/api/process-cognitive", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: userPrompt, language: currentLang })
+        });
+
+        const data = await response.json();
+        
+        // Update interface with backend intelligence payload
+        if (data.reply) {
+            voiceTranscript.innerText = data.reply;
+            speakText(data.reply);
+        }
+
+        // Redirect/Open link if provided by Flask/Selenium routing
+        if (data.url) {
+            window.open(data.url, '_blank');
+        }
+
+        // Update metric panels dynamically
+        if (data.metrics) {
+            updateDashboardMetrics(data.metrics);
+        }
+    } catch (err) {
+        console.error("Backend AI request failed:", err);
+    } finally {
+        emotionTokenDisplay.innerText = LocalizationMatrix[currentLang].statusActive;
+    }
+}
+
+function updateDashboardMetrics(metrics) {
+    if (metrics.neuralVelocity) {
+        document.getElementById("valNeuralVelocity").innerText = metrics.neuralVelocity;
+        document.getElementById("neuralBar").style.width = metrics.neuralVelocity;
+    }
+    if (metrics.visionFps) {
+        document.getElementById("valVisionFPS").innerText = metrics.visionFps;
+        document.getElementById("analyticsBar").style.width = metrics.visionFps;
+    }
+    if (metrics.roboticsLoad) {
+        document.getElementById("valRobotLoad").innerText = metrics.roboticsLoad;
+        document.getElementById("automationBar").style.width = metrics.roboticsLoad;
+    }
+}
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                voiceStatusDot.className = "status-dot speaking";
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.onend = () => {
+                    if (isListening) voiceStatusDot.className = "status-dot active";
+                };
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- Dynamic Telemetry Canvas Rendering ---
+        function renderCanvasWave(canvasId, strokeColor) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const ctx = canvas.getContext("2d");
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
 
-            let offset = 0;
-
-            function animate() {
-                canvas.width = canvas.parentElement.clientWidth || 300;
-                canvas.height = 65;
-
+            let step = 0;
+            function draw() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.beginPath();
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = color;
+                ctx.strokeStyle = strokeColor;
 
-                const height = canvas.height;
-                const width = canvas.width;
-
-                for (let x = 0; x < width; x++) {
-                    const y = isSystemActive
-                        ? (Math.sin((x + offset) * 0.05) * 15) + (Math.cos((x + offset) * 0.02) * 8) + (height / 2)
-                        : height / 2;
+                for (let x = 0; x < canvas.width; x++) {
+                    const y = (canvas.height / 2) + Math.sin((x + step) * 0.05) * 15 * (isListening ? 1 : 0.2);
                     if (x === 0) ctx.moveTo(x, y);
                     else ctx.lineTo(x, y);
                 }
-
                 ctx.stroke();
-                offset += 2;
-                requestAnimationFrame(animate);
+                step += 2;
+                requestAnimationFrame(draw);
             }
-            animate();
+            draw();
         }
 
-        drawCanvasGraph("neuralCanvas", "#00f3ff");
-        drawCanvasGraph("analyticsCanvas", "#8b5cf6");
-        drawCanvasGraph("automationCanvas", "#10b981");
+        renderCanvasWave("neuralCanvas", "#00f3ff");
+        renderCanvasWave("analyticsCanvas", "#8b5cf6");
+        renderCanvasWave("automationCanvas", "#10b981");
+
+        function animateTelemetry() {
+            if (!isListening) return;
+
+            // Generate live random metrics for dashboard visual updates
+            const calm = Math.floor(60 + Math.random() * 35);
+            const friction = Math.floor(10 + Math.random() * 20);
+            const load = Math.floor(30 + Math.random() * 50);
+
+            document.getElementById("txtCalm").innerText = `${calm}%`;
+            document.getElementById("barCalm").style.width = `${calm}%`;
+
+            document.getElementById("txtFriction").innerText = `${friction}%`;
+            document.getElementById("barFriction").style.width = `${friction}%`;
+
+            document.getElementById("txtLoad").innerText = `${load}%`;
+            document.getElementById("barLoad").style.width = `${load}%`;
+
+            setTimeout(animateTelemetry, 1500);
+        }
     });
-    </script>
-</body>
-</html>
+</script>
