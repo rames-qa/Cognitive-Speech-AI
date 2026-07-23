@@ -931,30 +931,60 @@
             }
             render();
         }
-
-        initCanvasVisualizer("neuralCanvas", "#00f3ff");
-        initCanvasVisualizer("analyticsCanvas", "#8b5cf6");
-        initCanvasVisualizer("automationCanvas", "#10b981");
-
-        // Simulation Updates for Dashboard Node Cards
-        setInterval(() => {
-            document.getElementById("neuralBar").style.width = `${Math.floor(Math.random() * 40) + 60}%`;
-            document.getElementById("analyticsBar").style.width = `${Math.floor(Math.random() * 30) + 70}%`;
-            document.getElementById("automationBar").style.width = `${Math.floor(Math.random() * 50) + 50}%`;
-
-            document.getElementById("valNeuralVelocity").textContent = `${Math.floor(Math.random() * 20) + 80}%`;
-            document.getElementById("valNeuralIndex").textContent = `${(Math.random() * 2 + 8).toFixed(1)}`;
-            document.getElementById("valNeuralActive").textContent = `${Math.floor(Math.random() * 10) + 90}%`;
-
-            document.getElementById("valVisionFPS").textContent = `${Math.floor(Math.random() * 15) + 45} FPS`;
-            document.getElementById("valVisionAccuracy").textContent = `${(Math.random() * 2 + 97).toFixed(1)}%`;
-            document.getElementById("valVisionTracking").textContent = `${Math.floor(Math.random() * 10) + 90}%`;
-
-            document.getElementById("valRobotTasks").textContent = `${Math.floor(Math.random() * 20) + 75}%`;
-            document.getElementById("valRobotLoad").textContent = `${Math.floor(Math.random() * 30) + 40}%`;
-            document.getElementById("valRobotFlow").textContent = `${Math.floor(Math.random() * 15) + 85}%`;
-        }, 3000);
+async function sendCommandToBackend(userTranscript, selectedLanguage) {
+  try {
+    const response = await fetch('http://localhost:5000/api/cognitive/command', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        transcript: userTranscript,
+        language: selectedLanguage
+      })
     });
+
+    if (!response.ok) {
+      throw new Error(`Server returned HTTP status ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log('Cognitive Server Response:', result);
+
+    // 1. Update Assistant Status Display with AI response
+    if (result.assistantResponse) {
+      const statusBox = document.getElementById("emotionTokenDisplay");
+      if (statusBox) {
+        statusBox.textContent = result.assistantResponse;
+      }
+    }
+
+    // 2. Dynamic UI Update for Vocal Metrics
+    if (result.vocalMetrics) {
+      const calmBar = document.getElementById("barCalm");
+      const calmTxt = document.getElementById("txtCalm");
+      if (calmBar && calmTxt) {
+        calmBar.style.width = `${result.vocalMetrics.calmStability}%`;
+        calmTxt.textContent = `${result.vocalMetrics.calmStability}%`;
+      }
+
+      const frictionBar = document.getElementById("barFriction");
+      const frictionTxt = document.getElementById("txtFriction");
+      if (frictionBar && frictionTxt) {
+        frictionBar.style.width = `${result.vocalMetrics.vocalFriction}%`;
+        frictionTxt.textContent = `${result.vocalMetrics.vocalFriction}%`;
+      }
+
+      const loadBar = document.getElementById("barLoad");
+      const loadTxt = document.getElementById("txtLoad");
+      if (loadBar && loadTxt) {
+        loadBar.style.width = `${result.vocalMetrics.processingLoad}%`;
+        loadTxt.textContent = `${result.vocalMetrics.processingLoad}%`;
+      }
+    }
+
+  } catch (error) {
+    console.error('Failed to communicate with Cognitive Backend:', error);
+  }
+}
     </script>
 </body>
 </html>
