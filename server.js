@@ -4,8 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
-
+app.use(express.static(__dirname));
 // Endpoint matching the frontend fetch call
 app.post("/api/process-cognitive", async (req, res) => {
     const { prompt, language } = req.body;
