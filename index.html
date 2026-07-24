@@ -924,36 +924,36 @@
                 try { SystemState.recognition.start(); } catch(e){}
             }
 function processVoicePayload(transcript) {
-                const text = transcript.trim();
-                voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
+    const text = transcript.trim();
+    voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
 
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 10000);
-                const dict = LocalizationMatrix[SystemState.currentLang];
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const dict = LocalizationMatrix[SystemState.currentLang];
 
-                fetch("http://127.0.0.1:5000/api/command", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ command: text, lang: SystemState.currentLang }),
-                    signal: controller.signal
-                })
-                .then(async (res) => {
-                    clearTimeout(timeout);
-                    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-                    return await res.json();
-                })
-                .then(data => {
-                    console.log("Backend Response:", data);
-                    // MATCHED TO FLASK BACKEND KEYS: summary & target_url
-                    if (data?.summary) executeRoboticSpeech(data.summary);
-                    if (data?.target_url) window.open(data.target_url, "_blank");
-                })
-                .catch(err => {
-                    clearTimeout(timeout);
-                    console.error("Flask Connection Error:", err);
-                    executeRoboticSpeech(dict.backendFail);
-                });
-            }
+    fetch("http://127.0.0.1:5000/api/command", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ command: text, lang: SystemState.currentLang }),
+        signal: controller.signal
+    })
+    .then(async (res) => {
+        clearTimeout(timeout);
+        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        return await res.json();
+    })
+    .then(data => {
+        console.log("Backend Response:", data);
+        // MATCHED TO FLASK BACKEND KEYS: summary & target_url
+        if (data?.summary) executeRoboticSpeech(data.summary);
+        if (data?.target_url) window.open(data.target_url, "_blank");
+    })
+    .catch(err => {
+        clearTimeout(timeout);
+        console.error("Flask Connection Error:", err);
+        executeRoboticSpeech(dict.backendFail);
+    });
+}
 
             function toggleVoiceCaptureSystem() {
                 const dict = LocalizationMatrix[SystemState.currentLang];
