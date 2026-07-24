@@ -820,102 +820,12 @@
                 metricLabels.visionTracking.textContent = "0%";
                 metricLabels.analyticsBar.style.width = "0%";
                 metricLabels.robotTasks.textContent = "0%";
-                metricLabels.robotLoad.textContent = "0%";
-                metricLabels.robotFlow.textContent = "0%";
-                metricLabels.automationBar.style.width = "0%";
-                liveDecibel.textContent = "-Inf dB";
-                liveSampleRate.textContent = "0.0 kHz";
             }
 
             function toggleVoiceCaptureSystem() {
+                // Implementation for toggling capture state
+                SystemState.isListening = !SystemState.isListening;
                 if (!SystemState.isListening) {
-                    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                        SystemState.isListening = true;
-                        SystemState.stream = stream;
-                        SystemState.shouldRestartRecognition = true;
-
-                        voiceBtn.classList.add("listening");
-                        document.getElementById("voiceText").textContent = "Terminate System Loop";
-                        voiceStatusDot.className = "status-dot active";
-                        voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                        voiceModuleStatus.textContent = "AMBIENT WATCH";
-                        voiceModuleStatus.classList.add("active");
-                        voiceProcessingPanel?.classList.add("voice-pulse-highlight");
-
-                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Core Online. Say "SYSTEM..." followed by your request.]</span>';
-
-                        SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        SystemState.analyser = SystemState.audioContext.createAnalyser();
-                        SystemState.analyser.fftSize = 32;
-                        const bufferLength = SystemState.analyser.frequencyBinCount;
-                        SystemState.dataArray = new Uint8Array(bufferLength);
-
-                        const source = SystemState.audioContext.createMediaStreamSource(stream);
-                        source.connect(SystemState.analyser);
-
-                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-
-                        setTimeout(() => {
-                            executeRoboticSpeech("System array online. I am actively monitoring.");
-                        }, 400);
-
-                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                            SystemState.recognition = new SpeechRecognition();
-
-                            SystemState.recognition.continuous = true; 
-                            SystemState.recognition.interimResults = false;
-                            SystemState.recognition.lang = 'en-US';
-
-                            SystemState.recognition.onresult = (event) => {
-                                let cleanBuffer = '';
-                                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                                    if (event.results[i].isFinal) {
-                                        cleanBuffer += event.results[i][0].transcript;
-                                    }
-                                }
-
-                                if (!cleanBuffer || cleanBuffer.trim() === '') return;
-                                processVoicePayload(cleanBuffer);
-                            };
-
-                            SystemState.recognition.onerror = (err) => {
-                                console.error("Speech Engine Error:", err);
-                            };
-
-                            SystemState.recognition.onend = () => {
-                                if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                                    try { SystemState.recognition.start(); } catch(e){}
-                                }
-                            };
-
-                            SystemState.recognition.start();
-                        }
-
-                        animateTelemetryCanvas();
-                    }).catch(err => {
-                        console.error("Microphone Access Denied:", err);
-                        alert("Microphone capture failure. Check permissions configuration parameters.");
-                    });
-                } else {
-                    // Shutdown Execution Pipelines cleanly
-                    SystemState.isListening = false;
-                    SystemState.shouldRestartRecognition = false;
-
-                    if (SystemState.recognition) SystemState.recognition.stop();
-                    if (SystemState.animationFrameId) cancelAnimationFrame(SystemState.animationFrameId);
-                    if (SystemState.stream) SystemState.stream.getTracks().forEach(track => track.stop());
-                    if (SystemState.audioContext) SystemState.audioContext.close();
-
-                    voiceBtn.classList.remove("listening");
-                    document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
-                    voiceStatusDot.className = "status-dot";
-                    voiceStatusText.textContent = "Acoustic Core Offline";
-                    voiceModuleStatus.textContent = "STANDBY";
-                    voiceModuleStatus.classList.remove("active");
-                    voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
-                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">System pipeline deactivated. Core offline.</span>';
-
                     resetAllUIValues();
                 }
             }
