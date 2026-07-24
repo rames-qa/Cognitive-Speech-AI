@@ -923,8 +923,7 @@
                 SystemState.recognition = recognition;
                 try { SystemState.recognition.start(); } catch(e){}
             }
-
-            function processVoicePayload(transcript) {
+function processVoicePayload(transcript) {
                 const text = transcript.trim();
                 voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
 
@@ -945,8 +944,9 @@
                 })
                 .then(data => {
                     console.log("Backend Response:", data);
-                    if (data?.action) executeRoboticSpeech(data.action);
-                    if (data?.url) window.open(data.url, "_blank");
+                    // MATCHED TO FLASK BACKEND KEYS: summary & target_url
+                    if (data?.summary) executeRoboticSpeech(data.summary);
+                    if (data?.target_url) window.open(data.target_url, "_blank");
                 })
                 .catch(err => {
                     clearTimeout(timeout);
