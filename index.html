@@ -701,26 +701,37 @@
                 const timeout = setTimeout(() => controller.abort(), 10000);
 
                 // Default Local Port Fallback Route Configuration
-              fetch("http://127.0.0.1:5000/api/command", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        command: transcript
-    })
-})
-.then(response => {
-    console.log("Response received");
-    return response.json();
-})
-.then(data => {
-    console.log(data);
-    window.open(data.url, "_blank");
-})
-.catch(error => {
-    console.error(error);
-});
+              async function processVoicePayload(transcript) {
+
+    console.log("Sending:", transcript);
+
+    try {
+
+        const response = await fetch("http://127.0.0.1:5000/api/command", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                command: transcript
+            })
+        });
+
+
+        console.log("HTTP Status:", response.status);
+
+
+        const data = await response.json();
+
+        console.log("FULL BACKEND RESPONSE:", data);
+
+
+    } catch(error) {
+
+        console.error("FETCH ERROR:", error);
+
+    }
+}
 
             function animateTelemetryCanvas() {
                 if (!SystemState.isListening) return;
