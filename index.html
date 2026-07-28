@@ -429,7 +429,7 @@
 <body>
 
     <nav>
-        <div class="logo">Cognitive AI</div>
+        <div class="logo">Cognitive AI </div>
         <ul>
             <li><a href="#home">Console</a></li>
             <li><a href="#dashboard">Live Matrix</a></li>
@@ -437,7 +437,7 @@
     </nav>
 
     <section class="hero" id="home">
-        <h1>Cognitive Speech AI</h1>
+        <h1> Cognitive Speech AI  </h1>
         <p>A multi-modal machine array stream synthesizing robotic neural processing patterns with real-time semantic execution.</p>
 
         <div class="voice-console-card">
@@ -578,7 +578,7 @@
         </div>
     </section>
 
-    <footer>
+    <footer> 
         &copy; 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K
     </footer>
 
@@ -693,34 +693,40 @@
                 SystemState.voiceSynth.speak(utterance);
             }
 
-            async function processVoicePayload(transcript) {
+            function processVoicePayload(transcript) {
                 const text = transcript.trim();
                 voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
-                console.log("Sending:", text);
 
-                try {
-                    const response = await fetch("http://127.0.0.1:5000/api/command", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            command: text
-                        })
-                    });
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 10000);
 
-                    console.log("HTTP Status:", response.status);
-                    const data = await response.json();
-                    console.log("FULL BACKEND RESPONSE:", data);
+                // Default Local Port Fallback Route Configuration
+              async function processVoicePayload(transcript) {
 
-                    if (data && data.response) {
-                        executeRoboticSpeech(data.response);
-                    }
-                } catch(error) {
-                    console.error("FETCH ERROR:", error);
-                    executeRoboticSpeech("Error communicating with processing core.");
-                }
-            }
+    console.log("Sending:", transcript);
+
+    try {
+
+       fetch("http://127.0.0.1:5000/api/command", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        command: transcript
+    })
+})
+.then(response => {
+    console.log("Response received");
+    return response.json();
+})
+.then(data => {
+    console.log(data);
+    window.open(data.url, "_blank");
+})
+.catch(error => {
+    console.error(error);
+});
 
             function animateTelemetryCanvas() {
                 if (!SystemState.isListening) return;
@@ -825,107 +831,97 @@
                 liveSampleRate.textContent = "0.0 kHz";
             }
 
-            async function toggleVoiceCaptureSystem() {
-                if (SystemState.isListening) {
-                    stopVoiceCaptureSystem();
-                } else {
-                    await startVoiceCaptureSystem();
-                }
-            }
+            function toggleVoiceCaptureSystem() {
+                if (!SystemState.isListening) {
+                    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                        SystemState.isListening = true;
+                        SystemState.stream = stream;
+                        SystemState.shouldRestartRecognition = true;
 
-            async function startVoiceCaptureSystem() {
-                try {
-                    SystemState.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    const source = SystemState.audioContext.createMediaStreamSource(SystemState.stream);
-                    SystemState.analyser = SystemState.audioContext.createAnalyser();
-                    SystemState.analyser.fftSize = 64;
-                    source.connect(SystemState.analyser);
-                    SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
+                        voiceBtn.classList.add("listening");
+                        document.getElementById("voiceText").textContent = "Terminate System Loop";
+                        voiceStatusDot.className = "status-dot active";
+                        voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
+                        voiceModuleStatus.textContent = "AMBIENT WATCH";
+                        voiceModuleStatus.classList.add("active");
+                        voiceProcessingPanel?.classList.add("voice-pulse-highlight");
 
-                    liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
+                        voiceTranscript.innerHTML = '<span style="color:var(--neon-blue);">[Core Online. Say "SYSTEM..." followed by your request.]</span>';
 
-                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    if (SpeechRecognition) {
-                        SystemState.recognition = new SpeechRecognition();
-                        SystemState.recognition.continuous = true;
-                        SystemState.recognition.interimResults = true;
+                        SystemState.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        SystemState.analyser = SystemState.audioContext.createAnalyser();
+                        SystemState.analyser.fftSize = 32;
+                        const bufferLength = SystemState.analyser.frequencyBinCount;
+                        SystemState.dataArray = new Uint8Array(bufferLength);
 
-                        SystemState.recognition.onresult = (event) => {
-                            let interimTranscript = '';
-                            let finalTranscript = '';
+                        const source = SystemState.audioContext.createMediaStreamSource(stream);
+                        source.connect(SystemState.analyser);
 
-                            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                                if (event.results[i].isFinal) {
-                                    finalTranscript += event.results[i][0].transcript;
-                                } else {
-                                    interimTranscript += event.results[i][0].transcript;
+                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
+
+                        setTimeout(() => {
+                            executeRoboticSpeech("System array online. I am actively monitoring.");
+                        }, 400);
+
+                        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                            SystemState.recognition = new SpeechRecognition();
+
+                            SystemState.recognition.continuous = true; 
+                            SystemState.recognition.interimResults = false;
+                            SystemState.recognition.lang = 'en-US';
+
+                            SystemState.recognition.onresult = (event) => {
+                                let cleanBuffer = '';
+                                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                    if (event.results[i].isFinal) {
+                                        cleanBuffer += event.results[i][0].transcript;
+                                    }
                                 }
-                            }
 
-                            if (finalTranscript !== '') {
-                                processVoicePayload(finalTranscript);
-                            } else if (interimTranscript !== '') {
-                                voiceTranscript.innerHTML = `<span style="color:var(--text-secondary);">> ${interimTranscript}...</span>`;
-                            }
-                        };
+                                if (!cleanBuffer || cleanBuffer.trim() === '') return;
+                                processVoicePayload(cleanBuffer);
+                            };
 
-                        SystemState.recognition.onend = () => {
-                            if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                                try { SystemState.recognition.start(); } catch(e){}
-                            }
-                        };
+                            SystemState.recognition.onerror = (err) => {
+                                console.error("Speech Engine Error:", err);
+                            };
 
-                        SystemState.recognition.start();
-                    }
+                            SystemState.recognition.onend = () => {
+                                if (SystemState.isListening && SystemState.shouldRestartRecognition) {
+                                    try { SystemState.recognition.start(); } catch(e){}
+                                }
+                            };
 
-                    SystemState.isListening = true;
-                    voiceBtn.classList.add("listening");
-                    document.getElementById("voiceText").textContent = "Terminate Assistant Stream";
-                    voiceStatusDot.className = "status-dot active";
-                    voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                    voiceModuleStatus.textContent = "ACTIVE";
-                    voiceModuleStatus.classList.add("active");
-                    voiceProcessingPanel.classList.add("voice-pulse-highlight");
-                    emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
-                    emotionTokenDisplay.style.color = "var(--neon-green)";
+                            SystemState.recognition.start();
+                        }
 
-                    animateTelemetryCanvas();
-                } catch (err) {
-                    console.error("Audio initialization error:", err);
-                    voiceStatusText.textContent = "Microphone Access Denied";
+                        animateTelemetryCanvas();
+                    }).catch(err => {
+                        console.error("Microphone Access Denied:", err);
+                        alert("Microphone capture failure. Check permissions configuration parameters.");
+                    });
+                } else {
+                    // Shutdown Execution Pipelines cleanly
+                    SystemState.isListening = false;
+                    SystemState.shouldRestartRecognition = false;
+
+                    if (SystemState.recognition) SystemState.recognition.stop();
+                    if (SystemState.animationFrameId) cancelAnimationFrame(SystemState.animationFrameId);
+                    if (SystemState.stream) SystemState.stream.getTracks().forEach(track => track.stop());
+                    if (SystemState.audioContext) SystemState.audioContext.close();
+
+                    voiceBtn.classList.remove("listening");
+                    document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
+                    voiceStatusDot.className = "status-dot";
+                    voiceStatusText.textContent = "Acoustic Core Offline";
+                    voiceModuleStatus.textContent = "STANDBY";
+                    voiceModuleStatus.classList.remove("active");
+                    voiceProcessingPanel?.classList.remove("voice-pulse-highlight");
+                    voiceTranscript.innerHTML = '<span class="transcript-placeholder">System pipeline deactivated. Core offline.</span>';
+
+                    resetAllUIValues();
                 }
-            }
-
-            function stopVoiceCaptureSystem() {
-                SystemState.isListening = false;
-                SystemState.shouldRestartRecognition = false;
-
-                if (SystemState.recognition) {
-                    SystemState.recognition.stop();
-                }
-
-                if (SystemState.stream) {
-                    SystemState.stream.getTracks().forEach(track => track.stop());
-                }
-
-                if (SystemState.audioContext) {
-                    SystemState.audioContext.close();
-                }
-
-                if (SystemState.animationFrameId) {
-                    cancelAnimationFrame(SystemState.animationFrameId);
-                }
-
-                voiceBtn.classList.remove("listening");
-                document.getElementById("voiceText").textContent = "Initialize Ambient Assistant Loop";
-                voiceStatusDot.className = "status-dot";
-                voiceStatusText.textContent = "Acoustic Core Offline";
-                voiceModuleStatus.textContent = "STANDBY";
-                voiceModuleStatus.classList.remove("active");
-                voiceProcessingPanel.classList.remove("voice-pulse-highlight");
-
-                resetAllUIValues();
             }
         });
     </script>
