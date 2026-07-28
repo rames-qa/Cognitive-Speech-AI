@@ -701,28 +701,26 @@
                 const timeout = setTimeout(() => controller.abort(), 10000);
 
                 // Default Local Port Fallback Route Configuration
-                fetch("http://127.0.0.1:5000/api/command", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ command: text }),
-                    signal: controller.signal
-                })
-                .then(async (res) => {
-                    clearTimeout(timeout);
-                    if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
-                    return await res.json();
-                })
-                .then(data => {
-                    console.log("Backend Response:", data);
-                    if (data?.action) executeRoboticSpeech(data.action);
-                    if (data?.url) window.open(data.url, "_blank");
-                })
-                .catch(err => {
-                    clearTimeout(timeout);
-                    console.error("Flask Connection Error:", err);
-                    executeRoboticSpeech("Backend connection failed.");
-                });
-            }
+              fetch("http://127.0.0.1:5000/api/command", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        command: transcript
+    })
+})
+.then(response => {
+    console.log("Response received");
+    return response.json();
+})
+.then(data => {
+    console.log(data);
+    window.open(data.url, "_blank");
+})
+.catch(error => {
+    console.error(error);
+});
 
             function animateTelemetryCanvas() {
                 if (!SystemState.isListening) return;
