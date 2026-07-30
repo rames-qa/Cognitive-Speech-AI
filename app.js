@@ -194,6 +194,7 @@ PLATFORM_REGISTRY = {
     },
 }
 
+
 # DYNAMIC NLP PARSING ENGINE
 def resolve_intent_and_query(command):
     command = command.lower().strip()
