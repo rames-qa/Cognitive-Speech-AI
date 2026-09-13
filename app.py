@@ -14,7 +14,7 @@ class CommandModel(BaseModel):
     command: str
 @app.post("/api/command")
 def handle_command(payload: CommandModel):
-    user_command = payload.command.lower()   
+    user_command = payload.command.lower()      
     # Intent mapping for speech commands
     if "youtube" in user_command:
         return {
@@ -30,7 +30,7 @@ def handle_command(payload: CommandModel):
         return {
             "action": "All cognitive neural arrays and vision matrix modules are operating at peak efficiency.",
             "url": None
-        } 
+        }  
     # General fallback response
     return {
         "action": f"Processed command string: {user_command}",
