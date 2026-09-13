@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-app = FastAPI(title="Cognitive Speech AI Backend", version="1.0")
+app = FastAPI()
 
-# Enable CORS for local development and frontend integration
+# Crucial: Allow browser requests from local or remote origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -12,7 +12,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 class CommandModel(BaseModel):
     command: str
 
