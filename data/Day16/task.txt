@@ -1,4 +1,0 @@
-Day 16 Work
-Topic: Python Practice
-Task: Complete coding exercises
-Status: Pending

@@ -1,4 +1,0 @@
-Day 57 Work
-Topic: Python Practice
-Task: Complete coding exercises
-Status: Pending

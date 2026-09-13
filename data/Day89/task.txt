@@ -1,4 +1,0 @@
-Day 89 Work
-Topic: Python Practice
-Task: Complete coding exercises
-Status: Pending
