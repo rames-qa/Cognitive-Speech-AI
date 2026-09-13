@@ -11,23 +11,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
-
 # SYSTEM SETUP & CONFIGURATION
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 automation_lock = threading.Lock()
 active_driver = None
-
-
 # HELPER FUNCTIONS
 def build_google_maps_search(query):
     return f"https://www.google.com/maps/search/{urllib.parse.quote(query)}"
-
-
 def build_google_maps_direction(source, destination):
     return f"https://www.google.com/maps/dir/{urllib.parse.quote(source)}/{urllib.parse.quote(destination)}"
-
-
 # COMPLETELY DYNAMIC REGISTRY CONFIGURATION
 PLATFORM_REGISTRY = {
     "amazon": {
@@ -218,7 +211,6 @@ def resolve_intent_and_query(command):
                 break
         if matched_platform:
             break
-
     action_patterns = [
         r"\btell me about\b",
         r"\bdetails of\b",
@@ -243,12 +235,8 @@ def resolve_intent_and_query(command):
         clean_query = re.sub(pattern, " ", clean_query)
     extracted_query = " ".join(clean_query.split())
     return matched_platform, extracted_query
-
-
 def build_api_payload(status, action, url=""):
     return jsonify({"status": status, "action": action, "url": url})
-
-
 # ASYNC AUTOMATION PIPELINE RUNNER
 def execute_amazon_pipeline():
     global active_driver
@@ -262,26 +250,21 @@ def execute_amazon_pipeline():
     )
     try:
         options = webdriver.ChromeOptions()
-
         # Headless Configuration
         options.add_argument("--headless=new")
         options.add_argument("--disable-gpu")
         options.add_argument("--window-size=1920,1080")
-
         # Sandbox Safety Setups
         options.add_argument("--start-maximized")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
         options.add_experimental_option("detach", True)
-
         # Standardizing driver executable setup via Service object instantiation
         chrome_service = Service(ChromeDriverManager().install())
         active_driver = webdriver.Chrome(
             service=chrome_service, options=options
         )
-
         active_driver.get(PLATFORM_REGISTRY["amazon"]["base_url"])
-
         wait = WebDriverWait(active_driver, 12)
         signin_node = wait.until(
             EC.element_to_be_clickable((By.ID, "nav-link-accountList"))
@@ -303,8 +286,6 @@ def execute_amazon_pipeline():
             active_driver = None
     finally:
         automation_lock.release()
-
-
 # DYNAMIC ENDPOINT ROUTING MANAGEMENT
 @app.route("/api/command", methods=["POST"])
 def process_incoming_command():
@@ -380,8 +361,6 @@ def process_incoming_command():
             ),
             500,
         )
-
-
 @app.route("/api/close_session", methods=["POST"])
 def terminate_orphaned_drivers():
     global active_driver
@@ -399,15 +378,11 @@ def terminate_orphaned_drivers():
         return build_api_payload(
             "error", f"Node teardown exception: {str(error)}"
         )
-
-
 @app.route("/")
 def health_check():
     return jsonify(
         {"status": "online", "service": "Adaptive Codespace Pipeline"}
     )
-
-
 if __name__ == "__main__":
     logging.getLogger("werkzeug").setLevel(logging.ERROR)
     print("\n" + "=" * 65)
