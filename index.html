@@ -604,6 +604,7 @@
             };
 
             const voiceBtn = document.getElementById("btnVoiceTrigger");
+            const voiceText = document.getElementById("voiceText");
             const voiceStatusDot = document.getElementById("voiceStatusDot");
             const voiceStatusText = document.getElementById("voiceStatusText");
             const voiceTranscript = document.getElementById("voiceTranscript");
@@ -643,8 +644,8 @@
                 if (!SystemState.voiceSynth) return;
                 let voices = SystemState.voiceSynth.getVoices();
                 SystemState.roboticVoice = voices.find(v => v.lang.includes('en-US') && v.name.toLowerCase().includes('google')) || 
-                                             voices.find(v => v.lang.includes('en-US')) || 
-                                             voices[0];
+                                           voices.find(v => v.lang.includes('en-US')) || 
+                                           voices[0];
             }
 
             if (window.speechSynthesis) {
@@ -831,66 +832,54 @@
                         source.connect(SystemState.analyser);
                         SystemState.dataArray = new Uint8Array(SystemState.analyser.frequencyBinCount);
 
-                        liveSampleRate.textContent = `${(SystemState.audioContext.sampleRate / 1000).toFixed(1)} kHz`;
-                    } catch (e) {
-                        console.warn("Microphone access denied or unavailable:", e);
-                    }
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        if (SpeechRecognition) {
+                            SystemState.recognition = new SpeechRecognition();
+                            SystemState.recognition.continuous = true;
+                            SystemState.recognition.interimResults = true;
+                            SystemState.recognition.lang = 'en-US';
 
-                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    if (SpeechRecognition) {
-                        SystemState.recognition = new SpeechRecognition();
-                        SystemState.recognition.continuous = true;
-                        SystemState.recognition.interimResults = true;
-                        SystemState.recognition.lang = 'en-US';
-
-                        SystemState.recognition.onresult = (event) => {
-                            let interimTranscript = '';
-                            let finalTranscript = '';
-
-                            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                                if (event.results[i].isFinal) {
-                                    finalTranscript += event.results[i][0].transcript;
-                                } else {
-                                    interimTranscript += event.results[i][0].transcript;
+                            SystemState.recognition.onresult = (event) => {
+                                let interim = '';
+                                let final = '';
+                                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                                    if (event.results[i].isFinal) {
+                                        final += event.results[i][0].transcript;
+                                    } else {
+                                        interim += event.results[i][0].transcript;
+                                    }
                                 }
-                            }
-
-                            if (finalTranscript) {
-                                processVoicePayload(finalTranscript);
-                            } else if (interimTranscript) {
-                                voiceTranscript.innerHTML = `<span style="color:var(--text-secondary);">> ${interimTranscript}</span>`;
-                            }
-                        };
-
-                        SystemState.recognition.onerror = (event) => {
-                            console.warn("Speech Recognition Error:", event.error);
-                        };
-
-                        SystemState.recognition.onend = () => {
-                            if (SystemState.isListening && SystemState.shouldRestartRecognition) {
-                                try { SystemState.recognition.start(); } catch(e){}
-                            }
-                        };
-
-                        try {
+                                if (final) {
+                                    processVoicePayload(final);
+                                } else if (interim) {
+                                    voiceTranscript.innerHTML = `<span style="color:var(--neon-blue);">> ${interim}</span>`;
+                                }
+                            };
+                            SystemState.recognition.onerror = (e) => {
+                                console.warn("Speech Recognition Error:", e.error);
+                            };
+                            SystemState.recognition.onend = () => {
+                                if (SystemState.isListening && SystemState.shouldRestartRecognition) {
+                                    try { SystemState.recognition.start(); } catch(e){}
+                                }
+                            };
                             SystemState.recognition.start();
-                        } catch (e) {
-                            console.warn("Could not start SpeechRecognition:", e);
                         }
+                        SystemState.isListening = true;
+                        voiceBtn.classList.add("listening");
+                        voiceText.textContent = "Terminate Ambient Assistant Loop";
+                        voiceStatusDot.className = "status-dot active";
+                        voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
+                        voiceModuleStatus.textContent = "ACTIVE";
+                        voiceModuleStatus.className = "audio-pill-badge active";
+                        voiceProcessingPanel.classList.add("voice-pulse-highlight");
+                        emotionTokenDisplay.textContent = "AMBIENT WATCH ACTIVE";
+                        emotionTokenDisplay.style.color = "var(--neon-green)";
+                        animateTelemetryCanvas();
+                    } catch (err) {
+                        console.error("Microphone Access Denied:", err);
+                        alert("Microphone permission is required to initialize the acoustic loop.");
                     }
-
-                    SystemState.isListening = true;
-                    voiceBtn.classList.add("listening");
-                    voiceBtn.querySelector("#voiceText").textContent = "Terminate Ambient Assistant Loop";
-                    voiceStatusDot.className = "status-dot active";
-                    voiceStatusText.textContent = "Ambient Wake-Word Engine Operational";
-                    voiceModuleStatus.textContent = "ONLINE";
-                    voiceModuleStatus.className = "audio-pill-badge active";
-                    voiceProcessingPanel.classList.add("voice-pulse-highlight");
-                    emotionTokenDisplay.textContent = "READY FOR INPUT";
-                    emotionTokenDisplay.style.color = "var(--neon-green)";
-
-                    animateTelemetryCanvas();
                 } else {
                     SystemState.isListening = false;
                     if (SystemState.recognition) {
@@ -906,16 +895,14 @@
                     if (SystemState.animationFrameId) {
                         cancelAnimationFrame(SystemState.animationFrameId);
                     }
-
                     voiceBtn.classList.remove("listening");
-                    voiceBtn.querySelector("#voiceText").textContent = "Initialize Ambient Assistant Loop";
+                    voiceText.textContent = "Initialize Ambient Assistant Loop";
                     voiceStatusDot.className = "status-dot";
                     voiceStatusText.textContent = "Acoustic Core Offline";
                     voiceModuleStatus.textContent = "STANDBY";
                     voiceModuleStatus.className = "audio-pill-badge";
                     voiceProcessingPanel.classList.remove("voice-pulse-highlight");
                     voiceTranscript.innerHTML = `<span class="transcript-placeholder">Say "SYSTEM" followed by your command. Click initialization trigger below to begin standard smart loop monitoring.</span>`;
-
                     resetAllUIValues();
                 }
             }
