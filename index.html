@@ -615,13 +615,18 @@
                 const text = transcript.trim();
                 voiceTranscript.innerHTML = `<span style="color:#fff;">> ${text}</span>`;
                 const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 10000);
-                fetch("http://127.0.0.1:5000/api/command", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ command: text }),
-                    signal: controller.signal
-                })
+              const timeout = setTimeout(() => controller.abort(), 10000);
+
+const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? "http://127.0.0.1:5000/api/command"
+    : "https://your-backend-app-name.onrender.com/api/command"; // Replace with your actual hosted backend URL
+
+fetch(backendUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ command: text }),
+    signal: controller.signal
+})
                 .then(async (res) => {
                     clearTimeout(timeout);
                     if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
