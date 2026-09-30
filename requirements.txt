@@ -1,3 +1,9 @@
+flask
+flask-cors
+psutil
+requests
+selenium
+webdriver-manager
 fastapi
 uvicorn
 pydantic
