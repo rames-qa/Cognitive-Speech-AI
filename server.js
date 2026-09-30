@@ -4,6 +4,7 @@ const { exec } = require('child_process');
 const os = require('os');
 const si = require('systeminformation');
 const http = require('http');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,7 +12,7 @@ const FLASK_PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const platform = os.platform();
 
@@ -27,7 +28,7 @@ function runOSCommand(cmd) {
     });
 }
 
-// Route handling for both local OS actions and Python automation bridge
+// Unified Cognitive Processing Route
 app.post('/api/process-cognitive', async (req, res) => {
     const { prompt } = req.body;
     if (!prompt) {
@@ -111,5 +112,5 @@ app.post('/api/process-cognitive', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Unified Voice & OS Hub active on http://localhost:${PORT}`);
+    console.log(`🚀 Unified Voice & OS Hub active on http://localhost:${PORT}`);
 });
