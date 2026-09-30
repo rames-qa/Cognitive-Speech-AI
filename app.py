@@ -44,7 +44,21 @@ kill_process_on_port(5000)
 
 # --- SYSTEM SETUP & CONFIGURATION ---
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+# Allow requests from your GitHub Pages domain, plus localhost for local testing
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "https://rames-qa.github.io",
+                "http://localhost",
+                "http://127.0.0.1",
+            ]
+        }
+    },
+)
+
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 # --- GLOBAL STATE ---
@@ -79,7 +93,7 @@ PLATFORM_REGISTRY = {
     "youtube": {
         "base_url": "https://www.youtube.com",
         "search_path": "/results?search_query=",
-        "aliases": ["video", "song", "music", "videos"],
+        "aliases": ["video", "song", "music"],
         "has_automation": False,
     },
     "news": {
@@ -288,7 +302,7 @@ HTML_TEMPLATE = """
         <button id="mic-btn" class="btn btn-speak">🎤 Speak Command</button>
         
         <form id="cmd-form">
-            <input type="text" id="cmd-input" placeholder="Or type e.g., 'Open YouTube' or 'Open Gmail'">
+            <input type="text" id="cmd-input" placeholder="Or type e.g., 'Open Amazon' or 'Search news Python'">
             <button type="submit" class="btn">Execute Command</button>
         </form>
 
@@ -303,12 +317,14 @@ HTML_TEMPLATE = """
         const actionText = document.getElementById('action-text');
         const cmdInput = document.getElementById('cmd-input');
 
+        const BACKEND_URL = "http://localhost:5000";
+
         async function sendCommand(commandStr) {
             statusText.innerText = "Processing...";
-            actionText.innerText = "Sending payload to /api/command";
+            actionText.innerText = "Sending payload to Python backend...";
 
             try {
-                const res = await fetch('/api/command', {
+                const res = await fetch(`${BACKEND_URL}/api/command`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ command: commandStr })
@@ -318,12 +334,18 @@ HTML_TEMPLATE = """
                 statusText.innerText = data.status.toUpperCase();
                 actionText.innerText = data.action;
 
+                // Siri-like Voice feedback (Text-to-Speech)
+                if (data.action && 'speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(data.action);
+                    window.speechSynthesis.speak(utterance);
+                }
+
                 if (data.url) {
                     window.open(data.url, '_blank');
                 }
             } catch (err) {
                 statusText.innerText = "Error";
-                actionText.innerText = "Failed to connect to backend.";
+                actionText.innerText = "Failed to connect to local Python backend.";
                 console.error(err);
             }
         }
