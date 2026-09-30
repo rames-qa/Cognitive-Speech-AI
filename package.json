@@ -8,11 +8,22 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "systeminformation": "^5.21.0"
+    "cors": "^2.8.6",
+    "express": "^4.22.3",
+    "systeminformation": "^5.33.14"
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rames-qa/Cognitive-Speech-AI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rames-qa/Cognitive-Speech-AI/issues"
+  },
+  "homepage": "https://github.com/rames-qa/Cognitive-Speech-AI#readme"
 }
