@@ -1,0 +1,16 @@
+name: cognitive-ai
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - flask
+  - requests
+  - psutil
+  - pip:
+    - fastapi
+    - uvicorn
+    - pydantic
+    - selenium
+    - webdriver-manager
+    - flask-cors
