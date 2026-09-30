@@ -79,7 +79,7 @@ PLATFORM_REGISTRY = {
     "youtube": {
         "base_url": "https://www.youtube.com",
         "search_path": "/results?search_query=",
-        "aliases": ["video", "song", "music"],
+        "aliases": ["video", "song", "music", "videos"],
         "has_automation": False,
     },
     "news": {
@@ -288,7 +288,7 @@ HTML_TEMPLATE = """
         <button id="mic-btn" class="btn btn-speak">🎤 Speak Command</button>
         
         <form id="cmd-form">
-            <input type="text" id="cmd-input" placeholder="Or type e.g., 'Open Amazon' or 'Search news Python'">
+            <input type="text" id="cmd-input" placeholder="Or type e.g., 'Open YouTube' or 'Open Gmail'">
             <button type="submit" class="btn">Execute Command</button>
         </form>
 
