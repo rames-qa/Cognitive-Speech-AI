@@ -21,23 +21,23 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # --- UTILITY: PORT REUSE CLEANER ---
 def kill_process_on_port(port):
-  """Dynamically releases port 5000 if locked by an orphaned process."""
-  for proc in psutil.process_iter(['pid', 'name']):
-    try:
-      connections_fn = getattr(
-          proc, "net_connections", getattr(proc, "connections", None)
-      )
-      if connections_fn:
-        for conn in connections_fn(kind='inet'):
-          if conn.laddr.port == port:
-            print(
-                f"[PORT GUARD] Terminating {proc.info['name']} (PID:"
-                f" {proc.info['pid']}) holding port {port}..."
+    """Dynamically releases port 5000 if locked by an orphaned process."""
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            connections_fn = getattr(
+                proc, "net_connections", getattr(proc, "connections", None)
             )
-            proc.terminate()
-            proc.wait(timeout=2)
-    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-      pass
+            if connections_fn:
+                for conn in connections_fn(kind='inet'):
+                    if conn.laddr.port == port:
+                        print(
+                            f"[PORT GUARD] Terminating {proc.info['name']} (PID:"
+                            f" {proc.info['pid']}) holding port {port}..."
+                        )
+                        proc.terminate()
+                        proc.wait(timeout=2)
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
 
 
 kill_process_on_port(5000)
@@ -140,124 +140,124 @@ PLATFORM_REGISTRY = {
 
 
 def resolve_intent_and_query(command):
-  command = command.lower().strip()
-  matched_platform = None
+    command = command.lower().strip()
+    matched_platform = None
 
-  sorted_platforms = sorted(
-      PLATFORM_REGISTRY.items(),
-      key=lambda item: max(
-          [len(term) for term in [item[0]] + item[1].get("aliases", [])]
-      ),
-      reverse=True,
-  )
-  for target_key, config in sorted_platforms:
-    search_terms = [target_key] + config.get("aliases", [])
-    for term in search_terms:
-      if re.search(r"\b" + re.escape(term) + r"\b", command):
-        matched_platform = target_key
-        command = re.sub(
-            r"\b" + re.escape(term) + r"\b", "", command
-        ).strip()
-        break
-    if matched_platform:
-      break
+    sorted_platforms = sorted(
+        PLATFORM_REGISTRY.items(),
+        key=lambda item: max(
+            [len(term) for term in [item[0]] + item[1].get("aliases", [])]
+        ),
+        reverse=True,
+    )
+    for target_key, config in sorted_platforms:
+        search_terms = [target_key] + config.get("aliases", [])
+        for term in search_terms:
+            if re.search(r"\b" + re.escape(term) + r"\b", command):
+                matched_platform = target_key
+                command = re.sub(
+                    r"\b" + re.escape(term) + r"\b", "", command
+                ).strip()
+                break
+        if matched_platform:
+            break
 
-  action_patterns = [
-      r"\btell me about\b",
-      r"\bdetails of\b",
-      r"\bsearch for\b",
-      r"\bopen up\b",
-      r"\broute to\b",
-      r"\bshow me\b",
-      r"\bgo to\b",
-      r"\bsearch\b",
-      r"\blaunch\b",
-      r"\bstart\b",
-      r"\bplay\b",
-      r"\bfind\b",
-      r"\bopen\b",
-      r"\bon\b",  # Fixed \b regex pattern
-      r"\bfor\b",
-      r"\bat\b",
-      r"\band\b",
-  ]
-  clean_query = command
-  for pattern in action_patterns:
-    clean_query = re.sub(pattern, " ", clean_query)
-  extracted_query = " ".join(clean_query.split())
-  return matched_platform, extracted_query
+    action_patterns = [
+        r"\btell me about\b",
+        r"\bdetails of\b",
+        r"\bsearch for\b",
+        r"\bopen up\b",
+        r"\broute to\b",
+        r"\bshow me\b",
+        r"\bgo to\b",
+        r"\bsearch\b",
+        r"\blaunch\b",
+        r"\bstart\b",
+        r"\bplay\b",
+        r"\bfind\b",
+        r"\bopen\b",
+        r"\bon\b",
+        r"\bfor\b",
+        r"\bat\b",
+        r"\band\b",
+    ]
+    clean_query = command
+    for pattern in action_patterns:
+        clean_query = re.sub(pattern, " ", clean_query)
+    extracted_query = " ".join(clean_query.split())
+    return matched_platform, extracted_query
 
 
 def get_configured_driver():
-  options = webdriver.ChromeOptions()
-  options.add_argument("--start-maximized")
-  options.add_argument("--disable-gpu")
-  options.add_argument("--disable-dev-shm-usage")
-  options.add_argument("--no-sandbox")
-  options.add_experimental_option("excludeSwitches", ["enable-automation"])
-  options.add_experimental_option("useAutomationExtension", False)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--no-sandbox")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option("useAutomationExtension", False)
 
-  chrome_service = Service(ChromeDriverManager().install())
-  return webdriver.Chrome(service=chrome_service, options=options)
+    chrome_service = Service(ChromeDriverManager().install())
+    return webdriver.Chrome(service=chrome_service, options=options)
 
 
 def run_platform_automation(platform, query):
-  global active_driver, current_automation_status
-  if not automation_lock.acquire(blocking=False):
-    current_automation_status = "Engine locked. Pipeline busy."
-    return
+    global active_driver, current_automation_status
+    if not automation_lock.acquire(blocking=False):
+        current_automation_status = "Engine locked. Pipeline busy."
+        return
 
-  local_driver = None
-  try:
-    current_automation_status = f"Spinning up driver for {platform.title()}..."
-    local_driver = get_configured_driver()
-    active_driver = local_driver
-
-    platform_config = PLATFORM_REGISTRY[platform]
-
-    if platform == "amazon":
-      current_automation_status = "Running Amazon workflow..."
-      local_driver.get(platform_config["base_url"])
-      wait = WebDriverWait(local_driver, 12)
-      signin_node = wait.until(
-          EC.element_to_be_clickable((By.ID, "nav-link-accountList"))
-      )
-      signin_node.click()
-      current_automation_status = "Amazon workflow complete."
-
-    elif platform == "news":
-      current_automation_status = "Scraping media nodes..."
-      target_url = platform_config["base_url"]
-      if query:
-        target_url += (
-            f"{platform_config['search_path']}{urllib.parse.quote(query)}"
-        )
-      local_driver.get(target_url)
-      time.sleep(4)
-
-      headlines = local_driver.find_elements(By.TAG_NAME, "h4")
-      top_stories = [h.text for h in headlines[:3] if h.text]
-      if top_stories:
-        current_automation_status = (
-            f"News update: {', '.join(top_stories[:2])}"
-        )
-      else:
-        current_automation_status = "News page parsed completely."
-
-  except Exception as error:
-    current_automation_status = f"Error: {str(error)[:35]}..."
-    print(f"[SELENIUM FAULT] Pipeline exception: {error}", file=sys.stderr)
-    if local_driver:
-      try:
-        local_driver.quit()
-      except Exception:
-        pass
-    active_driver = None
-  finally:
+    local_driver = None
     try:
-      automation_lock.release()
-    except RuntimeError:
-      pass
+        current_automation_status = f"Spinning up driver for {platform.title()}..."
+        local_driver = get_configured_driver()
+        active_driver = local_driver
+
+        platform_config = PLATFORM_REGISTRY[platform]
+
+        if platform == "amazon":
+            current_automation_status = "Running Amazon workflow..."
+            local_driver.get(platform_config["base_url"])
+            wait = WebDriverWait(local_driver, 12)
+            signin_node = wait.until(
+                EC.element_to_be_clickable((By.ID, "nav-link-accountList"))
+            )
+            signin_node.click()
+            current_automation_status = "Amazon workflow complete."
+
+        elif platform == "news":
+            current_automation_status = "Scraping media nodes..."
+            target_url = platform_config["base_url"]
+            if query:
+                target_url += (
+                    f"{platform_config['search_path']}{urllib.parse.quote(query)}"
+                )
+            local_driver.get(target_url)
+            time.sleep(4)
+
+            headlines = local_driver.find_elements(By.TAG_NAME, "h4")
+            top_stories = [h.text for h in headlines[:3] if h.text]
+            if top_stories:
+                current_automation_status = (
+                    f"News update: {', '.join(top_stories[:2])}"
+                )
+            else:
+                current_automation_status = "News page parsed completely."
+
+    except Exception as error:
+        current_automation_status = f"Error: {str(error)[:35]}..."
+        print(f"[SELENIUM FAULT] Pipeline exception: {error}", file=sys.stderr)
+        if local_driver:
+            try:
+                local_driver.quit()
+            except Exception:
+                pass
+        active_driver = None
+    finally:
+        try:
+            automation_lock.release()
+        except RuntimeError:
+            pass
 
 
 # --- BUILT-IN FRONTEND DASHBOARD ---
@@ -303,7 +303,6 @@ HTML_TEMPLATE = """
         const actionText = document.getElementById('action-text');
         const cmdInput = document.getElementById('cmd-input');
 
-        // FUNCTION TO SEND COMMAND TO FLASK BACKEND
         async function sendCommand(commandStr) {
             statusText.innerText = "Processing...";
             actionText.innerText = "Sending payload to /api/command";
@@ -319,7 +318,6 @@ HTML_TEMPLATE = """
                 statusText.innerText = data.status.toUpperCase();
                 actionText.innerText = data.action;
 
-                // Open link automatically if returned
                 if (data.url) {
                     window.open(data.url, '_blank');
                 }
@@ -330,14 +328,12 @@ HTML_TEMPLATE = """
             }
         }
 
-        // HANDLE MANUAL FORM SUBMISSION
         document.getElementById('cmd-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const val = cmdInput.value.trim();
             if (val) sendCommand(val);
         });
 
-        // HANDLE SPEECH RECOGNITION (WEB SPEECH API)
         const micBtn = document.getElementById('mic-btn');
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -368,139 +364,124 @@ HTML_TEMPLATE = """
 
 
 def build_api_payload(status, action, url=""):
-  return jsonify({"status": status, "action": action, "url": url})
+    return jsonify({"status": status, "action": action, "url": url})
 
 
 @app.route("/")
 def index():
-  return render_template_string(HTML_TEMPLATE)
+    return render_template_string(HTML_TEMPLATE)
 
 
 @app.route("/api/system-metrics", methods=["GET"])
 def get_system_metrics():
-  cpu = psutil.cpu_percent(interval=None)
-  ram = psutil.virtual_memory().percent
-  return jsonify({
-      "cpu": cpu,
-      "ram": ram,
-      "automation_status": current_automation_status,
-  })
+    cpu = psutil.cpu_percent(interval=None)
+    ram = psutil.virtual_memory().percent
+    return jsonify({
+        "cpu": cpu,
+        "ram": ram,
+        "automation_status": current_automation_status,
+    })
 
 
 @app.route("/api/command", methods=["POST"])
 def process_incoming_command():
-  try:
-    payload = request.get_json(force=True) or {}
-    raw_input = payload.get("command", "").strip()
-    if not raw_input:
-      return build_api_payload(
-          "empty", "No payload execution vector supplied."
-      )
+    try:
+        payload = request.get_json(force=True) or {}
+        raw_input = payload.get("command", "").strip()
+        if not raw_input:
+            return build_api_payload("empty", "No payload execution vector supplied.")
 
-    command = raw_input.lower()
-    print(f"[INGRESS] Routing Vector Received -> {command}")
+        command = raw_input.lower()
+        print(f"[INGRESS] Routing Vector Received -> {command}")
 
-    if any(
-        token in command
-        for token in ["system", "status", "connected", "dashboard"]
-    ):
-      return build_api_payload(
-          "success", "Dynamic infrastructure matrix operational."
-      )
+        if any(token in command for token in ["system", "status", "connected", "dashboard"]):
+            return build_api_payload("success", "Dynamic infrastructure matrix operational.")
 
-    platform, query = resolve_intent_and_query(command)
-    if platform:
-      platform_config = PLATFORM_REGISTRY[platform]
+        platform, query = resolve_intent_and_query(command)
+        if platform:
+            platform_config = PLATFORM_REGISTRY[platform]
 
-      if platform_config["has_automation"] and any(
-          act in command
-          for act in ["login", "automation", "run", "start", "scrape", "open"]
-      ):
-        if automation_lock.locked():
-          return build_api_payload(
-              "busy", "Selenium instance pipeline is currently locked."
-          )
+            if platform_config["has_automation"] and any(
+                act in command for act in ["login", "automation", "run", "start", "scrape", "open"]
+            ):
+                if automation_lock.locked():
+                    return build_api_payload("busy", "Selenium instance pipeline is currently locked.")
 
-        threading.Thread(
-            target=run_platform_automation,
-            args=(platform, query),
-            daemon=True,
-        ).start()
+                threading.Thread(
+                    target=run_platform_automation,
+                    args=(platform, query),
+                    daemon=True,
+                ).start()
+                return build_api_payload(
+                    "success",
+                    f"Triggered active thread runner for {platform}.",
+                    platform_config["base_url"],
+                )
+
+            if query:
+                if platform == "myntra":
+                    target_url = f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
+                else:
+                    target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"
+
+                return build_api_payload(
+                    "success",
+                    f"Dynamic routing mapping for {platform.title()} searching for '{query}'.",
+                    target_url,
+                )
+
+            return build_api_payload(
+                "success",
+                f"Routing request forward to {platform.title()} root node.",
+                platform_config["base_url"],
+            )
+
+        fallback_target = f"https://www.google.com/search?q={urllib.parse.quote(raw_input)}"
         return build_api_payload(
             "success",
-            f"Triggered active automation workflow on {platform.title()}.",
-            platform_config["base_url"],
+            "No localized workspace hit. Default fallback query initiated.",
+            fallback_target,
         )
-
-      if query:
-        if platform == "myntra":
-          target_url = (
-              f"{platform_config['base_url']}/{urllib.parse.quote(query)}"
-          )
-        else:
-          target_url = f"{platform_config['base_url']}{platform_config['search_path']}{urllib.parse.quote(query)}"
-
-        return build_api_payload(
-            "success",
-            (
-                f"Dynamic routing mapping for {platform.title()} searching for"
-                f" '{query}'."
-            ),
-            target_url,
+    except Exception as runtime_error:
+        print(f"[CRITICAL ERROR] Process pipeline crashed: {runtime_error}", file=sys.stderr)
+        return (
+            jsonify({
+                "status": "error",
+                "action": "Internal API infrastructure exception encountered.",
+                "details": str(runtime_error),
+            }),
+            500,
         )
-
-      return build_api_payload(
-          "success",
-          f"Routing request forward to {platform.title()} root node.",
-          platform_config["base_url"],
-      )
-
-    fallback_target = (
-        f"https://www.google.com/search?q={urllib.parse.quote(raw_input)}"
-    )
-    return build_api_payload(
-        "success",
-        "No localized workspace hit. Default fallback query initiated.",
-        fallback_target,
-    )
-  except Exception as runtime_error:
-    print(
-        f"[CRITICAL ERROR] Process pipeline crashed: {runtime_error}",
-        file=sys.stderr,
-    )
-    return (
-        jsonify({
-            "status": "error",
-            "action": "Internal API infrastructure exception encountered.",
-            "details": str(runtime_error),
-        }),
-        500,
-    )
 
 
 @app.route("/api/close_session", methods=["POST"])
 def terminate_orphaned_drivers():
-  global active_driver, current_automation_status
-  try:
-    if automation_lock.locked():
-      try:
-        automation_lock.release()
-      except RuntimeError:
-        pass
+    global active_driver, current_automation_status
+    try:
+        if automation_lock.locked():
+            try:
+                automation_lock.release()
+            except RuntimeError:
+                pass
 
-    if active_driver:
-      try:
-        active_driver.quit()
-      except Exception as e:
-        print(f"[DRIVER CLEANUP ERROR] {e}")
-      finally:
-        active_driver = None
+        if active_driver:
+            try:
+                active_driver.quit()
+            except Exception as e:
+                print(f"[DRIVER CLEANUP ERROR] {e}")
+            finally:
+                active_driver = None
 
-    current_automation_status = "Drivers killed. System idle."
-    return build_api_payload("success", "Active automation drivers terminated.")
-  except Exception as e:
-    return build_api_payload("error", f"Termination failed: {str(e)}")
+        current_automation_status = "Drivers killed. System idle."
+        return build_api_payload("success", "Active automation drivers terminated.")
+    except Exception as e:
+        return build_api_payload("error", f"Termination failed: {str(e)}")
 
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=5000, debug=True)
+    print("\n" + "=" * 65)
+    print("   COGNITIVE SPEECH AI (CODESPACE EDITION)")
+    print("   Operational Scope: Registry-Driven Route Processing Engine")
+    print("   Network Target:    http://0.0.0.0:5000")
+    print("=" * 65 + "\n")
+    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
