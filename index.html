@@ -396,16 +396,203 @@
                 });
             }
 
-            // --- State Machine & Speech Engine ---
-            let isListening = false;
-            let recognition = null;
-            const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
-            const voiceStatusDot = document.getElementById("voiceStatusDot");
-            const voiceStatusText = document.getElementById("voiceStatusText");
-            const voiceTranscript = document.getElementById("voiceTranscript");
-            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
-            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
+            
+// --- Voice Recognition + Flask Backend Integration ---
 
+let isListening = false;
+let recognition = null;
+
+const BACKEND_URL = "http://localhost:5000";
+
+const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
+const voiceStatusDot = document.getElementById("voiceStatusDot");
+const voiceStatusText = document.getElementById("voiceStatusText");
+const voiceTranscript = document.getElementById("voiceTranscript");
+const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
+
+const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+const languageCodes = {
+    en: "en-IN",
+    ta: "ta-IN",
+    hi: "hi-IN",
+    kn: "kn-IN"
+};
+
+function speakResponse(text) {
+    if (!("speechSynthesis" in window)) return;
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = languageCodes[currentLang] || "en-IN";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    utterance.onstart = () => {
+        voiceStatusText.textContent =
+            LocalizationMatrix[currentLang].voiceStatusSpeaking;
+    };
+
+    utterance.onend = () => {
+        voiceStatusText.textContent =
+            LocalizationMatrix[currentLang].voiceStatusActive;
+    };
+
+    window.speechSynthesis.speak(utterance);
+}
+
+async function sendCommandToBackend(command) {
+    voiceStatusText.textContent = "Connecting to Python backend...";
+    emotionTokenDisplay.textContent = "PROCESSING";
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/command`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ command })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Backend returned HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        voiceTranscript.innerHTML =
+            `<div class="text-neonBlue">Command: ${escapeHtml(command)}</div>
+             <div class="text-neonGreen mt-2">Response: ${escapeHtml(data.action || "No response")}</div>`;
+
+        emotionTokenDisplay.textContent =
+            (data.status || "UNKNOWN").toUpperCase();
+
+        speakResponse(data.action || "Command processed.");
+
+        // Navigate to the returned URL if the backend supplies one.
+        if (data.url) {
+            const link = document.createElement("a");
+            link.href = data.url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "Open requested website";
+            link.className = "block mt-3 text-neonBlue underline";
+            voiceTranscript.appendChild(link);
+        }
+
+    } catch (error) {
+        console.error("Backend connection error:", error);
+
+        voiceStatusText.textContent = "Backend Connection Failed";
+        emotionTokenDisplay.textContent = "CONNECTION ERROR";
+
+        speakResponse(
+            "Unable to connect to the Python backend. Please check whether the server is running."
+        );
+    }
+}
+
+function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = languageCodes[currentLang];
+
+    recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (!event.results[i].isFinal) continue;
+
+            const transcript = event.results[i][0].transcript.trim();
+
+            if (!transcript) continue;
+
+            voiceTranscript.textContent = `Recognized: ${transcript}`;
+
+            // Optional wake-word support.
+            const command = transcript.replace(
+                /^system[\s,]+/i, ""
+            ).trim();
+
+            if (command) {
+                sendCommandToBackend(command);
+            }
+        }
+    };
+
+    recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        voiceStatusText.textContent = `Microphone: ${event.error}`;
+    };
+
+    recognition.onend = () => {
+        if (isListening) {
+            try {
+                recognition.start();
+            } catch (error) {
+                console.warn("Recognition restart:", error);
+            }
+        }
+    };
+
+} else {
+    btnVoiceTrigger.disabled = true;
+    voiceStatusText.textContent =
+        "Speech recognition is not supported in this browser.";
+}
+
+btnVoiceTrigger.addEventListener("click", () => {
+    if (!recognition) return;
+
+    if (!isListening) {
+        recognition.lang = languageCodes[currentLang];
+        isListening = true;
+
+        try {
+            recognition.start();
+
+            voiceStatusText.textContent = "Listening...";
+            voiceModuleStatus.textContent = "ACTIVE";
+            emotionTokenDisplay.textContent = "VOICE READY";
+
+            document.getElementById("voiceText").textContent =
+                LocalizationMatrix[currentLang].voiceTextStop;
+
+        } catch (error) {
+            isListening = false;
+            voiceStatusText.textContent = "Unable to start microphone.";
+            console.error(error);
+        }
+
+    } else {
+        isListening = false;
+        recognition.stop();
+        window.speechSynthesis.cancel();
+
+        voiceStatusText.textContent =
+            LocalizationMatrix[currentLang].voiceStatusOffline;
+
+        voiceModuleStatus.textContent = "STANDBY";
+        emotionTokenDisplay.textContent =
+            LocalizationMatrix[currentLang].statusSilent;
+
+        document.getElementById("voiceText").textContent =
+            LocalizationMatrix[currentLang].voiceTextInit;
+    }
+});
             // Setup Web Speech Recognition
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (SpeechRecognition) {
