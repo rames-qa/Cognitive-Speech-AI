@@ -3,3 +3,8 @@ node_modules/
 cognitive-speech-ai@1.0.0
 node_modules/
 .npm-cache/
+__pycache__/
+*.py[cod]
+venv/
+.env
+node_modules/
