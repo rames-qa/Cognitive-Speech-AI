@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive Autonomous AI - Enterprise Architecture Matrix Hub</title>
-    
-    <!-- Fonts & Styling CDN Dependencies -->
+    <title>Cognitive Speech AI - End-to-End Architecture Matrix</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -34,35 +30,24 @@
             }
         }
     </script>
-
     <style>
-        /* Baseline CSS Reset & Custom Scrollbar */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
             background-color: #0b0f19;
             color: #f0f4f8;
             overflow-x: hidden;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
         }
         .glass-panel {
-            background: rgba(20, 27, 45, 0.85);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(34, 47, 76, 0.85);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            background: rgba(20, 27, 45, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(34, 47, 76, 0.8);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        .flow-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        @keyframes pulseGlow {
+            0% { opacity: 0.6; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1.02); }
         }
-        .flow-card:hover {
-            border-color: rgba(0, 243, 255, 0.6);
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.25);
-            transform: translateY(-3px);
+        .animate-glow {
+            animation: pulseGlow 1.5s infinite alternate;
         }
         .eq-bar {
             width: 8px;
@@ -70,9 +55,9 @@
             border-radius: 4px;
             transition: height 0.08s ease;
         }
+        /* Custom scrollbar for transcripts */
         ::-webkit-scrollbar {
             width: 6px;
-            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #090d16;
@@ -84,36 +69,20 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #00f3ff;
         }
-        
-        /* Pulse Effects for Active Pipeline Nodes */
-        .node-active-pulse {
-            animation: pulseGlow 1.8s infinite alternate ease-in-out;
-        }
-        @keyframes pulseGlow {
-            0% {
-                box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
-            }
-            100% {
-                box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
-            }
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-black">
-
-    <!-- ==================================================================== -->
-    <!-- TOP ENTERPRISE NAVIGATION HEADER                                    -->
-    <!-- ==================================================================== -->
-    <nav class="sticky top-0 z-50 flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-darkPanel/95 backdrop-blur-md border-b border-borderCol">
+    <nav class="sticky top-0 z-50 flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-darkPanel/90 backdrop-blur-md border-b border-borderCol">
         <div class="flex items-center gap-3">
-            <div class="w-3.5 h-3.5 rounded-full bg-neonBlue animate-ping"></div>
-            <span id="navLogo" class="text-xl font-bold tracking-wider bg-gradient-to-r from-neonBlue via-neonPurple to-neonGreen bg-clip-text text-transparent">Cognitive Autonomous AI Matrix</span>
+            <div class="w-3 h-3 rounded-full bg-neonBlue animate-ping"></div>
+            <span id="navLogo" class="text-xl font-bold tracking-wider bg-gradient-to-r from-neonBlue to-neonPurple bg-clip-text text-transparent">Cognitive Speech AI</span>
         </div>
-        <div class="flex items-center gap-5 mt-3 md:mt-0">
-            <div class="flex items-center gap-1.5 bg-[#090d16] px-3 py-1 rounded-lg border border-borderCol font-mono text-xs">
-                <span id="backendPingDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="backendStatusLabel" class="text-neonGreen">Flask Bridge: ONLINE</span>
-            </div>
+        <div class="flex items-center gap-6 mt-3 md:mt-0">
+            <ul class="flex items-center gap-5 list-none text-sm font-medium">
+                <li><a href="#console" id="navLinkConsole" class="text-slate-400 hover:text-neonBlue transition-colors">Console</a></li>
+                <li><a href="#pipeline" class="text-slate-400 hover:text-neonBlue transition-colors">Pipeline Architecture</a></li>
+                <li><a href="#dashboard" id="navLinkMatrix" class="text-slate-400 hover:text-neonBlue transition-colors">Live Matrix</a></li>
+            </ul>
             <div class="flex items-center gap-2 bg-[#090d16] px-3 py-1.5 rounded-lg border border-borderCol">
                 <label for="langSelect" id="langLabel" class="text-xs font-semibold text-slate-400 uppercase">LN:</label>
                 <select id="langSelect" class="bg-transparent text-white font-mono text-xs font-bold cursor-pointer outline-none">
@@ -126,611 +95,310 @@
         </div>
     </nav>
 
-    <!-- ==================================================================== -->
-    <!-- MAIN WORKSPACE & ARCHITECTURE BLUEPRINT                              -->
-    <!-- ==================================================================== -->
-    <main class="max-w-6xl mx-auto w-full px-6 pt-10 pb-16 flex-1 space-y-12">
+    <!-- Console Section: Dual Mode Input (Voice / Text) -->
+    <section id="console" class="max-w-5xl mx-auto w-full px-6 pt-10 pb-8 text-center">
+        <h1 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-3 tracking-tight">Cognitive Speech AI</h1>
+        <p id="heroDesc" class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mb-8">Integrated speech-to-intent pipeline executing real-time AI evaluation, command processing, and automated system response.</p>
         
-        <!-- Header Banner -->
-        <header class="text-center max-w-3xl mx-auto">
-            <h1 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-3 tracking-tight bg-gradient-to-r from-neonBlue via-neonPurple to-neonGreen bg-clip-text text-transparent">End-to-End Architecture Blueprint</h1>
-            <p id="heroDesc" class="text-slate-400 text-sm md:text-base">Visual multi-tiered matrix mapping acoustic voice input, speech transcription, intent AI evaluation, Python Flask execution, and live output feedback.</p>
-        </header>
-
-        <!-- ==================================================================== -->
-        <!-- BLOCK-WISE VERTICAL ARCHITECTURE BLUEPRINT (Matching Image Layout)   -->
-        <!-- ==================================================================== -->
-        <section id="architecture-flow" class="flex flex-col items-center gap-5">
-            
-            <!-- TIER 1: Cognitive Speech AI (Voice / Text / Multilingual Input) -->
-            <div id="archNode-1" onclick="handleBlockActivation(1)" class="flow-card glass-panel w-full max-w-2xl rounded-2xl p-6 border-2 border-slate-700 cursor-pointer text-center">
-                <div class="flex items-center justify-center gap-2 text-neonBlue mb-2">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                    <h3 class="font-bold text-lg text-white">Cognitive Speech AI</h3>
-                </div>
-                <p class="text-xs font-mono text-slate-400">Voice / Text / Multilingual Input (EN, TA, HI, KN)</p>
-            </div>
-
-            <!-- Down Flow Arrow Indicator -->
-            <div class="text-neonBlue font-bold text-xl animate-bounce">↓</div>
-
-            <!-- TIER 2: Split Grid (Speech Engine & AI Intelligence) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl">
-                <!-- Speech Engine Box -->
-                <div id="archNode-2" onclick="handleBlockActivation(2)" class="flow-card glass-panel rounded-2xl p-5 border-2 border-slate-700 cursor-pointer text-center">
-                    <div class="flex items-center justify-center gap-2 text-cyan-400 mb-2">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 10v3"/><path d="M6 6v11"/><path d="M10 3v18"/><path d="M14 8v7"/><path d="M18 5v13"/><path d="M22 10v3"/></svg>
-                        <h4 class="font-bold text-base text-white">Speech Engine</h4>
-                    </div>
-                    <p class="text-xs font-mono text-slate-400">Transcription & Acoustic Buffering</p>
-                </div>
-
-                <!-- AI Intelligence Box -->
-                <div id="archNode-3" onclick="handleBlockActivation(3)" class="flow-card glass-panel rounded-2xl p-5 border-2 border-slate-700 cursor-pointer text-center">
-                    <div class="flex items-center justify-center gap-2 text-purple-400 mb-2">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 1 0 10 10H12V2Z"/><path d="M12 12 2.7 9.3"/><path d="M12 12l9.3 2.7"/></svg>
-                        <h4 class="font-bold text-base text-white">AI Intelligence</h4>
-                    </div>
-                    <p class="text-xs font-mono text-slate-400">Intent and Context Extraction</p>
-                </div>
-            </div>
-
-            <!-- Down Flow Arrow Indicator -->
-            <div class="text-neonPurple font-bold text-xl animate-bounce">↓</div>
-
-            <!-- TIER 3: Python Flask Backend -->
-            <div id="archNode-4" onclick="handleBlockActivation(4)" class="flow-card glass-panel w-full max-w-2xl rounded-2xl p-6 border-2 border-slate-700 cursor-pointer text-center">
-                <div class="flex items-center justify-center gap-2 text-neonGreen mb-2">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg>
-                    <h3 class="font-bold text-lg text-white">Python Flask Backend</h3>
-                </div>
-                <p class="text-xs font-mono text-slate-400">Command processing · AI evaluation · Approved automation · System metrics</p>
-            </div>
-
-            <!-- Down Flow Arrow Indicator -->
-            <div class="text-neonGreen font-bold text-xl animate-bounce">↓</div>
-
-            <!-- TIER 4: Split Grid (Live Dashboard & Voice Response) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl">
-                <!-- Live Dashboard Box -->
-                <div id="archNode-5" onclick="handleBlockActivation(5)" class="flow-card glass-panel rounded-2xl p-5 border-2 border-slate-700 cursor-pointer text-center">
-                    <div class="flex items-center justify-center gap-2 text-neonBlue mb-2">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
-                        <h4 class="font-bold text-base text-white">Live Dashboard</h4>
-                    </div>
-                    <p class="text-xs font-mono text-slate-400">Telemetry & UI Visualization</p>
-                </div>
-
-                <!-- Voice Response Box -->
-                <div id="archNode-6" onclick="handleBlockActivation(6)" class="flow-card glass-panel rounded-2xl p-5 border-2 border-slate-700 cursor-pointer text-center">
-                    <div class="flex items-center justify-center gap-2 text-neonRose mb-2">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-                        <h4 class="font-bold text-base text-white">Voice Response</h4>
-                    </div>
-                    <p class="text-xs font-mono text-slate-400">Acoustic TTS Output & Feedback</p>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- ==================================================================== -->
-        <!-- INTERACTIVE EXECUTION TERMINAL & COMMAND CONSOLE                     -->
-        <!-- ==================================================================== -->
-        <section id="console" class="glass-panel rounded-2xl p-6">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+        <div class="glass-panel rounded-2xl p-6 mb-6 text-left">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-3 font-semibold text-sm">
-                    <span id="terminalDot" class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span id="terminalStatusText">Autonomous Execution Terminal Online</span>
+                    <span id="voiceStatusDot" class="w-3 h-3 rounded-full bg-slate-500 transition-all duration-300"></span>
+                    <span id="voiceStatusText">Acoustic Core Offline</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-xs text-slate-400 font-mono">Active Token:</span>
-                    <span id="activeTokenBadge" class="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-cyan-500/10 text-neonBlue border border-cyan-500/30">IDLE</span>
+                    <span class="text-xs text-slate-400 font-mono">Backend Engine:</span>
+                    <span id="backendBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-neonAmber border border-amber-500/30">DISCONNECTED / FALLBACK</span>
                 </div>
             </div>
-
-            <!-- Terminal Output Log Container -->
-            <div id="terminalLog" class="bg-[#090d16] p-4 rounded-xl font-mono text-xs md:text-sm min-h-[160px] max-h-72 overflow-y-auto text-slate-200 border border-[#1a243a] mb-4 space-y-2">
-                <div class="text-slate-500">[SYSTEM] Click any architectural block above or submit a command below to execute pipeline vector...</div>
+            
+            <div id="voiceTranscript" class="bg-[#090d16] p-4 rounded-xl font-mono text-sm min-h-[140px] max-h-64 overflow-y-auto text-slate-200 border border-[#1a243a]">
+                <span id="transcriptPlaceholder" class="text-slate-500 italic">Say "SYSTEM" followed by your command or submit text input below to trigger speech transcription & intent evaluation...</span>
             </div>
-
-            <!-- Input Form & Speech Triggers -->
-            <form id="commandForm" class="flex flex-col sm:flex-row gap-3">
-                <input type="text" id="commandInput" placeholder="Enter command (e.g., 'Open YouTube', 'Gold rate', 'Weather', 'News')..." class="flex-1 bg-[#090d16] border border-borderCol rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-neonBlue transition-all font-mono">
-                <button type="submit" class="px-6 py-3 rounded-xl bg-gradient-to-r from-neonBlue to-neonPurple text-black font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2">
-                    <span>Execute Vector</span>
-                </button>
+            
+            <!-- Text Input Fallback / Multilingual Direct Command Input -->
+            <form id="textCommandForm" class="mt-4 flex flex-col sm:flex-row gap-3">
+                <input type="text" id="textCommandInput" placeholder="Or type command here (e.g., 'SYSTEM run vision matrix test')..." class="flex-1 bg-[#090d16] border border-borderCol rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-neonBlue transition-all font-mono">
+                <button type="submit" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 transition-all">Submit Text</button>
             </form>
+        </div>
 
-            <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800/80">
-                <button id="btnVoiceTrigger" type="button" class="w-full sm:w-auto py-3 px-6 rounded-xl font-semibold text-white bg-darkPanel border border-borderCol hover:border-neonBlue transition-all flex items-center justify-center gap-3 text-sm">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" x2="12" y1="19" y2="22"/></svg>
-                    <span id="voiceText">Initialize Speech Recognition Stream</span>
-                </button>
-                <div class="text-xs text-slate-400 font-mono">Web Speech Recognition & Synthesis Active</div>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+            <button id="btnVoiceTrigger" class="w-full py-4 px-6 rounded-xl font-semibold text-white bg-gradient-to-r from-neonBlue to-neonPurple shadow-lg shadow-cyan-500/25 hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-3 text-sm">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                    <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+                    <line x1="12" x2="12" y1="19" y2="22"/>
+                </svg>
+                <span id="voiceText">Initialize Ambient Speech Loop</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Pipeline Architecture Matrix Block -->
+    <section id="pipeline" class="max-w-7xl mx-auto w-full px-6 py-8">
+        <h2 class="text-xl md:text-2xl font-bold text-center mb-6 text-white tracking-wide">Recommended Architecture Pipeline Execution</h2>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-mono font-bold text-neonBlue bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30 uppercase">Stage 01</span>
+                    <h4 class="text-sm font-bold mt-2 text-white">Voice / Text / Multilingual Input</h4>
+                    <p class="text-xs text-slate-400 mt-1">Multi-modal audio capture & multilingual text stream (EN, TA, HI, KN).</p>
+                </div>
+                <div id="pipeStage1" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
             </div>
-        </section>
+            <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-mono font-bold text-neonPurple bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/30 uppercase">Stage 02</span>
+                    <h4 class="text-sm font-bold mt-2 text-white">Speech Engine & Transcription</h4>
+                    <p class="text-xs text-slate-400 mt-1">Acoustic buffer conversion and web speech transcription tokenizing.</p>
+                </div>
+                <div id="pipeStage2" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
+            </div>
+            <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-mono font-bold text-neonAmber bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 uppercase">Stage 03</span>
+                    <h4 class="text-sm font-bold mt-2 text-white">AI Intelligence (Intent & Context)</h4>
+                    <p class="text-xs text-slate-400 mt-1">Semantic extraction, intent parsing, and contextual classification.</p>
+                </div>
+                <div id="pipeStage3" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
+            </div>
+            <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-mono font-bold text-neonGreen bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 uppercase">Stage 04</span>
+                    <h4 class="text-sm font-bold mt-2 text-white">Python Flask Backend Engine</h4>
+                    <p class="text-xs text-slate-400 mt-1">Command processing, automation dispatch, and live telemetry aggregation.</p>
+                </div>
+                <div id="pipeStage4" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
+            </div>
+            <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
+                <div>
+                    <span class="text-[10px] font-mono font-bold text-neonRose bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30 uppercase">Stage 05</span>
+                    <h4 class="text-sm font-bold mt-2 text-white">Live Dashboard & Voice Response</h4>
+                    <p class="text-xs text-slate-400 mt-1">Acoustic speech synthesis response output and real-time dashboard update.</p>
+                </div>
+                <div id="pipeStage5" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
+            </div>
+        </div>
+    </section>
 
-        <!-- ==================================================================== -->
-        <!-- REAL-TIME ACOUSTIC TELEMETRY MATRIX                                  -->
-        <!-- ==================================================================== -->
-        <section id="dashboard" class="space-y-6">
-            <h2 id="sectionTitleMatrix" class="text-2xl font-bold text-center text-white">Cognitive Operations Interface Matrix</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Acoustic Capture Panel -->
-                <div class="glass-panel rounded-2xl p-6">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
-                        <h3 id="panelHeaderCapture" class="text-base font-semibold">Acoustic Capture Buffer</h3>
-                        <span id="voiceModuleStatus" class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-neonGreen border border-emerald-500/20">READY</span>
+    <!-- Dashboard & Telemetry Section -->
+    <section id="dashboard" class="max-w-7xl mx-auto w-full px-6 pb-16">
+        <h2 id="sectionTitleMatrix" class="text-2xl md:text-3xl font-bold text-center mb-10">Cognitive Operations Interface Matrix</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Acoustic Capture Panel -->
+            <div class="glass-panel rounded-2xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 mb-5 gap-3">
+                    <h3 id="panelHeaderCapture" class="text-lg font-semibold flex items-center gap-2">Acoustic Capture Buffer</h3>
+                    <span id="voiceModuleStatus" class="self-start sm:self-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-neonGreen border border-emerald-500/20">STANDBY</span>
+                </div>
+                <div id="eqContainer" class="flex items-end justify-center gap-1.5 h-20 bg-[#090d16] rounded-xl p-3 mb-5 border border-slate-900">
+                    <div class="eq-bar h-[10%]"></div>
+                    <div class="eq-bar h-[20%]"></div>
+                    <div class="eq-bar h-[15%]"></div>
+                    <div class="eq-bar h-[40%]"></div>
+                    <div class="eq-bar h-[70%]"></div>
+                    <div class="eq-bar h-[50%]"></div>
+                    <div class="eq-bar h-[30%]"></div>
+                    <div class="eq-bar h-[60%]"></div>
+                    <div class="eq-bar h-[25%]"></div>
+                    <div class="eq-bar h-[10%]"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-[#090d16] p-3.5 rounded-xl border border-slate-800/80 text-center">
+                        <p id="metricLabelDecibel" class="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Acoustic Decibels</p>
+                        <h5 id="liveDecibel" class="font-mono text-base font-bold text-white">-Inf dB</h5>
                     </div>
-                    <div id="eqContainer" class="flex items-end justify-center gap-1.5 h-20 bg-[#090d16] rounded-xl p-3 mb-4 border border-slate-900">
-                        <div class="eq-bar h-[15%]"></div>
-                        <div class="eq-bar h-[35%]"></div>
-                        <div class="eq-bar h-[25%]"></div>
-                        <div class="eq-bar h-[65%]"></div>
-                        <div class="eq-bar h-[85%]"></div>
-                        <div class="eq-bar h-[50%]"></div>
-                        <div class="eq-bar h-[35%]"></div>
-                        <div class="eq-bar h-[75%]"></div>
-                        <div class="eq-bar h-[30%]"></div>
-                        <div class="eq-bar h-[15%]"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-[#090d16] p-3 rounded-xl border border-slate-800 text-center">
-                            <span id="metricLabelDecibel" class="text-[10px] text-slate-400 uppercase tracking-wider block mb-1">Signal Decibels</span>
-                            <span id="liveDecibel" class="font-mono text-base font-bold text-white">-17.8 dB</span>
-                        </div>
-                        <div class="bg-[#090d16] p-3 rounded-xl border border-slate-800 text-center">
-                            <span id="metricLabelFrequency" class="text-[10px] text-slate-400 uppercase tracking-wider block mb-1">Stream Frequency</span>
-                            <span id="liveSampleRate" class="font-mono text-base font-bold text-neonBlue">44.1 kHz</span>
-                        </div>
+                    <div class="bg-[#090d16] p-3.5 rounded-xl border border-slate-800/80 text-center">
+                        <p id="metricLabelFrequency" class="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Stream Frequency</p>
+                        <h5 id="liveSampleRate" class="font-mono text-base font-bold text-white">0.0 kHz</h5>
                     </div>
                 </div>
-
-                <!-- Cognitive Vocal Signature Panel -->
-                <div class="glass-panel rounded-2xl p-6">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
-                        <h3 id="panelHeaderSignature" class="text-base font-semibold">Cognitive Vocal Signature</h3>
-                        <span id="cognitiveModality" class="text-xs font-semibold text-slate-400">Signal Processing</span>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-xs text-slate-400 mb-1.5">
-                                <span id="labelCalm">Calm Stability</span>
-                                <span id="txtCalm" class="font-mono font-bold text-white">94%</span>
-                            </div>
-                            <div class="bg-[#090d16] h-2.5 rounded-full overflow-hidden">
-                                <div id="barCalm" class="h-full bg-neonGreen rounded-full w-[94%] transition-all duration-300"></div>
-                            </div>
+            </div>
+            
+            <!-- Cognitive Vocal Signature Panel -->
+            <div class="glass-panel rounded-2xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 mb-5 gap-3">
+                    <h3 id="panelHeaderSignature" class="text-lg font-semibold">Cognitive Vocal Signature</h3>
+                    <span id="cognitiveModality" class="text-xs font-semibold text-slate-400">Acoustic Signal Processing</span>
+                </div>
+                <div class="bg-[#090d16] border border-dashed border-slate-800 rounded-xl p-4 mb-5 text-center flex flex-col justify-center min-h-[90px]">
+                    <div id="panelHeaderStatus" class="text-xs text-slate-400 uppercase tracking-wider mb-1">Current Node Assistant Status</div>
+                    <div id="emotionTokenDisplay" class="font-mono text-xl font-bold text-slate-400 transition-all duration-300">SYSTEM SILENT</div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs text-slate-400 mb-1.5">
+                            <span id="labelCalm">Calm Stability</span>
+                            <span id="txtCalm" class="font-mono font-bold text-white">0%</span>
                         </div>
-                        <div>
-                            <div class="flex justify-between text-xs text-slate-400 mb-1.5">
-                                <span id="labelLoad">Dynamic Processing Load</span>
-                                <span id="txtLoad" class="font-mono font-bold text-white">38%</span>
-                            </div>
-                            <div class="bg-[#090d16] h-2.5 rounded-full overflow-hidden">
-                                <div id="barLoad" class="h-full bg-neonPurple rounded-full w-[38%] transition-all duration-300"></div>
-                            </div>
+                        <div class="bg-[#090d16] h-2 rounded-full overflow-hidden">
+                            <div id="barCalm" class="h-full bg-neonGreen rounded-full transition-all duration-300 w-0"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs text-slate-400 mb-1.5">
+                            <span id="labelFriction">Vocal Friction</span>
+                            <span id="txtFriction" class="font-mono font-bold text-white">0%</span>
+                        </div>
+                        <div class="bg-[#090d16] h-2 rounded-full overflow-hidden">
+                            <div id="barFriction" class="h-full bg-neonAmber rounded-full transition-all duration-300 w-0"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs text-slate-400 mb-1.5">
+                            <span id="labelLoad">Dynamic Processing Load</span>
+                            <span id="txtLoad" class="font-mono font-bold text-white">0%</span>
+                        </div>
+                        <div class="bg-[#090d16] h-2 rounded-full overflow-hidden">
+                            <div id="barLoad" class="h-full bg-neonPurple rounded-full transition-all duration-300 w-0"></div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- THREE INTERACTIVE SUB-SYSTEM MATRIX GRID -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
-                
-                <!-- Sub-system 1: Neural Processing Box -->
-                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
-                    <div>
-                        <div class="mb-4 border-b border-slate-800 pb-3">
-                            <h3 id="cardTitleNeural" class="text-base font-semibold text-neonBlue mb-1">Neural Processing</h3>
-                            <p id="cardDescNeural" class="text-xs text-slate-400">Evaluating language tokens and acoustic matrices across hardware array tracks.</p>
+        </div>
+        
+        <!-- Three Interactive Sub-Systems Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Neural Processing Box -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="mb-4 border-b border-slate-800 pb-3">
+                        <h3 id="cardTitleNeural" class="text-base font-semibold text-neonBlue mb-1">Neural Processing</h3>
+                        <p id="cardDescNeural" class="text-xs text-slate-400">Evaluating language tokens and acoustic matrices across hardware array tracks.</p>
+                    </div>
+                    <div class="bg-[#090d16] h-1.5 rounded-full overflow-hidden mb-4">
+                        <div id="neuralBar" class="h-full bg-gradient-to-r from-neonBlue to-neonPurple rounded-full transition-all w-0"></div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valNeuralVelocity" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricNeuralVelocity" class="text-[9px] text-slate-400 uppercase">Velocity</small>
                         </div>
-                        <div class="bg-[#090d16] h-1.5 rounded-full overflow-hidden mb-4">
-                            <div id="neuralBar" class="h-full bg-gradient-to-r from-neonBlue to-neonPurple rounded-full transition-all w-[75%]"></div>
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valNeuralIndex" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricNeuralIndex" class="text-[9px] text-slate-400 uppercase">Index</small>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valNeuralVelocity" class="font-mono text-sm font-bold text-white block">98.4%</span>
-                                <small id="subMetricNeuralVelocity" class="text-[9px] text-slate-400 uppercase">Velocity</small>
-                            </div>
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valNeuralIndex" class="font-mono text-sm font-bold text-white block">1.02</span>
-                                <small id="subMetricNeuralIndex" class="text-[9px] text-slate-400 uppercase">Index</small>
-                            </div>
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valNeuralActive" class="font-mono text-sm font-bold text-white block">16 Core</span>
-                                <small id="subMetricNeuralActive" class="text-[9px] text-slate-400 uppercase">Active</small>
-                            </div>
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valNeuralActive" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricNeuralActive" class="text-[9px] text-slate-400 uppercase">Active</small>
                         </div>
                     </div>
-                    <canvas id="neuralCanvas" class="w-full h-24 bg-[#090d16] rounded-lg border border-slate-900 block mt-2"></canvas>
                 </div>
-
-                <!-- Sub-system 2: Vision AI Matrix Box -->
-                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
-                    <div>
-                        <div class="mb-4 border-b border-slate-800 pb-3">
-                            <h3 id="cardTitleVision" class="text-base font-semibold text-neonPurple mb-1">Vision AI Matrix</h3>
-                            <p id="cardDescVision" class="text-xs text-slate-400">Processing spatial environment tracking, matrix frameworks, and vector points.</p>
-                        </div>
-                        <div class="bg-[#090d16] h-1.5 rounded-full overflow-hidden mb-4">
-                            <div id="analyticsBar" class="h-full bg-gradient-to-r from-neonPurple to-neonGreen rounded-full transition-all w-[88%]"></div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valVisionFPS" class="font-mono text-sm font-bold text-white block">60 FPS</span>
-                                <small id="subMetricVisionFPS" class="text-[9px] text-slate-400 uppercase">FPS Feed</small>
-                            </div>
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valVisionAccuracy" class="font-mono text-sm font-bold text-white block">99.1%</span>
-                                <small id="subMetricVisionAccuracy" class="text-[9px] text-slate-400 uppercase">Accuracy</small>
-                            </div>
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valVisionTracking" class="font-mono text-sm font-bold text-white block">Vector</span>
-                                <small id="subMetricVisionTracking" class="text-[9px] text-slate-400 uppercase">Tracking</small>
-                            </div>
-                        </div>
-                    </div>
-                    <canvas id="analyticsCanvas" class="w-full h-24 bg-[#090d16] rounded-lg border border-slate-900 block mt-2"></canvas>
-                </div>
-
-                <!-- Sub-system 3: Robotics Core Box -->
-                <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
-                    <div>
-                        <div class="mb-4 border-b border-slate-800 pb-3">
-                            <h3 id="cardTitleRobotics" class="text-base font-semibold text-neonGreen mb-1">Robotics Core</h3>
-                            <p id="cardDescRobotics" class="text-xs text-slate-400">Automated kinematics telemetry, hardware mapping, and thread scheduling loops.</p>
-                        </div>
-                        <div class="bg-[#090d16] h-1.5 rounded-full overflow-hidden mb-4">
-                            <div id="automationBar" class="h-full bg-gradient-to-r from-neonGreen to-neonBlue rounded-full transition-all w-[92%]"></div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valRobotTasks" class="font-mono text-sm font-bold text-white block">24 Loop</span>
-                                <small id="subMetricRobotTasks" class="text-[9px] text-slate-400 uppercase">Tasks</small>
-                            </div>
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valRobotLoad" class="font-mono text-sm font-bold text-white block">14.2%</span>
-                                <small id="subMetricRobotLoad" class="text-[9px] text-slate-400 uppercase">Load</small>
-                            </div>
-                            <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
-                                <span id="valRobotFlow" class="font-mono text-sm font-bold text-white block">SYNC</span>
-                                <small id="subMetricRobotFlow" class="text-[9px] text-slate-400 uppercase">Flow</small>
-                            </div>
-                        </div>
-                    </div>
-                    <canvas id="automationCanvas" class="w-full h-24 bg-[#090d16] rounded-lg border border-slate-900 block mt-2"></canvas>
-                </div>
-
+                <canvas id="neuralCanvas" class="w-full h-24 bg-[#090d16] rounded-lg border border-slate-900 block mt-2"></canvas>
             </div>
-        </section>
+            
+            <!-- Vision AI Matrix Box -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="mb-4 border-b border-slate-800 pb-3">
+                        <h3 id="cardTitleVision" class="text-base font-semibold text-neonPurple mb-1">Vision AI Matrix</h3>
+                        <p id="cardDescVision" class="text-xs text-slate-400">Processing spatial environment tracking, matrix frameworks, and vector points.</p>
+                    </div>
+                    <div class="bg-[#090d16] h-1.5 rounded-full overflow-hidden mb-4">
+                        <div id="analyticsBar" class="h-full bg-gradient-to-r from-neonPurple to-neonGreen rounded-full transition-all w-0"></div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valVisionFPS" class="font-mono text-sm font-bold text-white block">0 FPS</span>
+                            <small id="subMetricVisionFPS" class="text-[9px] text-slate-400 uppercase">FPS Feed</small>
+                        </div>
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valVisionAccuracy" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricVisionAccuracy" class="text-[9px] text-slate-400 uppercase">Accuracy</small>
+                        </div>
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valVisionTracking" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricVisionTracking" class="text-[9px] text-slate-400 uppercase">Tracking</small>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="analyticsCanvas" class="w-full h-24 bg-[#090d16] rounded-lg border border-slate-900 block mt-2"></canvas>
+            </div>
 
-    </main>
+            <!-- Robotics Core Box -->
+            <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="mb-4 border-b border-slate-800 pb-3">
+                        <h3 id="cardTitleRobotics" class="text-base font-semibold text-neonGreen mb-1">Robotics Core</h3>
+                        <p id="cardDescRobotics" class="text-xs text-slate-400">Automated kinematics telemetry, hardware mapping, and thread scheduling loops.</p>
+                    </div>
+                    <div class="bg-[#090d16] h-1.5 rounded-full overflow-hidden mb-4">
+                        <div id="automationBar" class="h-full bg-gradient-to-r from-neonGreen to-neonBlue rounded-full transition-all w-0"></div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valRobotTasks" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricRobotTasks" class="text-[9px] text-slate-400 uppercase">Tasks</small>
+                        </div>
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valRobotLoad" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricRobotLoad" class="text-[9px] text-slate-400 uppercase">Load</small>
+                        </div>
+                        <div class="bg-[#090d16] p-2 rounded-lg border border-slate-800 text-center">
+                            <span id="valRobotFlow" class="font-mono text-sm font-bold text-white block">0%</span>
+                            <small id="subMetricRobotFlow" class="text-[9px] text-slate-400 uppercase">Flow</small>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="automationCanvas" class="w-full h-24 bg-[#090d16] rounded-lg border border-slate-900 block mt-2"></canvas>
+            </div>
+        </div>
+    </section>
 
-    <!-- Footer -->
     <footer id="footerText" class="mt-auto text-center py-6 text-xs text-slate-400 border-t border-borderCol bg-[#090d16]">
         &copy; 2026 Cognitive AI Advanced Web Project | End-to-End Recommended Architecture Implementation
     </footer>
 
-    <!-- ==================================================================== -->
-    <!-- ADVANCED FRONTEND INTERPRETER & SCRIPT ENGINE                        -->
-    <!-- ==================================================================== -->
     <script>
-        /**
-         * Global API Config & State Tokens
-         */
-        const BACKEND_URL = "http://localhost:5000";
-        let currentLanguage = 'en';
-
-        // Multi-Language Dictionary Matrix
-        const LocalizationMatrix = {
-            en: {
-                navLogo: "Cognitive Speech AI Matrix",
-                heroTitle: "End-to-End Architecture Blueprint",
-                heroDesc: "Visual multi-tiered matrix mapping acoustic voice input, speech transcription, intent AI evaluation, Python Flask execution, and live output feedback.",
-                sectionTitleMatrix: "Cognitive Operations Interface Matrix",
-                panelHeaderCapture: "Acoustic Capture Buffer",
-                metricLabelDecibel: "Signal Decibels",
-                metricLabelFrequency: "Stream Frequency",
-                panelHeaderSignature: "Cognitive Vocal Signature",
-                cognitiveModality: "Signal Processing",
-                labelCalm: "Calm Stability",
-                labelLoad: "Dynamic Processing Load",
-                cardTitleNeural: "Neural Processing",
-                cardDescNeural: "Evaluating language tokens and acoustic matrices across hardware array tracks.",
-                subMetricNeuralVelocity: "Velocity",
-                subMetricNeuralIndex: "Index",
-                subMetricNeuralActive: "Active",
-                cardTitleVision: "Vision AI Matrix",
-                cardDescVision: "Processing spatial environment tracking, matrix frameworks, and vector points.",
-                subMetricVisionFPS: "FPS Feed",
-                subMetricVisionAccuracy: "Accuracy",
-                subMetricVisionTracking: "Tracking",
-                cardTitleRobotics: "Robotics Core",
-                cardDescRobotics: "Automated kinematics telemetry, hardware mapping, and thread scheduling loops.",
-                subMetricRobotTasks: "Tasks",
-                subMetricRobotLoad: "Load",
-                subMetricRobotFlow: "Flow",
-                footerText: "© 2026 Cognitive AI Advanced Web Project | Designed by Ramesh Kumar K"
-            },
-            ta: {
-                navLogo: "அறிவுசார் பேச்சு AI மேட்ரிக்ஸ்",
-                heroTitle: "முடிவிலிருந்து முடிவு கட்டமைப்பு வரைபடம்",
-                heroDesc: "ஒலி குரல் உள்ளீடு, பேச்சு படியெடுத்தல், நோக்கம் AI மதிப்பீடு மற்றும் நேரடி வெளியீட்டு கருத்துக்களை வரைபடமாக்கும் காட்சி அடுக்கு மேட்ரிக்ஸ்.",
-                sectionTitleMatrix: "அறிவுசார் செயல்பாட்டு இடைமுக மேட்ரிக்ஸ்",
-                panelHeaderCapture: "ஒலி பிடிப்பு இடையக பகுதி",
-                metricLabelDecibel: "சமிக்ஞை டெசிபல்கள்",
-                metricLabelFrequency: "அலைவரிசை அதிர்வெண்",
-                panelHeaderSignature: "அறிவுசார் குரல் கையொப்பம்",
-                cognitiveModality: "சமிக்ஞை செயலாக்கம்",
-                labelCalm: "அமைதியான நிலைத்தன்மை",
-                labelLoad: "செயலாக்க சுமை",
-                cardTitleNeural: "நரம்பியல் செயலாக்கம்",
-                cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
-                subMetricNeuralVelocity: "வேகம்",
-                subMetricNeuralIndex: "குறியீடு",
-                subMetricNeuralActive: "செயலில்",
-                cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்",
-                cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
-                subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபீட்",
-                subMetricVisionAccuracy: "துல்லியம்",
-                subMetricVisionTracking: "கண்காணிப்பு",
-                cardTitleRobotics: "ரோபோடிக்ஸ் கோர்",
-                cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி மற்றும் வன்பொருள் வரைபடம்.",
-                subMetricRobotTasks: "பணிகள்",
-                subMetricRobotLoad: "சுமை",
-                subMetricRobotFlow: "பாய்ச்சல்",
-                footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம்"
-            },
-            hi: {
-                navLogo: "कॉग्निटिव स्पीच एआई मैट्रिक्स",
-                heroTitle: "एंड-टू-एंड आर्किटेक्चर ब्लूप्रिंट",
-                heroDesc: "ध्वनिक वॉयस इनपुट, स्पीच ट्रांसक्रिप्शन, इरादा एआई मूल्यांकन और लाइव आउटपुट प्रतिक्रिया का मानचित्रण करने वाला विजुअल मैट्रिक्स।",
-                sectionTitleMatrix: "कॉग्निटिव ऑपरेशंस इंटरफेस मैट्रिक्स",
-                panelHeaderCapture: "ध्वनिक कैप्चर बफर",
-                metricLabelDecibel: "सिग्नल डेसिबल",
-                metricLabelFrequency: "स्ट्रीम फ्रीक्वेंसी",
-                panelHeaderSignature: "कॉग्निटिव वोकल सिग्नेचर",
-                cognitiveModality: "सिग्नल प्रोसेसिंग",
-                labelCalm: "शांत स्थिरता",
-                labelLoad: "प्रोसेसिंग लोड",
-                cardTitleNeural: "न्यूरल प्रोसेसिंग",
-                cardDescNeural: "हार्डवेयर एरे ट्रैक पर भाषा टोकन और ध्वनिक मैट्रिक्स का मूल्यांकन।",
-                subMetricNeuralVelocity: "गति",
-                subMetricNeuralIndex: "इंडेक्स",
-                subMetricNeuralActive: "सक्रिय",
-                cardTitleVision: "विजन एआई मैट्रिक्स",
-                cardDescVision: "स्थानिक पर्यावरण ट्रैकिंग और वेक्टर बिंदुओं को संसाधित करना।",
-                subMetricVisionFPS: "एफपीएस फीड",
-                subMetricVisionAccuracy: "सटीकता",
-                subMetricVisionTracking: "ट्रैकिंग",
-                cardTitleRobotics: "रोबोटिक्स कोर",
-                cardDescRobotics: "स्वचालित कीनेमैटिक्स टेलीमेट्री और हार्डवेयर मैपिंग।",
-                subMetricRobotTasks: "कार्य",
-                subMetricRobotLoad: "लोड",
-                subMetricRobotFlow: "प्रवाह",
-                footerText: "© 2026 कॉग्निटिव एआई एडवांस्ड वेब प्रोजेक्ट"
-            },
-            kn: {
-                navLogo: "ಕಾಗ್ನಿಟಿವ್ ಸ್ಪೀಚ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್",
-                heroTitle: "ಎಂಡ್-ಟು-ಎಂಡ್ ಆರ್ಕಿಟೆಕ್ಚರ್ ಬ್ಲೂಪ್ರಿಂಟ್",
-                heroDesc: "ಧ್ವನಿ ಇನ್‌ಪುಟ್, ಸ್ಪೀಚ್ ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಷನ್, ಇಂಟೆಂಟ್ ಎಐ ಮೌಲ್ಯಮಾಪನ ಮತ್ತು ಲೈವ್ ಟ್ವಿಟ್ ಬ್ಲೂಪ್ರಿಂಟ್ ಮ್ಯಾಪಿಂಗ್ visual ಮ್ಯಾಟ್ರಿಕ್ಸ್.",
-                sectionTitleMatrix: "ಕಾಗ್ನಿಟಿವ್ ಆಪರೇಷನ್ಸ್ ಇಂಟರ್ಫೇಸ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್",
-                panelHeaderCapture: "ಅಕೌಸ್ಟಿಕ್ ಕ್ಯಾಪ್ಚರ್ ಬಫರ್",
-                metricLabelDecibel: "ಸಿಗ್ನಲ್ ಡೆಸಿಬಲ್ಸ್",
-                metricLabelFrequency: "ಸ್ಟ್ರೀಮ್ ಆವರ್ತನ",
-                panelHeaderSignature: "ಕಾಗ್ನಿಟಿವ್ ವೋಕಲ್ ಸಿಗ್ನೇಚರ್",
-                cognitiveModality: "ಸಿಗ್ನಲ್ ಪ್ರೊಸೆಸಿಂಗ್",
-                labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ",
-                labelLoad: "ಪ್ರೊಸೆಸಿಂಗ್ ಲೋಡ್",
-                cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ",
-                cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
-                subMetricNeuralVelocity: "ವೇಗ",
-                subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ",
-                subMetricNeuralActive: "ಸಕ್ರಿಯ",
-                cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್",
-                cardDescVision: "ಸ್ಪೇಷಿಯಲ್ ಎನ್ವಿರಾನ್‌ಮೆಂಟ್ ಟ್ರ್ಯಾಕಿಂಗ್ ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಸಂಸ್ಕರಿಸುವುದು.",
-                subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್",
-                subMetricVisionAccuracy: "ನಿಖರತೆ",
-                subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
-                cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್",
-                cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಕಿನೆಮ್ಯಾಟಿಕ್ಸ್ ಟೆಲಿಮೆಟ್ರಿ ಮತ್ತು ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್.",
-                subMetricRobotTasks: "ಕಾರ್ಯಗಳು",
-                subMetricRobotLoad: "ಲೋಡ್",
-                subMetricRobotFlow: "ಹರಿವು",
-                footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಅಡ್ವಾನ್ಸಡ್ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್"
-            }
-        };
-
-        // Initialize Language Select Listener
-        const langSelect = document.getElementById("langSelect");
-        if (langSelect) {
-            langSelect.addEventListener("change", (e) => {
-                currentLanguage = e.target.value;
-                const dict = LocalizationMatrix[currentLanguage];
-                if (dict) {
-                    Object.keys(dict).forEach(key => {
-                        const el = document.getElementById(key);
-                        if (el) el.textContent = dict[key];
-                    });
+        document.addEventListener("DOMContentLoaded", () => {
+            // Localization Matrix
+            const LocalizationMatrix = {
+                en: {
+                    navLogo: "Cognitive Speech AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
+                    heroTitle: "Cognitive Speech AI", heroDesc: "Integrated speech-to-intent pipeline executing real-time AI evaluation, command processing, and automated system response.",
+                    voiceStatusOffline: "Acoustic Core Offline", voiceStatusActive: "Ambient Wake-Word Engine Operational",
+                    voiceStatusSpeaking: "Broadcasting Audio Output Array...", transcriptPlaceholder: 'Say "SYSTEM" followed by your command or submit text input below to trigger speech transcription & intent evaluation...',
+                    voiceTextInit: "Initialize Ambient Speech Loop", voiceTextStop: "Terminate Matrix Operations Loop",
+                    sectionTitleMatrix: "Cognitive Operations Interface Matrix", panelHeaderCapture: "Acoustic Capture Buffer",
+                    metricLabelDecibel: "Acoustic Decibels", metricLabelFrequency: "Stream Frequency", panelHeaderSignature: "Cognitive Vocal Signature",
+                    cognitiveModality: "Acoustic Signal Processing", panelHeaderStatus: "Current Node Assistant Status",
+                    statusSilent: "SYSTEM SILENT", statusTransmitting: "TRANSMITTING RESPONSE", statusActive: "AMBIENT WATCH ACTIVE", statusOffline: "SYSTEM OFFLINE",
+                    labelCalm: "Calm Stability", labelFriction: "Vocal Friction", labelLoad: "Dynamic Processing Load",
+                    cardTitleNeural: "Neural Processing", cardDescNeural: "Evaluating language tokens and acoustic matrices across hardware array tracks.",
+                    subMetricNeuralVelocity: "Velocity", subMetricNeuralIndex: "Index", subMetricNeuralActive: "Active",
+                    cardTitleVision: "Vision AI Matrix", cardDescVision: "Processing spatial environment tracking, matrix frameworks, and vector points.",
+                    subMetricVisionFPS: "FPS Feed", subMetricVisionAccuracy: "Accuracy", subMetricVisionTracking: "Tracking",
+                    cardTitleRobotics: "Robotics Core", cardDescRobotics: "Automated kinematics telemetry, hardware mapping, and thread scheduling loops.",
+                    subMetricRobotTasks: "Tasks", subMetricRobotLoad: "Load", subMetricRobotFlow: "Flow",
+                    footerText: "© 2026 Cognitive AI Advanced Web Project | End-to-End Recommended Architecture Implementation"
+                },
+                ta: {
+                    navLogo: "அறிவுசார் பேச்சு AI", navLinkConsole: "முனையம்", navLinkMatrix: "நேரடி மேட்ரிக்ஸ்",
+                    heroTitle: "அறிவுசார் பேச்சு கணினி ஆட்டோமேஷன்", heroDesc: "நிகழ்நேர சொற்பொருள் செயலாக்கத்துடன் ரோபோடிக் நரம்பியல் வடிவங்களை ஒருங்கிணைக்கும் பல மாதிரி இயந்திர வரிசை தளம்.",
+                    voiceStatusOffline: "ஒலி கோர் ஆஃப்லைனில் உள்ளது", voiceStatusActive: "சுற்றுப்புற விழித்தெழு சொல் எஞ்சின் செயல்படுகிறது",
+                    voiceStatusSpeaking: "ஒலி வெளியீட்டு வரிசையை ஒளிபரப்புகிறது...", transcriptPlaceholder: '"SYSTEM" எனக் கூறி உங்கள் கட்டளையை வழங்கவும் அல்லது உரை உள்ளீட்டை சமர்ப்பிக்கவும்.',
+                    voiceTextInit: "சுற்றுப்புற உதவி வளையத்தைத் தொடங்கு", voiceTextStop: "செயல்பாட்டு வளையத்தை நிறுத்து",
+                    sectionTitleMatrix: "அறிவுசார் செயல்பாட்டு இடைமுக மேட்ரிக்ஸ்", panelHeaderCapture: "ஒலி பிடிப்பு இடையக பகுதி",
+                    metricLabelDecibel: "ஒலி டெசிபல்கள்", metricLabelFrequency: "அலைவரிசை அதிர்வெண்", panelHeaderSignature: "அறிவுசார் குரல் கையொப்பம்",
+                    cognitiveModality: "ஒலி சமிகஞை செயலாக்கம்", panelHeaderStatus: "தற்போதைய கணினி உதவி நிலை",
+                    statusSilent: "கணினி அமைதி", statusTransmitting: "பதிலை அனுப்புகிறது", statusActive: "சுற்றுப்புற கண்காணிப்பு செயலில் உள்ளது", statusOffline: "கணினி ஆஃப்லைனுக்கு சென்றது",
+                    labelCalm: "அமையதியான நிலைத்தன்மை", labelFriction: "குரல் உராய்வு", labelLoad: "இயக்க முறை செயலாக்க சுமை",
+                    cardTitleNeural: "நரம்பியல் செயலாக்கம்", cardDescNeural: "வன்பொருள் வரிசை தடங்களில் மொழி டோக்கன்கள் மற்றும் ஒலி மேட்ரிக்ஸ்களை மதிப்பிடுதல்.",
+                    subMetricNeuralVelocity: "வேகம்", subMetricNeuralIndex: "குறியீடு", subMetricNeuralActive: "செயலில்",
+                    cardTitleVision: "பார்வை AI மேட்ரிக்ஸ்", cardDescVision: "இடஞ்சார்ந்த சூழல் கண்காணிப்பு, மேட்ரிக்ஸ் கட்டமைப்புகள் மற்றும் திசையன் புள்ளிகளை செயலாக்குகிறது.",
+                    subMetricVisionFPS: "எஃப்.பி.எஸ் ஃபீட்", subMetricVisionAccuracy: "துல்லியம்", subMetricVisionTracking: "கண்காணிப்பு",
+                    cardTitleRobotics: "ரோபோடிக்ஸ் கோர்", cardDescRobotics: "தானியங்கி இயக்கவியல் டெலிமெட்ரி, வன்பொருள் வரைபடம் மற்றும் த்ரெட் திட்டமிடல் சுழல்கள்.",
+                    subMetricRobotTasks: "பணிகள்", subMetricRobotLoad: "சுமை", subMetricRobotFlow: "பாய்ச்சல்",
+                    footerText: "© 2026 அறிவுசார் AI மேம்பட்ட வலைத் திட்டம்"
+                },
+                hi: {
+                    navLogo: "कॉग्निटिव स्पीच एआई", navLinkConsole: "कंसोल", navLinkMatrix: "लाइव मैट्रिक्स",
+                    heroTitle: "कॉग्निटिव स्पीच एआई ऑटोमेशन", heroDesc: "वास्तविक समय के सिमेंटिक निष्पादन के साथ रोबोटिक न्यूरल प्रोसेसिंग पैटर्न को संश्लेषित करने वाला एक मल्टी-मोडल मशीन एरे स्ट्रीम।",
+                    voiceStatusOffline: "ध्वनिक कोर ऑफ़लाइन", voiceStatusActive: "वेक-वर्ड इंजन सक्रिय"
                 }
-            });
-        }
-
-        /**
-         * Block Activation Handler (Node Clicking Event)
-         */
-        function handleBlockActivation(nodeId) {
-            // Reset borders across nodes
-            for(let i=1; i<=6; i++) {
-                const node = document.getElementById(`archNode-${i}`);
-                if(node) node.style.borderColor = "#334155";
-            }
-            const activeNode = document.getElementById(`archNode-${nodeId}`);
-            if(activeNode) activeNode.style.borderColor = "#00f3ff";
-
-            const log = document.getElementById("terminalLog");
-            const tokenBadge = document.getElementById("activeTokenBadge");
-
-            const metadata = {
-                1: { token: "INPUT_STREAM", text: "Cognitive Speech AI: Initializing multi-modal audio vector stream across EN/TA/HI/KN matrices." },
-                2: { token: "SPEECH_ENGINE", text: "Speech Engine: Executing Whisper acoustic buffer conversion & phonetic tokenization." },
-                3: { token: "AI_INTELLIGENCE", text: "AI Intelligence: Parsing semantic intent and mapping contextual RAG vector memories." },
-                4: { token: "FLASK_BACKEND", text: "Python Flask Backend: Routing command through intent matcher and executing automation rules." },
-                5: { token: "DASHBOARD_SYNC", text: "Live Dashboard: Synchronizing real-time telemetry widgets and EQ frequency spectrum." },
-                6: { token: "VOICE_TTS", text: "Voice Response: Synthesizing emotional text-to-speech audio response wave." }
             };
-
-            const data = metadata[nodeId];
-            if(data) {
-                tokenBadge.textContent = data.token;
-                log.innerHTML += `<div class="text-neonBlue mt-1">⚡ [Architecture Node ${nodeId} Triggered]: ${data.text}</div>`;
-                log.scrollTop = log.scrollHeight;
-
-                if("speechSynthesis" in window && nodeId === 6) {
-                    window.speechSynthesis.cancel();
-                    window.speechSynthesis.speak(new SpeechSynthesisUtterance(data.text));
-                }
-            }
-        }
-
-        /**
-         * Command Execution & REST API Dispatcher
-         */
-        async function executeCommand(query) {
-            const log = document.getElementById("terminalLog");
-            const tokenBadge = document.getElementById("activeTokenBadge");
-
-            log.innerHTML += `<div class="mt-2 text-neonBlue">> ${query}</div>`;
-            log.scrollTop = log.scrollHeight;
-
-            try {
-                const res = await fetch(`${BACKEND_URL}/api/command`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ command: query })
-                });
-                const data = await res.json();
-                
-                tokenBadge.textContent = data.status.toUpperCase();
-                log.innerHTML += `<div class="mt-1 text-neonGreen">✓ [Flask Backend]: ${data.action}</div>`;
-                log.scrollTop = log.scrollHeight;
-
-                if (data.action && 'speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    window.speechSynthesis.speak(new SpeechSynthesisUtterance(data.action));
-                }
-
-                if (data.url) {
-                    window.open(data.url, '_blank');
-                }
-            } catch (err) {
-                tokenBadge.textContent = "FALLBACK_MODE";
-                log.innerHTML += `<div class="mt-1 text-neonAmber">⚠ Flask backend offline. Local simulation active for: "${query}"</div>`;
-                log.scrollTop = log.scrollHeight;
-
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    window.speechSynthesis.speak(new SpeechSynthesisUtterance(`Simulated response for ${query}`));
-                }
-            }
-        }
-
-        // Handle Command Form Submit
-        const commandForm = document.getElementById("commandForm");
-        if(commandForm) {
-            commandForm.addEventListener("submit", (e) => {
-                e.preventDefault();
-                const input = document.getElementById("commandInput");
-                const query = input.value.trim();
-                if(query) {
-                    executeCommand(query);
-                    input.value = "";
-                }
-            });
-        }
-
-        /**
-         * Web Speech Recognition Integration
-         */
-        const micBtn = document.getElementById("btnVoiceTrigger");
-        if(micBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-
-            micBtn.addEventListener('click', () => {
-                recognition.start();
-                document.getElementById("terminalDot").className = "w-3 h-3 rounded-full bg-neonBlue animate-ping";
-                document.getElementById("terminalStatusText").textContent = "Listening to acoustic microphone stream...";
-            });
-
-            recognition.onresult = (event) => {
-                const speechResult = event.results[0][0].transcript;
-                document.getElementById("commandInput").value = speechResult;
-                executeCommand(speechResult);
-            };
-
-            recognition.onerror = () => {
-                document.getElementById("terminalDot").className = "w-3 h-3 rounded-full bg-rose-500";
-                document.getElementById("terminalStatusText").textContent = "Speech API Error / Permission Denied";
-            };
-        }
-
-        /**
-         * Canvas Rendering Engine for Sub-system Modules
-         */
-        function drawCanvasWave(canvasId, strokeColor) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            let offset = 0;
-
-            function animate() {
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.beginPath();
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = strokeColor;
-
-                const height = canvas.height;
-                const width = canvas.width;
-                offset += 0.05;
-
-                for (let x = 0; x < width; x++) {
-                    const y = Math.sin(x * 0.05 + offset) * 15 + height / 2;
-                    if (x === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.stroke();
-                requestAnimationFrame(animate);
-            }
-            animate();
-        }
-
-        // Initialize Canvases
-        window.addEventListener('load', () => {
-            drawCanvasWave('neuralCanvas', '#00f3ff');
-            drawCanvasWave('analyticsCanvas', '#8b5cf6');
-            drawCanvasWave('automationCanvas', '#10b981');
         });
-
-        /**
-         * Live Acoustic Spectrogram Equalizer Fluctuation Loop
-         */
-        setInterval(() => {
-            const bars = document.querySelectorAll('.eq-bar');
-            bars.forEach(bar => {
-                bar.style.height = (Math.floor(Math.random() * 80) + 15) + "%";
-            });
-            const db = -(Math.random() * 10 + 10).toFixed(1);
-            const decEl = document.getElementById("liveDecibel");
-            if(decEl) decEl.textContent = db + " dB";
-        }, 150);
     </script>
 </body>
 </html>
