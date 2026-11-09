@@ -42,20 +42,12 @@
             border: 1px solid rgba(34, 47, 76, 0.8);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        @keyframes pulseGlow {
-            0% { opacity: 0.6; transform: scale(0.98); }
-            100% { opacity: 1; transform: scale(1.02); }
-        }
-        .animate-glow {
-            animation: pulseGlow 1.5s infinite alternate;
-        }
         .eq-bar {
             width: 8px;
             background: #00f3ff;
             border-radius: 4px;
             transition: height 0.08s ease;
         }
-        /* Custom scrollbar for transcripts */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -72,6 +64,7 @@
     </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-black">
+
     <nav class="sticky top-0 z-50 flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-darkPanel/90 backdrop-blur-md border-b border-borderCol">
         <div class="flex items-center gap-3">
             <div class="w-3 h-3 rounded-full bg-neonBlue animate-ping"></div>
@@ -99,7 +92,7 @@
     <section id="console" class="max-w-5xl mx-auto w-full px-6 pt-10 pb-8 text-center">
         <h1 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-3 tracking-tight">Cognitive Speech AI</h1>
         <p id="heroDesc" class="text-slate-400 max-w-2xl mx-auto text-sm md:text-base mb-8">Integrated speech-to-intent pipeline executing real-time AI evaluation, command processing, and automated system response.</p>
-        
+
         <div class="glass-panel rounded-2xl p-6 mb-6 text-left">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 border-b border-slate-800 pb-3">
                 <div class="flex items-center gap-3 font-semibold text-sm">
@@ -111,11 +104,11 @@
                     <span id="backendBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-neonAmber border border-amber-500/30">DISCONNECTED / FALLBACK</span>
                 </div>
             </div>
-            
+
             <div id="voiceTranscript" class="bg-[#090d16] p-4 rounded-xl font-mono text-sm min-h-[140px] max-h-64 overflow-y-auto text-slate-200 border border-[#1a243a]">
                 <span id="transcriptPlaceholder" class="text-slate-500 italic">Say "SYSTEM" followed by your command or submit text input below to trigger speech transcription & intent evaluation...</span>
             </div>
-            
+
             <!-- Text Input Fallback / Multilingual Direct Command Input -->
             <form id="textCommandForm" class="mt-4 flex flex-col sm:flex-row gap-3">
                 <input type="text" id="textCommandInput" placeholder="Or type command here (e.g., 'SYSTEM run vision matrix test')..." class="flex-1 bg-[#090d16] border border-borderCol rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-neonBlue transition-all font-mono">
@@ -147,6 +140,7 @@
                 </div>
                 <div id="pipeStage1" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
             </div>
+
             <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
                 <div>
                     <span class="text-[10px] font-mono font-bold text-neonPurple bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/30 uppercase">Stage 02</span>
@@ -155,6 +149,7 @@
                 </div>
                 <div id="pipeStage2" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
             </div>
+
             <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
                 <div>
                     <span class="text-[10px] font-mono font-bold text-neonAmber bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 uppercase">Stage 03</span>
@@ -163,6 +158,7 @@
                 </div>
                 <div id="pipeStage3" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
             </div>
+
             <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
                 <div>
                     <span class="text-[10px] font-mono font-bold text-neonGreen bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 uppercase">Stage 04</span>
@@ -171,6 +167,7 @@
                 </div>
                 <div id="pipeStage4" class="mt-3 text-[11px] font-mono text-slate-500 border-t border-slate-800/80 pt-2">IDLE</div>
             </div>
+
             <div class="glass-panel p-4 rounded-xl border border-slate-800 text-center flex flex-col justify-between">
                 <div>
                     <span class="text-[10px] font-mono font-bold text-neonRose bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/30 uppercase">Stage 05</span>
@@ -185,6 +182,7 @@
     <!-- Dashboard & Telemetry Section -->
     <section id="dashboard" class="max-w-7xl mx-auto w-full px-6 pb-16">
         <h2 id="sectionTitleMatrix" class="text-2xl md:text-3xl font-bold text-center mb-10">Cognitive Operations Interface Matrix</h2>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <!-- Acoustic Capture Panel -->
             <div class="glass-panel rounded-2xl p-6">
@@ -215,17 +213,19 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Cognitive Vocal Signature Panel -->
             <div class="glass-panel rounded-2xl p-6">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800 pb-4 mb-5 gap-3">
                     <h3 id="panelHeaderSignature" class="text-lg font-semibold">Cognitive Vocal Signature</h3>
                     <span id="cognitiveModality" class="text-xs font-semibold text-slate-400">Acoustic Signal Processing</span>
                 </div>
+
                 <div class="bg-[#090d16] border border-dashed border-slate-800 rounded-xl p-4 mb-5 text-center flex flex-col justify-center min-h-[90px]">
                     <div id="panelHeaderStatus" class="text-xs text-slate-400 uppercase tracking-wider mb-1">Current Node Assistant Status</div>
                     <div id="emotionTokenDisplay" class="font-mono text-xl font-bold text-slate-400 transition-all duration-300">SYSTEM SILENT</div>
                 </div>
+
                 <div class="space-y-4">
                     <div>
                         <div class="flex justify-between text-xs text-slate-400 mb-1.5">
@@ -257,7 +257,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Three Interactive Sub-Systems Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Neural Processing Box -->
@@ -287,7 +287,7 @@
                 </div>
                 <canvas id="neuralCanvas" class="w-full h-24 bg-[#090d16] rounded-lg border border-slate-900 block mt-2"></canvas>
             </div>
-            
+
             <!-- Vision AI Matrix Box -->
             <div class="glass-panel rounded-2xl p-6 flex flex-col justify-between">
                 <div>
@@ -395,9 +395,375 @@
                 hi: {
                     navLogo: "कॉग्निटिव स्पीच एआई", navLinkConsole: "कंसोल", navLinkMatrix: "लाइव मैट्रिक्स",
                     heroTitle: "कॉग्निटिव स्पीच एआई ऑटोमेशन", heroDesc: "वास्तविक समय के सिमेंटिक निष्पादन के साथ रोबोटिक न्यूरल प्रोसेसिंग पैटर्न को संश्लेषित करने वाला एक मल्टी-मोडल मशीन एरे स्ट्रीम।",
-                    voiceStatusOffline: "ध्वनिक कोर ऑफ़लाइन", voiceStatusActive: "वेक-वर्ड इंजन सक्रिय"
+                    voiceStatusOffline: "ध्वनिक कोर ऑफ़लाइन", voiceStatusActive: "वेक-वर्ड इंजन सक्रिय है",
+                    voiceStatusSpeaking: "ऑडियो आउटपुट एरे प्रसारित हो रहा है...", transcriptPlaceholder: '"SYSTEM" बोलकर अपना कमांड दें या टेक्स्ट कमांड सबमिट करें।',
+                    voiceTextInit: "असिस्टेंट लूप प्रारंभ करें", voiceTextStop: "मैट्रिक्स ऑपरेशंस लूप समाप्त करें",
+                    sectionTitleMatrix: "कॉग्निटिव ऑपरेशंस इंटरफेस मैट्रिक्स", panelHeaderCapture: "ध्वनिक कैप्चर बफर",
+                    metricLabelDecibel: "ध्वनिक डेसिबल", metricLabelFrequency: "स्ट्रीम फ्रीक्वेंसी", panelHeaderSignature: "कॉग्निटिव वोकल सिग्नेचर",
+                    cognitiveModality: "ध्वनिक सिग्नल प्रोसेसिंग", panelHeaderStatus: "वर्तमान नोड असिस्टेंट स्थिति",
+                    statusSilent: "सिस्टम मौन", statusTransmitting: "प्रतिक्रिया प्रसारित हो रही है", statusActive: "असिस्टेंट वॉच सक्रिय", statusOffline: "सिस्टम ऑफ़लाइन",
+                    labelCalm: "शांत स्थिरता", labelFriction: "मुखर घर्षण", labelLoad: "डायनेमिक प्रोसेसिंग लोड",
+                    cardTitleNeural: "न्यूरल प्रोसेसिंग", cardDescNeural: "हार्डवेयर एरे ट्रैक पर भाषा टोकन और ध्वनिक मैट्रिक्स का मूल्यांकन।",
+                    subMetricNeuralVelocity: "गति", subMetricNeuralIndex: "इंडेक्स", subMetricNeuralActive: "सक्रिय",
+                    cardTitleVision: "विजन एआई मैट्रिक्स", cardDescVision: "स्थानिक पर्यावरण ट्रैकिंग, मैट्रिक्स फ्रेमवर्क और वेक्टर बिंदुओं को संसाधित करना।",
+                    subMetricVisionFPS: "एफपीएस फीड", subMetricVisionAccuracy: "सटीकता", subMetricVisionTracking: "ट्रैकिंग",
+                    cardTitleRobotics: "रोबोटिक्स कोर", cardDescRobotics: "स्वचालित कीनेमैटिक्स टेलीमेट्री, हार्डवेयर मैपिंग और थ्रेड शेड्यूलिंग लूप।",
+                    subMetricRobotTasks: "कार्य", subMetricRobotLoad: "लोड", subMetricRobotFlow: "प्रवाह",
+                    footerText: "© 2026 कॉग्निटिव एआई एडवांस्ड वेब प्रोजेक्ट"
+                },
+                kn: {
+                    navLogo: "ಕಾಗ್ನಿಟಿವ್ ಸ್ಪೀಚ್ ಎಐ", navLinkConsole: "ಕನ್ಸೋಲ್", navLinkMatrix: "ಲೈವ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್",
+                    heroTitle: "ಕಾಗ್ನಿಟಿವ್ ಸ್ಪೀಚ್ ಎಐ ಆಟೊಮೇಷನ್", heroDesc: "ನೈಜ-ಸಮಯದ ಲಾಕ್ಷಣಿಕ ಮರಣದಂಡನೆಯೊಂದಿಗೆ ರೋಬೋಟಿಕ್ ನರ ಸಂಸ್ಕರಣಾ ಮಾದರಿಗಳನ್ನು ಸಂಯೋಜಿಸುವ ಮಲ್ಟಿ-ಮೋಡಲ್ ಯಂತ್ರ ಅರೇ ಸ್ಟ್ರೀಮ್.",
+                    voiceStatusOffline: "ಅಕೌಸ್ಟಿಕ್ ಕೋರ್ ಆಫ್ಲೈನ್‌ನಲ್ಲಿದೆ", voiceStatusActive: "ವೇಕ್-ವರ್ಡ್ ಇಂಜಿನ್ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆ",
+                    voiceStatusSpeaking: "ಆಡಿಯೊ ಔಟ್‌ಪುಟ್ ಪ್ರಸಾರವಾಗುತ್ತಿದೆ...", transcriptPlaceholder: '"SYSTEM" ಎಂದು ಹೇಳಿ ನಿಮ್ಮ ಆದೇಶವನ್ನು ನೀಡಿ ಅಥವಾ ಪಠ್ಯ ನಮೂದಿಸಿ.',
+                    voiceTextInit: "ಅಸಿಸ್ಟೆಂಟ್ ಲೂಪ್ ಪ್ರಾರಂಭಿಸಿ", voiceTextStop: "ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಕಾರ್ಯಾಚರಣೆಗಳ ಲೂಪ್ ನಿಲ್ಲಿಸಿ",
+                    sectionTitleMatrix: "ಕಾಗ್ನಿಟಿವ್ ಆಪರೇಷನ್ಸ್ ಇಂಟರ್ಫೇಸ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್", panelHeaderCapture: "ಅಕೌಸ್ಟಿಕ್ ಕ್ಯಾಪ್ಚರ್ ಬಫರ್",
+                    metricLabelDecibel: "ಅಕೌಸ್ಟಿಕ್ ಡೆಸಿಬಲ್ಸ್", metricLabelFrequency: "ಸ್ಟ್ರೀಮ್ ಆವರ್ತನ", panelHeaderSignature: "ಕಾಗ್ನಿಟಿವ್ ವೋಕಲ್ ಸಿಗ್ನೇಚರ್",
+                    cognitiveModality: "ಅಕೌಸ್ಟಿಕ್ ಸಿಗ್ನಲ್ ಪ್ರೊಸೆಸಿಂಗ್", panelHeaderStatus: "ಪ್ರಸ್ತುತ ಅಸಿಸ್ಟೆಂಟ್ ಸ್ಥಿತಿ",
+                    statusSilent: "ಸಿಸ್ಟಮ್ ಸೈಲೆಂಟ್", statusTransmitting: "ಪ್ರತಿಕ್ರಿಯೆ ರವಾನಿಸಲಾಗುತ್ತಿದೆ", statusActive: "ಸುತ್ತಮುತ್ತಲಿನ ಜಾಗರೂಕತೆ ಸಕ್ರಿಯವಾಗಿದೆ", statusOffline: "ಸಿಸ್ಟಮ್ ಆಫ್‌ಲೈನ್",
+                    labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ಧ್ವನಿ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಸಂಸ್ಕರಣಾ ಲೋಡ್",
+                    cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
+                    subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
+                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಸ್ಪೇಷಿಯಲ್ ಎನ್ವಿರಾನ್ಮೆಂಟ್ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಫ್ರೇಮ್‌‌ವರ್ಕ್‌ಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ.",
+                    subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
+                    cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಯಂತ್ರಾಂಶ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
+                    subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಪ್ರವಾಹ",
+                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಅಡ್ವಾನ್ಸಡ್ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್"
                 }
             };
+
+            let currentLang = 'en';
+            const langSelect = document.getElementById("langSelect");
+            
+            function updateLanguage(lang) {
+                currentLang = lang;
+                const dict = LocalizationMatrix[lang];
+                if (!dict) return;
+                for (const key in dict) {
+                    const el = document.getElementById(key);
+                    if (el) el.textContent = dict[key];
+                }
+            }
+
+            if (langSelect) {
+                langSelect.addEventListener("change", (e) => updateLanguage(e.target.value));
+            }
+
+            // Pipeline Stage visual updater
+            const pipeStages = [
+                document.getElementById("pipeStage1"),
+                document.getElementById("pipeStage2"),
+                document.getElementById("pipeStage3"),
+                document.getElementById("pipeStage4"),
+                document.getElementById("pipeStage5")
+            ];
+
+            function updatePipelineVisual(stageIndex, statusText, isError = false) {
+                pipeStages.forEach((stage, idx) => {
+                    if (!stage) return;
+                    if (idx < stageIndex) {
+                        stage.textContent = "PASSED";
+                        stage.className = "mt-3 text-[11px] font-mono text-neonGreen font-bold border-t border-slate-800/80 pt-2";
+                    } else if (idx === stageIndex) {
+                        stage.textContent = statusText;
+                        stage.className = isError 
+                            ? "mt-3 text-[11px] font-mono text-neonRose font-bold border-t border-slate-800/80 pt-2 animate-pulse"
+                            : "mt-3 text-[11px] font-mono text-neonBlue font-bold border-t border-slate-800/80 pt-2 animate-pulse";
+                    } else {
+                        stage.textContent = "WAITING";
+                        stage.className = "mt-3 text-[11px] font-mono text-slate-600 border-t border-slate-800/80 pt-2";
+                    }
+                });
+            }
+
+            // --- Voice Recognition + Flask Backend Integration ---
+            let isListening = false;
+            let recognition = null;
+            const BACKEND_URL = "http://localhost:5000";
+
+            const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
+            const voiceStatusDot = document.getElementById("voiceStatusDot");
+            const voiceStatusText = document.getElementById("voiceStatusText");
+            const voiceTranscript = document.getElementById("voiceTranscript");
+            const voiceModuleStatus = document.getElementById("voiceModuleStatus");
+            const emotionTokenDisplay = document.getElementById("emotionTokenDisplay");
+            const textCommandForm = document.getElementById("textCommandForm");
+            const textCommandInput = document.getElementById("textCommandInput");
+            const backendBadge = document.getElementById("backendBadge");
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const languageCodes = { en: "en-IN", ta: "ta-IN", hi: "hi-IN", kn: "kn-IN" };
+
+            function escapeHtml(str) {
+                return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            }
+
+            function speakResponse(text) {
+                updatePipelineVisual(4, "VOICE TTS ACTIVE");
+                if (!("speechSynthesis" in window)) return;
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = languageCodes[currentLang] || "en-IN";
+                utterance.rate = 1;
+                utterance.pitch = 1;
+                utterance.onstart = () => {
+                    if (voiceStatusText) voiceStatusText.textContent = LocalizationMatrix[currentLang].voiceStatusSpeaking;
+                };
+                utterance.onend = () => {
+                    if (voiceStatusText) voiceStatusText.textContent = LocalizationMatrix[currentLang].voiceStatusActive;
+                    updatePipelineVisual(5, "COMPLETED");
+                };
+                window.speechSynthesis.speak(utterance);
+            }
+
+            async function processPipelineCommand(command, mode = "VOICE") {
+                updatePipelineVisual(0, `${mode} INPUT READY`);
+                await new Promise(r => setTimeout(r, 150));
+                
+                updatePipelineVisual(1, "TRANSCRIBING & TOKENIZING");
+                await new Promise(r => setTimeout(r, 150));
+                
+                updatePipelineVisual(2, "AI INTENT EVALUATION");
+                if (voiceStatusText) voiceStatusText.textContent = "Connecting to Python Flask backend...";
+                if (emotionTokenDisplay) emotionTokenDisplay.textContent = "PROCESSING AI INTENT";
+
+                updatePipelineVisual(3, "FLASK EXECUTING COMMAND");
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/command`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ command, lang: currentLang, mode })
+                    });
+
+                    if (!response.ok) throw new Error(`Backend HTTP ${response.status}`);
+
+                    const data = await response.json();
+                    if (backendBadge) {
+                        backendBadge.textContent = "FLASK ONLINE (5000)";
+                        backendBadge.className = "text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-neonGreen border border-emerald-500/30";
+                    }
+
+                    voiceTranscript.innerHTML = `
+                        <div class="text-neonBlue">Incoming Command [${mode}]: ${escapeHtml(command)}</div>
+                        <div class="text-neonPurple mt-1">Intent Category: ${escapeHtml(data.intent || "General Automated Action")}</div>
+                        <div class="text-neonGreen mt-2">Flask Backend Response: ${escapeHtml(data.action || "No response text")}</div>
+                    `;
+                    
+                    if (emotionTokenDisplay) {
+                        emotionTokenDisplay.textContent = (data.status || "EXECUTION OK").toUpperCase();
+                    }
+
+                    speakResponse(data.action || "Command processed by Flask backend.");
+
+                    if (data.url) {
+                        const link = document.createElement("a");
+                        link.href = data.url;
+                        link.target = "_blank";
+                        link.rel = "noopener noreferrer";
+                        link.textContent = "Open Requested Action URL";
+                        link.className = "block mt-3 text-neonBlue underline text-xs font-mono";
+                        voiceTranscript.appendChild(link);
+                    }
+                } catch (err) {
+                    console.warn("Python Flask backend not reachable. Executing client-side AI fallback simulation:", err);
+                    if (backendBadge) {
+                        backendBadge.textContent = "FALLBACK / DISCONNECTED";
+                        backendBadge.className = "text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-neonAmber border border-amber-500/30";
+                    }
+
+                    // Fallback AI Intent Parser
+                    let fallbackIntent = "SYSTEM_TELEMETRY";
+                    let fallbackResponse = `Simulated execution routine for "${command}". All system nodes reporting active.`;
+                    
+                    const lowerCmd = command.toLowerCase();
+                    if (lowerCmd.includes("vision") || lowerCmd.includes("camera") || lowerCmd.includes("matrix")) {
+                        fallbackIntent = "VISION_AI_EVALUATION";
+                        fallbackResponse = "Vision AI matrix diagnostics initiated. Spatial vector resolution set to high precision.";
+                    } else if (lowerCmd.includes("robot") || lowerCmd.includes("motor") || lowerCmd.includes("arm")) {
+                        fallbackIntent = "ROBOTICS_CORE_KINEMATICS";
+                        fallbackResponse = "Robotics kinematics thread verified. Hardware mapping operational.";
+                    }
+
+                    voiceTranscript.innerHTML = `
+                        <div class="text-neonBlue">Command Input [${mode}]: ${escapeHtml(command)}</div>
+                        <div class="text-neonAmber mt-1">Simulated Intent: ${fallbackIntent}</div>
+                        <div class="text-neonGreen mt-2">Simulated AI Response: ${escapeHtml(fallbackResponse)}</div>
+                    `;
+
+                    if (emotionTokenDisplay) emotionTokenDisplay.textContent = "SIMULATED AI OK";
+                    speakResponse(fallbackResponse);
+                }
+            }
+
+            // Handle Text Form Submit
+            textCommandForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const cmd = textCommandInput.value.trim();
+                if (cmd) {
+                    processPipelineCommand(cmd, "TEXT");
+                    textCommandInput.value = "";
+                }
+            });
+
+            // Speech Recognition Setup
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = () => {
+                    isListening = true;
+                    if (voiceStatusDot) voiceStatusDot.className = "w-3 h-3 rounded-full bg-neonGreen animate-ping";
+                    if (voiceStatusText) voiceStatusText.textContent = LocalizationMatrix[currentLang].voiceStatusActive;
+                    if (voiceModuleStatus) {
+                        voiceModuleStatus.textContent = "LISTENING";
+                        voiceModuleStatus.className = "self-start sm:self-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-neonGreen border border-emerald-500/40";
+                    }
+                    document.getElementById("voiceText").textContent = LocalizationMatrix[currentLang].voiceTextStop;
+                    updatePipelineVisual(0, "RECORDING AUDIO...");
+                };
+
+                recognition.onresult = (event) => {
+                    const transcriptText = event.results[0][0].transcript;
+                    processPipelineCommand(transcriptText, "VOICE");
+                };
+
+                recognition.onerror = (event) => {
+                    console.warn("Speech recognition error:", event.error);
+                    updatePipelineVisual(1, "SPEECH ERROR", true);
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    if (voiceStatusDot) voiceStatusDot.className = "w-3 h-3 rounded-full bg-slate-500";
+                    if (voiceStatusText) voiceStatusText.textContent = LocalizationMatrix[currentLang].voiceStatusOffline;
+                    if (voiceModuleStatus) {
+                        voiceModuleStatus.textContent = "STANDBY";
+                        voiceModuleStatus.className = "self-start sm:self-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-neonGreen border border-emerald-500/20";
+                    }
+                    document.getElementById("voiceText").textContent = LocalizationMatrix[currentLang].voiceTextInit;
+                };
+
+                btnVoiceTrigger.addEventListener("click", () => {
+                    recognition.lang = languageCodes[currentLang] || "en-IN";
+                    if (isListening) {
+                        recognition.stop();
+                    } else {
+                        try {
+                            recognition.start();
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    }
+                });
+            } else {
+                btnVoiceTrigger.addEventListener("click", () => {
+                    const manualCmd = prompt("Enter command for Cognitive AI Matrix:", "SYSTEM run diagnostics");
+                    if (manualCmd) processPipelineCommand(manualCmd, "TEXT_PROMPT");
+                });
+            }
+
+            // Live Telemetry Simulation Loop
+            const eqBars = document.querySelectorAll('.eq-bar');
+            const liveDecibel = document.getElementById("liveDecibel");
+            const liveSampleRate = document.getElementById("liveSampleRate");
+            
+            const barCalm = document.getElementById("barCalm");
+            const txtCalm = document.getElementById("txtCalm");
+            const barFriction = document.getElementById("barFriction");
+            const txtFriction = document.getElementById("txtFriction");
+            const barLoad = document.getElementById("barLoad");
+            const txtLoad = document.getElementById("txtLoad");
+
+            const neuralBar = document.getElementById("neuralBar");
+            const valNeuralVelocity = document.getElementById("valNeuralVelocity");
+            const valNeuralIndex = document.getElementById("valNeuralIndex");
+            const valNeuralActive = document.getElementById("valNeuralActive");
+
+            const analyticsBar = document.getElementById("analyticsBar");
+            const valVisionFPS = document.getElementById("valVisionFPS");
+            const valVisionAccuracy = document.getElementById("valVisionAccuracy");
+            const valVisionTracking = document.getElementById("valVisionTracking");
+
+            const automationBar = document.getElementById("automationBar");
+            const valRobotTasks = document.getElementById("valRobotTasks");
+            const valRobotLoad = document.getElementById("valRobotLoad");
+            const valRobotFlow = document.getElementById("valRobotFlow");
+
+            const neuralCtx = document.getElementById("neuralCanvas")?.getContext("2d");
+            const analyticsCtx = document.getElementById("analyticsCanvas")?.getContext("2d");
+            const automationCtx = document.getElementById("automationCanvas")?.getContext("2d");
+
+            let step = 0;
+            function drawWave(ctx, color) {
+                if (!ctx) return;
+                const width = ctx.canvas.width;
+                const height = ctx.canvas.height;
+                ctx.clearRect(0, 0, width, height);
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                for (let x = 0; x < width; x++) {
+                    let y = (height / 2) + Math.sin(x * 0.04 + step) * (height / 4) * Math.sin(step * 0.5);
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            setInterval(() => {
+                step += 0.15;
+                
+                eqBars.forEach((bar) => {
+                    const h = isListening ? Math.floor(Math.random() * 85) + 15 : Math.floor(Math.random() * 20) + 5;
+                    bar.style.height = h + "%";
+                });
+
+                const dbVal = isListening ? -(Math.random() * 15 + 2).toFixed(1) : -(Math.random() * 30 + 35).toFixed(1);
+                if (liveDecibel) liveDecibel.textContent = dbVal + " dB";
+                if (liveSampleRate) liveSampleRate.textContent = (44.1 + Math.random() * 0.4).toFixed(1) + " kHz";
+
+                const calmVal = Math.floor(75 + Math.random() * 20);
+                const frictionVal = Math.floor(5 + Math.random() * 15);
+                const loadVal = Math.floor(40 + Math.random() * 45);
+
+                if (barCalm) barCalm.style.width = calmVal + "%";
+                if (txtCalm) txtCalm.textContent = calmVal + "%";
+                if (barFriction) barFriction.style.width = frictionVal + "%";
+                if (txtFriction) txtFriction.textContent = frictionVal + "%";
+                if (barLoad) barLoad.style.width = loadVal + "%";
+                if (txtLoad) txtLoad.textContent = loadVal + "%";
+
+                const nVel = Math.floor(82 + Math.random() * 15);
+                const nInd = Math.floor(90 + Math.random() * 9);
+                const nAct = Math.floor(65 + Math.random() * 30);
+                if (neuralBar) neuralBar.style.width = nVel + "%";
+                if (valNeuralVelocity) valNeuralVelocity.textContent = nVel + "%";
+                if (valNeuralIndex) valNeuralIndex.textContent = nInd + "%";
+                if (valNeuralActive) valNeuralActive.textContent = nAct + "%";
+
+                const vFps = Math.floor(58 + Math.random() * 5);
+                const vAcc = Math.floor(94 + Math.random() * 5);
+                const vTrk = Math.floor(88 + Math.random() * 11);
+                if (analyticsBar) analyticsBar.style.width = vAcc + "%";
+                if (valVisionFPS) valVisionFPS.textContent = vFps + " FPS";
+                if (valVisionAccuracy) valVisionAccuracy.textContent = vAcc + "%";
+                if (valVisionTracking) valVisionTracking.textContent = vTrk + "%";
+
+                const rTasks = Math.floor(91 + Math.random() * 8);
+                const rLoad = Math.floor(45 + Math.random() * 35);
+                const rFlow = Math.floor(85 + Math.random() * 14);
+                if (automationBar) automationBar.style.width = rFlow + "%";
+                if (valRobotTasks) valRobotTasks.textContent = rTasks + "%";
+                if (valRobotLoad) valRobotLoad.textContent = rLoad + "%";
+                if (valRobotFlow) valRobotFlow.textContent = rFlow + "%";
+
+                drawWave(neuralCtx, "#00f3ff");
+                drawWave(analyticsCtx, "#8b5cf6");
+                drawWave(automationCtx, "#10b981");
+
+            }, 120);
         });
     </script>
 </body>
