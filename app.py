@@ -1028,12 +1028,11 @@ HTML_TEMPLATE = """
     </script>
 </body>
 </html>
-"""
+
 
 # Updated build_api_payload to pass 'intent' cleanly to your HTML frontend
 def build_api_payload(status, action, url="", intent="Platform Routing Vector"):
     return jsonify({"status": status, "action": action, "url": url, "intent": intent})
-
 
 @app.route("/")
 def index():
@@ -1060,6 +1059,32 @@ def process_incoming_command():
             return build_api_payload("empty", "No payload execution vector supplied.", intent="Empty Vector")
 
         command = raw_input.lower()
+        command = raw_input.lower()
+        
+        # Direct keyword checks for fast matching
+        if "gmail" in command or "mail" in command:
+            return build_api_payload(
+                "success", 
+                "Opening Gmail inbox interface.", 
+                "https://mail.google.com", 
+                intent="Platform Direct Routing: Gmail"
+            )
+        
+        if "amazon" in command:
+            return build_api_payload(
+                "success", 
+                "Opening Amazon India shopping portal.", 
+                "https://www.amazon.in", 
+                intent="Platform Direct Routing: Amazon"
+            )
+
+        if "youtube" in command or "video" in command or "song" in command:
+            return build_api_payload(
+                "success", 
+                "Launching YouTube streaming platform.", 
+                "https://www.youtube.com", 
+                intent="Platform Direct Routing: YouTube"
+            )
         print(f"[INGRESS] Routing Vector Received -> {command}")
 
         if any(term in command for term in ["gold rate", "gold price", "gold"]):
