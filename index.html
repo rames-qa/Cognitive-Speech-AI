@@ -101,17 +101,17 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="text-xs text-slate-400 font-mono">Backend Engine:</span>
-                    <span id="backendBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-neonAmber border border-amber-500/30">DISCONNECTED / FALLBACK</span>
+                    <span id="backendBadge" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-neonAmber border border-amber-500/30">CHECKING CONNECTION...</span>
                 </div>
             </div>
 
             <div id="voiceTranscript" class="bg-[#090d16] p-4 rounded-xl font-mono text-sm min-h-[140px] max-h-64 overflow-y-auto text-slate-200 border border-[#1a243a]">
-                <span id="transcriptPlaceholder" class="text-slate-500 italic">Say "SYSTEM" followed by your command or submit text input below to trigger speech transcription & intent evaluation...</span>
+                <span id="transcriptPlaceholder" class="text-slate-500 italic">Say an app name (e.g., "Open Amazon", "Search Zomato for biryani") or submit text command below...</span>
             </div>
 
             <!-- Text Input Fallback / Multilingual Direct Command Input -->
             <form id="textCommandForm" class="mt-4 flex flex-col sm:flex-row gap-3">
-                <input type="text" id="textCommandInput" placeholder="Or type command here (e.g., 'SYSTEM run vision matrix test')..." class="flex-1 bg-[#090d16] border border-borderCol rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-neonBlue transition-all font-mono">
+                <input type="text" id="textCommandInput" placeholder="Or type command here (e.g., 'Open Flipkart', 'Search YouTube for songs')..." class="flex-1 bg-[#090d16] border border-borderCol rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-neonBlue transition-all font-mono">
                 <button type="submit" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 transition-all">Submit Text</button>
             </form>
         </div>
@@ -357,7 +357,7 @@
                     navLogo: "Cognitive Speech AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
                     heroTitle: "Cognitive Speech AI", heroDesc: "Integrated speech-to-intent pipeline executing real-time AI evaluation, command processing, and automated system response.",
                     voiceStatusOffline: "Acoustic Core Offline", voiceStatusActive: "Ambient Wake-Word Engine Operational",
-                    voiceStatusSpeaking: "Broadcasting Audio Output Array...", transcriptPlaceholder: 'Say "SYSTEM" followed by your command or submit text input below to trigger speech transcription & intent evaluation...',
+                    voiceStatusSpeaking: "Broadcasting Audio Output Array...", transcriptPlaceholder: 'Say an app name (e.g., "Open Amazon", "Search Zomato for biryani") or submit text command below...',
                     voiceTextInit: "Initialize Ambient Speech Loop", voiceTextStop: "Terminate Matrix Operations Loop",
                     sectionTitleMatrix: "Cognitive Operations Interface Matrix", panelHeaderCapture: "Acoustic Capture Buffer",
                     metricLabelDecibel: "Acoustic Decibels", metricLabelFrequency: "Stream Frequency", panelHeaderSignature: "Cognitive Vocal Signature",
@@ -476,13 +476,6 @@
 
             let isListening = false;
             let recognition = null;
-            
-            // ==========================================
-            // BACKEND URL CONFIGURATION FOR LOCALHOST VS GITHUB PAGES
-            // ==========================================
-            // When testing locally (http://127.0.0.1:5000 or http://localhost:5000), it connects to Python Eclipse backend.
-            // When hosted on GitHub Pages (https://rames-qa.github.io/Cognitive-Speech-AI/), it will safely target http://localhost:5000 
-            // or an active secure tunnel (like ngrok) if you configure one.
             const BACKEND_URL = "http://localhost:5000";
 
             const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
@@ -520,19 +513,75 @@
                 window.speechSynthesis.speak(utterance);
             }
 
+            // ==========================================
+            // ROBUST CLIENT-SIDE FALLBACK INTENT PARSER
+            // ==========================================
+            function getClientFallbackResolution(rawCommand) {
+                const cmd = rawCommand.toLowerCase().trim();
+                let targetUrl = "https://www.google.com/search?q=" + encodeURIComponent(cmd);
+                let actionMsg = `Executing global search query for "${rawCommand}"`;
+                let intentName = "GLOBAL_SEARCH_ENGINE";
+
+                if (cmd.includes("amazon")) {
+                    targetUrl = "https://www.amazon.in";
+                    actionMsg = "Opening Amazon India portal.";
+                    intentName = "PLATFORM_ROUTING: AMAZON";
+                } else if (cmd.includes("flipkart")) {
+                    targetUrl = "https://www.flipkart.com";
+                    actionMsg = "Opening Flipkart shopping platform.";
+                    intentName = "PLATFORM_ROUTING: FLIPKART";
+                } else if (cmd.includes("meesho")) {
+                    targetUrl = "https://www.meesho.com";
+                    actionMsg = "Opening Meesho marketplace.";
+                    intentName = "PLATFORM_ROUTING: MEESHO";
+                } else if (cmd.includes("zomato")) {
+                    targetUrl = "https://www.zomato.com";
+                    actionMsg = "Opening Zomato food delivery.";
+                    intentName = "PLATFORM_ROUTING: ZOMATO";
+                } else if (cmd.includes("swiggy")) {
+                    targetUrl = "https://www.swiggy.com";
+                    actionMsg = "Opening Swiggy delivery platform.";
+                    intentName = "PLATFORM_ROUTING: SWIGGY";
+                } else if (cmd.includes("youtube") || cmd.includes("video") || cmd.includes("song")) {
+                    targetUrl = "https://www.youtube.com";
+                    actionMsg = "Launching YouTube media streaming.";
+                    intentName = "PLATFORM_ROUTING: YOUTUBE";
+                } else if (cmd.includes("gmail") || cmd.includes("mail")) {
+                    targetUrl = "https://mail.google.com";
+                    actionMsg = "Opening Gmail inbox workspace.";
+                    intentName = "PLATFORM_ROUTING: GMAIL";
+                } else if (cmd.includes("github")) {
+                    targetUrl = "https://github.com";
+                    actionMsg = "Opening GitHub repositories.";
+                    intentName = "PLATFORM_ROUTING: GITHUB";
+                } else if (cmd.includes("linkedin")) {
+                    targetUrl = "https://www.linkedin.com";
+                    actionMsg = "Opening LinkedIn professional network.";
+                    intentName = "PLATFORM_ROUTING: LINKEDIN";
+                }
+
+                return {
+                    status: "success",
+                    intent: intentName,
+                    action: actionMsg,
+                    url: targetUrl
+                };
+            }
+
             async function processPipelineCommand(command, mode = "VOICE") {
                 updatePipelineVisual(0, `${mode} INPUT READY`);
-                await new Promise(r => setTimeout(r, 150));
+                await new Promise(r => setTimeout(r, 100));
                 
                 updatePipelineVisual(1, "TRANSCRIBING & TOKENIZING");
-                await new Promise(r => setTimeout(r, 150));
+                await new Promise(r => setTimeout(r, 100));
                 
                 updatePipelineVisual(2, "AI INTENT EVALUATION");
-                if (voiceStatusText) voiceStatusText.textContent = "Connecting to Python Flask backend...";
-                if (emotionTokenDisplay) emotionTokenDisplay.textContent = "PROCESSING AI INTENT";
+                if (voiceStatusText) voiceStatusText.textContent = "Processing command intent...";
+                if (emotionTokenDisplay) emotionTokenDisplay.textContent = "EVALUATING INTENT";
 
-                updatePipelineVisual(3, "FLASK EXECUTING COMMAND");
+                updatePipelineVisual(3, "DISPATCHING AUTOMATION");
 
+                let data = null;
                 try {
                     const response = await fetch(`${BACKEND_URL}/api/command`, {
                         method: "POST",
@@ -541,52 +590,49 @@
                     });
 
                     if (!response.ok) throw new Error(`Backend HTTP ${response.status}`);
+                    data = await response.json();
 
-                    const data = await response.json();
                     if (backendBadge) {
                         backendBadge.textContent = "FLASK ONLINE (5000)";
                         backendBadge.className = "text-xs font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-neonGreen border border-emerald-500/30";
                     }
-
-                    voiceTranscript.innerHTML = `
-                        <div class="text-neonBlue">Incoming Command [${mode}]: ${escapeHtml(command)}</div>
-                        <div class="text-neonPurple mt-1">Intent Category: ${escapeHtml(data.intent || "General Automated Action")}</div>
-                        <div class="text-neonGreen mt-2">Flask Backend Response: ${escapeHtml(data.action || "No response text")}</div>
-                    `;
-                    
-                    if (emotionTokenDisplay) {
-                        emotionTokenDisplay.textContent = (data.status || "EXECUTION OK").toUpperCase();
-                    }
-
-                    speakResponse(data.action || "Command processed by Flask backend.");
-
-                    // ==========================================
-                    // REAL-TIME DYNAMIC REDIRECTION TO LIVE APPS
-                    // ==========================================
-                    if (data.url) {
-                        const link = document.createElement("a");
-                        link.href = data.url;
-                        link.target = "_blank";
-                        link.rel = "noopener noreferrer";
-                        link.textContent = "Open Requested Action URL";
-                        link.className = "block mt-3 text-neonBlue underline text-xs font-mono";
-                        voiceTranscript.appendChild(link);
-
-                        // Automatically launch target website/app tab in real time
-                        window.open(data.url, '_blank');
-                    }
                 } catch (err) {
-                    console.warn("Python Flask backend not reachable on port 5000:", err);
+                    console.warn("Python backend offline or unreachable. Engaging client-side dynamic solver:", err);
                     if (backendBadge) {
-                        backendBadge.textContent = "BACKEND DISCONNECTED";
-                        backendBadge.className = "text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-neonRose border border-rose-500/30";
+                        backendBadge.textContent = "CLIENT DYNAMIC SOLVER ACTIVE";
+                        backendBadge.className = "text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-neonAmber border border-amber-500/30";
                     }
+                    // Seamless client fallback so live apps/search always open
+                    data = getClientFallbackResolution(command);
+                }
 
-                    voiceTranscript.innerHTML = `
-                        <div class="text-neonBlue">Incoming Command [${mode}]: ${escapeHtml(command)}</div>
-                        <div class="text-neonRose mt-1">Connection Error: Python Flask backend (app.py) is not running or CORS is blocking.</div>
-                    `;
-                    speakResponse("Backend server offline. Please start app.py in Eclipse.");
+                // Render Response Data in Transcript Console
+                voiceTranscript.innerHTML = `
+                    <div class="text-neonBlue">Incoming Command [${mode}]: ${escapeHtml(command)}</div>
+                    <div class="text-neonPurple mt-1">Intent Category: ${escapeHtml(data.intent || "Dynamic Action Dispatch")}</div>
+                    <div class="text-neonGreen mt-2">Execution Response: ${escapeHtml(data.action || "Opening target application...")}</div>
+                `;
+                
+                if (emotionTokenDisplay) {
+                    emotionTokenDisplay.textContent = (data.status || "EXECUTION OK").toUpperCase();
+                }
+
+                speakResponse(data.action || "Opening target application.");
+
+                // ==========================================
+                // REAL-TIME DYNAMIC TAB REDIRECTION
+                // ==========================================
+                if (data.url) {
+                    const link = document.createElement("a");
+                    link.href = data.url;
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+                    link.textContent = `Open Action Link: ${data.url}`;
+                    link.className = "block mt-3 text-neonBlue underline text-xs font-mono hover:text-white";
+                    voiceTranscript.appendChild(link);
+
+                    // Dynamically launch requested app or website tab immediately
+                    window.open(data.url, '_blank');
                 }
             }
 
@@ -656,6 +702,7 @@
                 });
             }
 
+            // Background Telemetry & Canvas Waves Animation Loop
             const eqBars = document.querySelectorAll('.eq-bar');
             const liveDecibel = document.getElementById("liveDecibel");
             const liveSampleRate = document.getElementById("liveSampleRate");
