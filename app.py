@@ -53,7 +53,8 @@ CORS(
                 "http://localhost",
                 "http://127.0.0.1",
                 "http://localhost:3000",
-                "http://localhost:5000"
+                "http://localhost:5000",
+                "*"
             ]
         }
     },
@@ -78,22 +79,40 @@ PLATFORM_REGISTRY = {
         "search_path": "/search?q=",
         "has_automation": False,
     },
+    "meesho": {
+        "base_url": "https://www.meesho.com",
+        "search_path": "/search?q=",
+        "aliases": ["shop", "shopping", "clothes"],
+        "has_automation": False,
+    },
+    "zomato": {
+        "base_url": "https://www.zomato.com",
+        "search_path": "/bangalore/restaurants?q=",
+        "aliases": ["food", "restaurant", "order food", "dining"],
+        "has_automation": False,
+    },
+    "swiggy": {
+        "base_url": "https://www.swiggy.com",
+        "search_path": "/search?query=",
+        "aliases": ["delivery", "snacks", "hungry", "food delivery"],
+        "has_automation": False,
+    },
     "myntra": {
         "base_url": "https://www.myntra.com",
         "search_path": "/",
-        "aliases": ["fashion", "clothes", "shopping"],
+        "aliases": ["fashion", "apparel"],
         "has_automation": False,
     },
     "gmail": {
         "base_url": "https://mail.google.com",
         "search_path": "/mail/u/0/#search/",
-        "aliases": ["mail", "inbox"],
+        "aliases": ["mail", "inbox", "emails", "email"],
         "has_automation": False,
     },
     "youtube": {
         "base_url": "https://www.youtube.com",
         "search_path": "/results?search_query=",
-        "aliases": ["video", "song", "music"],
+        "aliases": ["video", "song", "music", "play"],
         "has_automation": False,
     },
     "news": {
@@ -123,6 +142,7 @@ PLATFORM_REGISTRY = {
     "google": {
         "base_url": "https://www.google.com",
         "search_path": "/search?q=",
+        "aliases": ["search", "web", "google search"],
         "has_automation": False,
     },
     "stackoverflow": {
@@ -136,8 +156,9 @@ PLATFORM_REGISTRY = {
         "has_automation": False,
     },
     "wikipedia": {
-        "base_url": "https://en.wikipedia.org",
-        "search_path": "/wiki/Special:Search?search=",
+        "base_url": "https://www.wikipedia.org",
+        "search_path": "/w/index.php?search=",
+        "aliases": ["wiki", "encyclopedia"],
         "has_automation": False,
     },
 }
