@@ -352,7 +352,6 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Localization Matrix
             const LocalizationMatrix = {
                 en: {
                     navLogo: "Cognitive Speech AI", navLinkConsole: "Console", navLinkMatrix: "Live Matrix",
@@ -424,11 +423,11 @@
                     labelCalm: "ಶಾಂತ ಸ್ಥಿರತೆ", labelFriction: "ಧ್ವನಿ ಘರ್ಷಣೆ", labelLoad: "ಡೈನಾಮಿಕ್ ಸಂಸ್ಕರಣಾ ಲೋಡ್",
                     cardTitleNeural: "ನರ ಸಂಸ್ಕರಣೆ", cardDescNeural: "ಹಾರ್ಡ್‌ವೇರ್ ಅರೇ ಟ್ರ್ಯಾಕ್‌ಗಳಲ್ಲಿ ಭಾಷಾ ಟೋಕನ್‌ಗಳು ಮತ್ತು ಅಕೌಸ್ಟಿಕ್ ಮ್ಯಾಟ್ರಿಕ್ಸ್‌ಗಳನ್ನು ಮೌಲ್ಯಮಾಪನ ಮಾಡುವುದು.",
                     subMetricNeuralVelocity: "ವೇಗ", subMetricNeuralIndex: "ಸೂಚ್ಯಂಕ", subMetricNeuralActive: "ಸಕ್ರಿಯ",
-                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಸ್ಪೇಷಿಯಲ್ ಎನ್ವಿರಾನ್ಮೆಂಟ್ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಫ್ರೇಮ್‌‌ವರ್ಕ್‌ಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ.",
+                    cardTitleVision: "ವಿಷನ್ ಎಐ ಮ್ಯಾಟ್ರಿಕ್ಸ್", cardDescVision: "ಸ್ಪೇಷಿಯಲ್ ಎನ್ವಿರಾನ್ಮೆಂಟ್ ಟ್ರ್ಯಾಕಿಂಗ್, ಮ್ಯಾಟ್ರಿಕ್ಸ್ ಫ್ರೇಮ್‌‌ವರ್ಕ್‌ಗಳು ಮತ್ತು ವೆಕ್ಟರ್ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಪ್ರಕ್ರೀಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ.",
                     subMetricVisionFPS: "ಎಫ್‌ಪಿಎಸ್ ಫೀಡ್", subMetricVisionAccuracy: "ನಿಖರತೆ", subMetricVisionTracking: "ಟ್ರ್ಯಾಕಿಂಗ್",
                     cardTitleRobotics: "ರೋಬೋಟಿಕ್ಸ್ ಕೋರ್", cardDescRobotics: "ಸ್ವಯಂಚಾಲಿತ ಯಂತ್ರಾಂಶ ಟೆಲಿಮೆಟ್ರಿ, ಹಾರ್ಡ್‌ವೇರ್ ಮ್ಯಾಪಿಂಗ್ ಮತ್ತು ಥ್ರೆಡ್ ಶೆಡ್ಯೂಲಿಂಗ್ ಲೂಪ್‌ಗಳು.",
                     subMetricRobotTasks: "ಕಾರ್ಯಗಳು", subMetricRobotLoad: "ಲೋಡ್", subMetricRobotFlow: "ಪ್ರವಾಹ",
-                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಅಡ್ವಾನ್ಸಡ್ ವೆಬ್ ಪ್ರಾಜೆಕ್ಟ್"
+                    footerText: "© 2026 ಕಾಗ್ನಿಟಿವ್ ಎಐ ಅಡ್ವಾನ್ಸಡ್ ವೆబ్ ಪ್ರಾಜೆಕ್ಟ್"
                 }
             };
 
@@ -449,7 +448,6 @@
                 langSelect.addEventListener("change", (e) => updateLanguage(e.target.value));
             }
 
-            // Pipeline Stage visual updater
             const pipeStages = [
                 document.getElementById("pipeStage1"),
                 document.getElementById("pipeStage2"),
@@ -476,9 +474,15 @@
                 });
             }
 
-            // --- Voice Recognition + Flask Backend Integration ---
             let isListening = false;
             let recognition = null;
+            
+            // ==========================================
+            // BACKEND URL CONFIGURATION FOR LOCALHOST VS GITHUB PAGES
+            // ==========================================
+            // When testing locally (http://127.0.0.1:5000 or http://localhost:5000), it connects to Python Eclipse backend.
+            // When hosted on GitHub Pages (https://rames-qa.github.io/Cognitive-Speech-AI/), it will safely target http://localhost:5000 
+            // or an active secure tunnel (like ngrok) if you configure one.
             const BACKEND_URL = "http://localhost:5000";
 
             const btnVoiceTrigger = document.getElementById("btnVoiceTrigger");
@@ -556,6 +560,9 @@
 
                     speakResponse(data.action || "Command processed by Flask backend.");
 
+                    // ==========================================
+                    // REAL-TIME DYNAMIC REDIRECTION TO LIVE APPS
+                    // ==========================================
                     if (data.url) {
                         const link = document.createElement("a");
                         link.href = data.url;
@@ -565,41 +572,24 @@
                         link.className = "block mt-3 text-neonBlue underline text-xs font-mono";
                         voiceTranscript.appendChild(link);
 
-                        // Real-time automatic tab redirection
+                        // Automatically launch target website/app tab in real time
                         window.open(data.url, '_blank');
                     }
                 } catch (err) {
-                    console.warn("Python Flask backend not reachable. Executing client-side AI fallback simulation:", err);
+                    console.warn("Python Flask backend not reachable on port 5000:", err);
                     if (backendBadge) {
-                        backendBadge.textContent = "FALLBACK / DISCONNECTED";
-                        backendBadge.className = "text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-neonAmber border border-amber-500/30";
-                    }
-
-                    // Fallback AI Intent Parser
-                    let fallbackIntent = "SYSTEM_TELEMETRY";
-                    let fallbackResponse = `Simulated execution routine for "${command}". All system nodes reporting active.`;
-                    
-                    const lowerCmd = command.toLowerCase();
-                    if (lowerCmd.includes("vision") || lowerCmd.includes("camera") || lowerCmd.includes("matrix")) {
-                        fallbackIntent = "VISION_AI_EVALUATION";
-                        fallbackResponse = "Vision AI matrix diagnostics initiated. Spatial vector resolution set to high precision.";
-                    } else if (lowerCmd.includes("robot") || lowerCmd.includes("motor") || lowerCmd.includes("arm")) {
-                        fallbackIntent = "ROBOTICS_CORE_KINEMATICS";
-                        fallbackResponse = "Robotics kinematics thread verified. Hardware mapping operational.";
+                        backendBadge.textContent = "BACKEND DISCONNECTED";
+                        backendBadge.className = "text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-neonRose border border-rose-500/30";
                     }
 
                     voiceTranscript.innerHTML = `
-                        <div class="text-neonBlue">Command Input [${mode}]: ${escapeHtml(command)}</div>
-                        <div class="text-neonAmber mt-1">Simulated Intent: ${fallbackIntent}</div>
-                        <div class="text-neonGreen mt-2">Simulated AI Response: ${escapeHtml(fallbackResponse)}</div>
+                        <div class="text-neonBlue">Incoming Command [${mode}]: ${escapeHtml(command)}</div>
+                        <div class="text-neonRose mt-1">Connection Error: Python Flask backend (app.py) is not running or CORS is blocking.</div>
                     `;
-
-                    if (emotionTokenDisplay) emotionTokenDisplay.textContent = "SIMULATED AI OK";
-                    speakResponse(fallbackResponse);
+                    speakResponse("Backend server offline. Please start app.py in Eclipse.");
                 }
             }
 
-            // Handle Text Form Submit
             textCommandForm.addEventListener("submit", (e) => {
                 e.preventDefault();
                 const cmd = textCommandInput.value.trim();
@@ -609,7 +599,6 @@
                 }
             });
 
-            // Speech Recognition Setup
             if (SpeechRecognition) {
                 recognition = new SpeechRecognition();
                 recognition.continuous = false;
@@ -662,12 +651,11 @@
                 });
             } else {
                 btnVoiceTrigger.addEventListener("click", () => {
-                    const manualCmd = prompt("Enter command for Cognitive AI Matrix:", "SYSTEM run diagnostics");
+                    const manualCmd = prompt("Enter command for Cognitive AI Matrix:", "Open Amazon");
                     if (manualCmd) processPipelineCommand(manualCmd, "TEXT_PROMPT");
                 });
             }
 
-            // Live Telemetry Simulation Loop
             const eqBars = document.querySelectorAll('.eq-bar');
             const liveDecibel = document.getElementById("liveDecibel");
             const liveSampleRate = document.getElementById("liveSampleRate");
